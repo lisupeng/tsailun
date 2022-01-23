@@ -17,7 +17,7 @@
 
 [Search](https://github.com/lisupeng/misc/tree/main/screenshots/v0.9.7/search.jpg)
 
-[Admin Panel](https://github.com/lisupeng/misc/tree/main/screenshots/v0.9.7/admin.jpg)
+ ![Admin Panel](https://github.com/lisupeng/misc/raw/main/screenshots/v0.9.7/admin.jpg)
 
 ## Download
 [download link](https://github.com/lisupeng/tsailunreleases)
