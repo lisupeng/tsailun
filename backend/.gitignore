@@ -1,0 +1,14 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# build output
+/build
+/build_linux64_dev
+/build_linux64
+/build_nmake_dev
+/build_nmake
+
+# server log
+CPPWebServer.log
+
+# misc
+.DS_Store

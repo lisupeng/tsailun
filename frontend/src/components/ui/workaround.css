@@ -1,0 +1,20 @@
+/* fix search input white edge issue */
+
+legend {
+  width: auto;
+}
+
+.ant-tree {
+
+    font-size: 18px;
+    background: #f5f5f5;
+
+}
+
+#pg_treeview {
+    background: #f5f5f5;
+}
+
+#pg_treeview_paper {
+    background: #f5f5f5;
+}
