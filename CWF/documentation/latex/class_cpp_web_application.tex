@@ -1,0 +1,106 @@
+\hypertarget{class_cpp_web_application}{}\section{Cpp\+Web\+Application Class Reference}
+\label{class_cpp_web_application}\index{Cpp\+Web\+Application@{Cpp\+Web\+Application}}
+
+
+This class is responsible for encapsulating the Q\+Core\+Application, the \hyperlink{class_cpp_web_server}{Cpp\+Web\+Server} and configure the server logging mechanism.  
+
+
+
+
+{\ttfamily \#include $<$cppwebapplication.\+h$>$}
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{class_cpp_web_application_a76766ee1be8080db9db6df98e1b9e907}{Cpp\+Web\+Application} (int argc, char $\ast$argv\mbox{[}$\,$\mbox{]}, const Q\+String \&server\+Path, \hyperlink{class_filter}{Filter} $\ast$filter=nullptr)
+\begin{DoxyCompactList}\small\item\em Constructs a Q\+Core\+Application, a \hyperlink{class_cpp_web_server}{Cpp\+Web\+Server} and install the message handler. if the server folder\textquotesingle{}s path was not found in the server\+Path, it will look into the executable\textquotesingle{}s folder. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_cpp_web_application_a96a7655a25d2e35ed545cdb7b8d81cc5}\label{class_cpp_web_application_a96a7655a25d2e35ed545cdb7b8d81cc5}} 
+\hyperlink{class_cpp_web_application_a96a7655a25d2e35ed545cdb7b8d81cc5}{$\sim$\+Cpp\+Web\+Application} ()
+\begin{DoxyCompactList}\small\item\em Destroys the server dynamically allocated. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename C\+O\+N\+T\+R\+O\+L\+L\+ER $>$ }\\void \hyperlink{class_cpp_web_application_ab4f105dee5ddd0cb7c6c93917057e850}{add\+Controller} (const Q\+String \&url) noexcept
+\begin{DoxyCompactList}\small\item\em Hitches a url to a \hyperlink{class_controller}{Controller}. \end{DoxyCompactList}\item 
+int \hyperlink{class_cpp_web_application_a1e9f2c789934748d6b7c29ad33e9d7c9}{start} ()
+\begin{DoxyCompactList}\small\item\em Starts the server and Q\+Core\+Application. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+This class is responsible for encapsulating the Q\+Core\+Application, the \hyperlink{class_cpp_web_server}{Cpp\+Web\+Server} and configure the server logging mechanism. 
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{class_cpp_web_application_a76766ee1be8080db9db6df98e1b9e907}\label{class_cpp_web_application_a76766ee1be8080db9db6df98e1b9e907}} 
+\index{Cpp\+Web\+Application@{Cpp\+Web\+Application}!Cpp\+Web\+Application@{Cpp\+Web\+Application}}
+\index{Cpp\+Web\+Application@{Cpp\+Web\+Application}!Cpp\+Web\+Application@{Cpp\+Web\+Application}}
+\subsubsection{\texorpdfstring{Cpp\+Web\+Application()}{CppWebApplication()}}
+{\footnotesize\ttfamily Cpp\+Web\+Application\+::\+Cpp\+Web\+Application (\begin{DoxyParamCaption}\item[{int}]{argc,  }\item[{char $\ast$}]{argv\mbox{[}$\,$\mbox{]},  }\item[{const Q\+String \&}]{server\+Path,  }\item[{\hyperlink{class_filter}{Filter} $\ast$}]{filter = {\ttfamily nullptr} }\end{DoxyParamCaption})}
+
+
+
+Constructs a Q\+Core\+Application, a \hyperlink{class_cpp_web_server}{Cpp\+Web\+Server} and install the message handler. if the server folder\textquotesingle{}s path was not found in the server\+Path, it will look into the executable\textquotesingle{}s folder. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em int} & argc \+: Main function parameter used to build Q\+Core\+Application. \\
+\hline
+{\em char} & $\ast$argv\mbox{[}\mbox{]} \+: Main function parameter used to build Q\+Core\+Application. \\
+\hline
+{\em const} & \hyperlink{class_configuration}{Configuration} \&config \+: Used to set the parameters of the server. \\
+\hline
+{\em \hyperlink{class_filter}{Filter}} & $\ast$filter \+: Install a filter for requests on the server. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{class_cpp_web_application_ab4f105dee5ddd0cb7c6c93917057e850}\label{class_cpp_web_application_ab4f105dee5ddd0cb7c6c93917057e850}} 
+\index{Cpp\+Web\+Application@{Cpp\+Web\+Application}!add\+Controller@{add\+Controller}}
+\index{add\+Controller@{add\+Controller}!Cpp\+Web\+Application@{Cpp\+Web\+Application}}
+\subsubsection{\texorpdfstring{add\+Controller()}{addController()}}
+{\footnotesize\ttfamily template$<$typename C\+O\+N\+T\+R\+O\+L\+L\+ER $>$ \\
+void Cpp\+Web\+Application\+::add\+Controller (\begin{DoxyParamCaption}\item[{const Q\+String \&}]{url }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Hitches a url to a \hyperlink{class_controller}{Controller}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em const} & Q\+String \&url \+: Url name. \\
+\hline
+{\em \hyperlink{class_controller}{Controller}} & $\ast$controller \+: \hyperlink{class_controller}{Controller} that will answer requests made to url. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyParagraph}{Example}
+
+\begin{DoxyCode}
+\textcolor{preprocessor}{#include <QCoreApplication>}
+\textcolor{preprocessor}{#include <controllers/helloworldcontroller.h>}
+\textcolor{preprocessor}{#include <cwf/cppwebapplication.h>}
+
+\textcolor{keywordtype}{int} main(\textcolor{keywordtype}{int} argc, \textcolor{keywordtype}{char} *argv[])
+\{
+     CWF::CppWebApplication server(argc, argv, \textcolor{stringliteral}{"/PATH\_TO\_EXAMPLE/server"}));
+     server.addUrlController<HelloWorldController>(\textcolor{stringliteral}{"/hello"});
+     \textcolor{keywordflow}{return} server.start();
+\}
+\end{DoxyCode}
+ 
+\end{DoxyParagraph}
+\mbox{\Hypertarget{class_cpp_web_application_a1e9f2c789934748d6b7c29ad33e9d7c9}\label{class_cpp_web_application_a1e9f2c789934748d6b7c29ad33e9d7c9}} 
+\index{Cpp\+Web\+Application@{Cpp\+Web\+Application}!start@{start}}
+\index{start@{start}!Cpp\+Web\+Application@{Cpp\+Web\+Application}}
+\subsubsection{\texorpdfstring{start()}{start()}}
+{\footnotesize\ttfamily int Cpp\+Web\+Application\+::start (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Starts the server and Q\+Core\+Application. 
+
+\begin{DoxyReturn}{Returns}
+int \+: Returns -\/1 if it fails. 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+/home/herik/\+C\+P\+P\+Web\+Framework/\+C\+P\+P\+Web\+Framework/cwf/cppwebapplication.\+h\item 
+/home/herik/\+C\+P\+P\+Web\+Framework/\+C\+P\+P\+Web\+Framework/cwf/cppwebapplication.\+cpp\end{DoxyCompactItemize}

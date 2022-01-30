@@ -1,0 +1,106 @@
+\hypertarget{class_filter}{}\section{Filter Class Reference}
+\label{class_filter}\index{Filter@{Filter}}
+
+
+The \hyperlink{class_filter}{Filter} class works like a filter. You can use this class to validate sessions or measuring runtime of a specific method, for example. To use this class, you will need to create a derived class and reconstruct the do\+Filter method, after this, you will need to configure it into the Configure\+Cpp\+Web\+Server, using the set\+Filter method.  
+
+
+
+
+{\ttfamily \#include $<$filter.\+h$>$}
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{class_filter_aa37dc017d133404b3a326f363ce36b8a}\label{class_filter_aa37dc017d133404b3a326f363ce36b8a}} 
+virtual \hyperlink{class_filter_aa37dc017d133404b3a326f363ce36b8a}{$\sim$\+Filter} ()
+\begin{DoxyCompactList}\small\item\em Virtual destructor. \end{DoxyCompactList}\item 
+virtual void \hyperlink{class_filter_a7648d16d5bc8cc5c95c072f34e507f7f}{do\+Filter} (C\+W\+F\+::\+Request \&request, C\+W\+F\+::\+Response \&response, \hyperlink{class_filter_chain}{Filter\+Chain} \&chain)
+\begin{DoxyCompactList}\small\item\em This method will be called always that the \hyperlink{class_cpp_web_server}{Cpp\+Web\+Server} receives a requisition. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+The \hyperlink{class_filter}{Filter} class works like a filter. You can use this class to validate sessions or measuring runtime of a specific method, for example. To use this class, you will need to create a derived class and reconstruct the do\+Filter method, after this, you will need to configure it into the Configure\+Cpp\+Web\+Server, using the set\+Filter method. 
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{class_filter_a7648d16d5bc8cc5c95c072f34e507f7f}\label{class_filter_a7648d16d5bc8cc5c95c072f34e507f7f}} 
+\index{Filter@{Filter}!do\+Filter@{do\+Filter}}
+\index{do\+Filter@{do\+Filter}!Filter@{Filter}}
+\subsubsection{\texorpdfstring{do\+Filter()}{doFilter()}}
+{\footnotesize\ttfamily virtual void Filter\+::do\+Filter (\begin{DoxyParamCaption}\item[{C\+W\+F\+::\+Request \&}]{request,  }\item[{C\+W\+F\+::\+Response \&}]{response,  }\item[{\hyperlink{class_filter_chain}{Filter\+Chain} \&}]{chain }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
+
+
+
+This method will be called always that the \hyperlink{class_cpp_web_server}{Cpp\+Web\+Server} receives a requisition. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em request} & \+: This is a reference to the \hyperlink{class_request}{Request}. \\
+\hline
+{\em response} & \+: This is a reference to the \hyperlink{class_response}{Response}. \\
+\hline
+{\em chain} & \+: This is a reference to the \hyperlink{class_filter_chain}{Filter\+Chain}. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyParagraph}{Example}
+
+\begin{DoxyCode}
+\textcolor{comment}{//----loginfilter.h-----}
+
+\textcolor{preprocessor}{#ifndef LOGINFILTER\_H}
+\textcolor{preprocessor}{#define LOGINFILTER\_H}
+
+\textcolor{preprocessor}{#include "cwf/filter.h"}
+
+\textcolor{keyword}{class }LoginFilter : \textcolor{keyword}{public} CWF::Filter
+\{
+\textcolor{keyword}{public}:
+    \textcolor{keywordtype}{void} \hyperlink{class_filter_a7648d16d5bc8cc5c95c072f34e507f7f}{doFilter}(CWF::Request &request, CWF::Response &response, CWF::FilterChain &chain)
+    \{
+        QString url = request.getRequestURL();
+        \textcolor{keywordflow}{if}(url.endsWith(\textcolor{stringliteral}{".css"}) || url.endsWith(\textcolor{stringliteral}{".png"}) || url.endsWith(\textcolor{stringliteral}{".jpg"}))
+        \{
+            chain.doFilter(request, response);
+        \}
+        \textcolor{keywordflow}{else} \textcolor{keywordflow}{if}(url != \textcolor{stringliteral}{"/login"})
+        \{
+            \textcolor{keywordflow}{if}(request.getSession().getAttribute(\textcolor{stringliteral}{"user"}) == \textcolor{keyword}{nullptr} || request.getSession().isExpired())
+            \{
+                request.getRequestDispatcher(\textcolor{stringliteral}{"/pages/login"}).forward(request, response);
+            \}
+            \textcolor{keywordflow}{else}
+            \{
+                chain.doFilter(request, response);
+            \}
+         \}
+         \textcolor{keywordflow}{else}
+         \{
+             chain.doFilter(request, response);
+         \}
+    \}
+\};
+
+\textcolor{preprocessor}{#endif // LOGINFILTER\_H}
+
+\textcolor{comment}{//----main.h-----}
+
+\textcolor{preprocessor}{#include <filter/loginfilter.h>}
+\textcolor{preprocessor}{#include "cwf/cppwebapplication.h"}
+
+\textcolor{keywordtype}{int} main(\textcolor{keywordtype}{int} argc, \textcolor{keywordtype}{char} *argv[])
+\{
+    CWF::CppWebApplication server(argc,
+                                  argv,
+                                  \textcolor{stringliteral}{"PATH\_TO\_SERVER\_FOLDER"},
+                                  \textcolor{keyword}{new} LoginFilter);
+
+    \textcolor{keywordflow}{return} server.start();
+\}
+\end{DoxyCode}
+ 
+\end{DoxyParagraph}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/herik/\+C\+P\+P\+Web\+Framework/\+C\+P\+P\+Web\+Framework/cwf/filter.\+h\end{DoxyCompactItemize}

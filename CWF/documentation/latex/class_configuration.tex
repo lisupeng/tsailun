@@ -1,0 +1,411 @@
+\hypertarget{class_configuration}{}\section{Configuration Class Reference}
+\label{class_configuration}\index{Configuration@{Configuration}}
+
+
+All classes of C++ Web Framework are contained within the namespace C\+WF.  
+
+
+
+
+{\ttfamily \#include $<$configuration.\+h$>$}
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{class_configuration_a60b4858740fb32114fa5f4e72577fa7a}{Configuration} (const Q\+String \&server\+Files\+Path=\char`\"{}\char`\"{})
+\begin{DoxyCompactList}\small\item\em Will make reading the C\+P\+P\+Web.\+ini file and extract all of its properties. \end{DoxyCompactList}\item 
+int \hyperlink{class_configuration_ab39a76ac734b52df96c9c07f71764ae2}{get\+Time\+Out} () const noexcept
+\begin{DoxyCompactList}\small\item\em Returns the time\+Out property that will be used by the server to expire threads that are not in use. Such threads will be restarted as needed. The default time\+Out is 30000 milliseconds (30 seconds). If time\+Out is negative, newly created threads will not expire, e.\+g., they will not exit until the thread pool is destroyed. \end{DoxyCompactList}\item 
+int \hyperlink{class_configuration_a56f953d35c709126b15603071b4132ab}{get\+Session\+Expiration\+Time} () const noexcept
+\begin{DoxyCompactList}\small\item\em Returns the \hyperlink{class_session}{Session} Expiration Time. \end{DoxyCompactList}\item 
+int \hyperlink{class_configuration_a7a761377328a3212a8387d033282b78e}{get\+Cleanup\+Interval} () const noexcept
+\begin{DoxyCompactList}\small\item\em Returns the clean up interval Time. \end{DoxyCompactList}\item 
+int \hyperlink{class_configuration_a71c68a3810e4c408e1e76f66b4ab11ff}{get\+Port} () const noexcept
+\begin{DoxyCompactList}\small\item\em Returns the port number. \end{DoxyCompactList}\item 
+Q\+Host\+Address \hyperlink{class_configuration_a47b1c954104ceea3c18fac417c1df323}{get\+Host} () const noexcept
+\begin{DoxyCompactList}\small\item\em Returns the address. \end{DoxyCompactList}\item 
+int \hyperlink{class_configuration_a1adc08d559e9e7209dfd73c436c27288}{get\+Max\+Thread} () const noexcept
+\begin{DoxyCompactList}\small\item\em Returns the max thread number. \end{DoxyCompactList}\item 
+Q\+String \hyperlink{class_configuration_aff6b12e5b77552fb0feb9f9598335049}{get\+Ssl\+Key\+File} () const noexcept
+\begin{DoxyCompactList}\small\item\em Returns the ssl key file. \end{DoxyCompactList}\item 
+Q\+String \hyperlink{class_configuration_a7d58b7b13992eb1ce0789b9442ff663c}{get\+Ssl\+Cert\+File} () const noexcept
+\begin{DoxyCompactList}\small\item\em Returns the ssl cert file. \end{DoxyCompactList}\item 
+Q\+String \hyperlink{class_configuration_ae8a0a39c01183a3ffa8d5e1511a2a883}{get\+Path} () const noexcept
+\begin{DoxyCompactList}\small\item\em Returns the path to the server\textquotesingle{}s folder. \end{DoxyCompactList}\item 
+Q\+String \hyperlink{class_configuration_a26a2c6ace6f2fbe725998a3ee3656b1c}{get\+Log\+File\+Path} () const noexcept
+\begin{DoxyCompactList}\small\item\em Returns the log file path. \end{DoxyCompactList}\item 
+qint64 \hyperlink{class_configuration_a6366d5802568dca07d4a633110f07863}{get\+Max\+Upload\+File} () const noexcept
+\begin{DoxyCompactList}\small\item\em Returns max upload file size supported by the server. \end{DoxyCompactList}\item 
+qint64 \hyperlink{class_configuration_af0ff5f0aca0bd13e5676847db77bac58}{get\+Max\+Log\+File} () const noexcept
+\begin{DoxyCompactList}\small\item\em get\+Max\+Log\+File the max file log \end{DoxyCompactList}\item 
+Q\+String \hyperlink{class_configuration_ab67d7ba6abdfc27f5a66042377b01cd4}{get\+Index\+Page} () const noexcept
+\begin{DoxyCompactList}\small\item\em Returns the index page. \end{DoxyCompactList}\item 
+bool \hyperlink{class_configuration_a28db1b4cea9169d74939107f45e18123}{get\+Access\+Server\+Pages} () const noexcept
+\begin{DoxyCompactList}\small\item\em Returns the access server page. \end{DoxyCompactList}\item 
+Q\+Byte\+Array \hyperlink{class_configuration_ae5e1bc207332b2f089f2168ada606c48}{get\+Ssl\+Pass\+Phrase} () const noexcept
+\begin{DoxyCompactList}\small\item\em Returns the ssl pass phrase. \end{DoxyCompactList}\item 
+bool \hyperlink{class_configuration_aad998fe40caeeb4c412f00f0874c67c9}{is\+Valid} () const noexcept
+\begin{DoxyCompactList}\small\item\em Returns true if the \hyperlink{class_configuration}{Configuration} is ok. Otherwise returns false. \end{DoxyCompactList}\item 
+Q\+Ssl\+::\+Key\+Algorithm \hyperlink{class_configuration_a490e50bab0cdb1ccb531ee2472e97ca6}{get\+Ssl\+Key\+Algorithm} () const noexcept
+\begin{DoxyCompactList}\small\item\em Returns the S\+SL Key Algorithm. The R\+SA is defined by default. \end{DoxyCompactList}\item 
+Q\+Ssl\+::\+Key\+Type \hyperlink{class_configuration_abd78f9eb7315e0b0ed5c7d3088ce1795}{get\+Ssl\+Key\+Type} () const noexcept
+\begin{DoxyCompactList}\small\item\em Returns the S\+SL Key Type. The private is defined by default. \end{DoxyCompactList}\item 
+Q\+Ssl\+::\+Encoding\+Format \hyperlink{class_configuration_aa839f957ac9af33187140649b38785ef}{get\+Ssl\+Encoding\+Format} () const noexcept
+\begin{DoxyCompactList}\small\item\em Returns the S\+SL Encoding Format. The P\+EM is defined by default. \end{DoxyCompactList}\item 
+Q\+Ssl\+Socket\+::\+Peer\+Verify\+Mode \hyperlink{class_configuration_ae7e5872717b012e16dc2255d1741e422}{get\+Ssl\+Peer\+Verify\+Mode} () const noexcept
+\begin{DoxyCompactList}\small\item\em Returns the S\+SL Peer Veryfy Mode. The Verify\+None is defined by default. \end{DoxyCompactList}\item 
+Q\+Ssl\+::\+Ssl\+Protocol \hyperlink{class_configuration_acfe38d1e3f4801c942ad2e57165509f7}{get\+Ssl\+Protocol} () const noexcept
+\begin{DoxyCompactList}\small\item\em Returns the S\+SL Protocol. The Tls\+V1\+Ssl\+V3 is defined by default. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+All classes of C++ Web Framework are contained within the namespace C\+WF. 
+
+This class is responsable to read a ini file and extract its information. 
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{class_configuration_a60b4858740fb32114fa5f4e72577fa7a}\label{class_configuration_a60b4858740fb32114fa5f4e72577fa7a}} 
+\index{Configuration@{Configuration}!Configuration@{Configuration}}
+\index{Configuration@{Configuration}!Configuration@{Configuration}}
+\subsubsection{\texorpdfstring{Configuration()}{Configuration()}}
+{\footnotesize\ttfamily C\+W\+F\+\_\+\+B\+E\+G\+I\+N\+\_\+\+N\+A\+M\+E\+S\+P\+A\+CE Configuration\+::\+Configuration (\begin{DoxyParamCaption}\item[{const Q\+String \&}]{server\+Files\+Path = {\ttfamily \char`\"{}\char`\"{}} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [explicit]}}
+
+
+
+Will make reading the C\+P\+P\+Web.\+ini file and extract all of its properties. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Q\+String} & server\+Files\+Path \+: You should always points to the directory server. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyParagraph}{Example}
+
+\begin{DoxyCode}
+\textcolor{preprocessor}{#include <QCoreApplication>}
+\textcolor{preprocessor}{#include <cwf/cppwebapplication.h>}
+
+\textcolor{keywordtype}{int} main(\textcolor{keywordtype}{int} argc, \textcolor{keywordtype}{char} *argv[])
+\{     
+    CWF::CppWebApplication a(argc, argv, \textcolor{stringliteral}{"PATH\_TO\_SERVER\_FOLDER"});
+    \textcolor{keywordflow}{return} a.start();
+\}
+\end{DoxyCode}
+ 
+\end{DoxyParagraph}
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{class_configuration_a28db1b4cea9169d74939107f45e18123}\label{class_configuration_a28db1b4cea9169d74939107f45e18123}} 
+\index{Configuration@{Configuration}!get\+Access\+Server\+Pages@{get\+Access\+Server\+Pages}}
+\index{get\+Access\+Server\+Pages@{get\+Access\+Server\+Pages}!Configuration@{Configuration}}
+\subsubsection{\texorpdfstring{get\+Access\+Server\+Pages()}{getAccessServerPages()}}
+{\footnotesize\ttfamily bool Configuration\+::get\+Access\+Server\+Pages (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Returns the access server page. 
+
+\begin{DoxyReturn}{Returns}
+bool \+: Access server pages. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_configuration_a7a761377328a3212a8387d033282b78e}\label{class_configuration_a7a761377328a3212a8387d033282b78e}} 
+\index{Configuration@{Configuration}!get\+Cleanup\+Interval@{get\+Cleanup\+Interval}}
+\index{get\+Cleanup\+Interval@{get\+Cleanup\+Interval}!Configuration@{Configuration}}
+\subsubsection{\texorpdfstring{get\+Cleanup\+Interval()}{getCleanupInterval()}}
+{\footnotesize\ttfamily int Configuration\+::get\+Cleanup\+Interval (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Returns the clean up interval Time. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em int} & \+: Time in milliseconds. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_configuration_a47b1c954104ceea3c18fac417c1df323}\label{class_configuration_a47b1c954104ceea3c18fac417c1df323}} 
+\index{Configuration@{Configuration}!get\+Host@{get\+Host}}
+\index{get\+Host@{get\+Host}!Configuration@{Configuration}}
+\subsubsection{\texorpdfstring{get\+Host()}{getHost()}}
+{\footnotesize\ttfamily Q\+Host\+Address Configuration\+::get\+Host (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Returns the address. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Q\+Host\+Address} & \+: host. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_configuration_ab67d7ba6abdfc27f5a66042377b01cd4}\label{class_configuration_ab67d7ba6abdfc27f5a66042377b01cd4}} 
+\index{Configuration@{Configuration}!get\+Index\+Page@{get\+Index\+Page}}
+\index{get\+Index\+Page@{get\+Index\+Page}!Configuration@{Configuration}}
+\subsubsection{\texorpdfstring{get\+Index\+Page()}{getIndexPage()}}
+{\footnotesize\ttfamily Q\+String Configuration\+::get\+Index\+Page (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Returns the index page. 
+
+\begin{DoxyReturn}{Returns}
+Q\+String \+: index page name. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_configuration_a26a2c6ace6f2fbe725998a3ee3656b1c}\label{class_configuration_a26a2c6ace6f2fbe725998a3ee3656b1c}} 
+\index{Configuration@{Configuration}!get\+Log\+File\+Path@{get\+Log\+File\+Path}}
+\index{get\+Log\+File\+Path@{get\+Log\+File\+Path}!Configuration@{Configuration}}
+\subsubsection{\texorpdfstring{get\+Log\+File\+Path()}{getLogFilePath()}}
+{\footnotesize\ttfamily Q\+String Configuration\+::get\+Log\+File\+Path (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Returns the log file path. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Q\+String} & \+: log file. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_configuration_af0ff5f0aca0bd13e5676847db77bac58}\label{class_configuration_af0ff5f0aca0bd13e5676847db77bac58}} 
+\index{Configuration@{Configuration}!get\+Max\+Log\+File@{get\+Max\+Log\+File}}
+\index{get\+Max\+Log\+File@{get\+Max\+Log\+File}!Configuration@{Configuration}}
+\subsubsection{\texorpdfstring{get\+Max\+Log\+File()}{getMaxLogFile()}}
+{\footnotesize\ttfamily qint64 Configuration\+::get\+Max\+Log\+File (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+get\+Max\+Log\+File the max file log 
+
+\begin{DoxyReturn}{Returns}
+qint64 \+: Max file log in bytes. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_configuration_a1adc08d559e9e7209dfd73c436c27288}\label{class_configuration_a1adc08d559e9e7209dfd73c436c27288}} 
+\index{Configuration@{Configuration}!get\+Max\+Thread@{get\+Max\+Thread}}
+\index{get\+Max\+Thread@{get\+Max\+Thread}!Configuration@{Configuration}}
+\subsubsection{\texorpdfstring{get\+Max\+Thread()}{getMaxThread()}}
+{\footnotesize\ttfamily int Configuration\+::get\+Max\+Thread (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Returns the max thread number. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em int} & \+: max. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_configuration_a6366d5802568dca07d4a633110f07863}\label{class_configuration_a6366d5802568dca07d4a633110f07863}} 
+\index{Configuration@{Configuration}!get\+Max\+Upload\+File@{get\+Max\+Upload\+File}}
+\index{get\+Max\+Upload\+File@{get\+Max\+Upload\+File}!Configuration@{Configuration}}
+\subsubsection{\texorpdfstring{get\+Max\+Upload\+File()}{getMaxUploadFile()}}
+{\footnotesize\ttfamily qint64 Configuration\+::get\+Max\+Upload\+File (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Returns max upload file size supported by the server. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em qint64} & max file size. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_configuration_ae8a0a39c01183a3ffa8d5e1511a2a883}\label{class_configuration_ae8a0a39c01183a3ffa8d5e1511a2a883}} 
+\index{Configuration@{Configuration}!get\+Path@{get\+Path}}
+\index{get\+Path@{get\+Path}!Configuration@{Configuration}}
+\subsubsection{\texorpdfstring{get\+Path()}{getPath()}}
+{\footnotesize\ttfamily Q\+String Configuration\+::get\+Path (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Returns the path to the server\textquotesingle{}s folder. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Q\+String} & \+: path. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_configuration_a71c68a3810e4c408e1e76f66b4ab11ff}\label{class_configuration_a71c68a3810e4c408e1e76f66b4ab11ff}} 
+\index{Configuration@{Configuration}!get\+Port@{get\+Port}}
+\index{get\+Port@{get\+Port}!Configuration@{Configuration}}
+\subsubsection{\texorpdfstring{get\+Port()}{getPort()}}
+{\footnotesize\ttfamily int Configuration\+::get\+Port (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Returns the port number. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em int} & \+: port. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_configuration_a56f953d35c709126b15603071b4132ab}\label{class_configuration_a56f953d35c709126b15603071b4132ab}} 
+\index{Configuration@{Configuration}!get\+Session\+Expiration\+Time@{get\+Session\+Expiration\+Time}}
+\index{get\+Session\+Expiration\+Time@{get\+Session\+Expiration\+Time}!Configuration@{Configuration}}
+\subsubsection{\texorpdfstring{get\+Session\+Expiration\+Time()}{getSessionExpirationTime()}}
+{\footnotesize\ttfamily int Configuration\+::get\+Session\+Expiration\+Time (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Returns the \hyperlink{class_session}{Session} Expiration Time. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em int} & \+: Time in milliseconds. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_configuration_a7d58b7b13992eb1ce0789b9442ff663c}\label{class_configuration_a7d58b7b13992eb1ce0789b9442ff663c}} 
+\index{Configuration@{Configuration}!get\+Ssl\+Cert\+File@{get\+Ssl\+Cert\+File}}
+\index{get\+Ssl\+Cert\+File@{get\+Ssl\+Cert\+File}!Configuration@{Configuration}}
+\subsubsection{\texorpdfstring{get\+Ssl\+Cert\+File()}{getSslCertFile()}}
+{\footnotesize\ttfamily Q\+String Configuration\+::get\+Ssl\+Cert\+File (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Returns the ssl cert file. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Q\+String} & \+: ssl\+Cert\+File name. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_configuration_aa839f957ac9af33187140649b38785ef}\label{class_configuration_aa839f957ac9af33187140649b38785ef}} 
+\index{Configuration@{Configuration}!get\+Ssl\+Encoding\+Format@{get\+Ssl\+Encoding\+Format}}
+\index{get\+Ssl\+Encoding\+Format@{get\+Ssl\+Encoding\+Format}!Configuration@{Configuration}}
+\subsubsection{\texorpdfstring{get\+Ssl\+Encoding\+Format()}{getSslEncodingFormat()}}
+{\footnotesize\ttfamily Q\+Ssl\+::\+Encoding\+Format Configuration\+::get\+Ssl\+Encoding\+Format (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Returns the S\+SL Encoding Format. The P\+EM is defined by default. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Q\+Ssl\+::\+Encoding\+Format} & \+: S\+SL key Encoding Format. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_configuration_a490e50bab0cdb1ccb531ee2472e97ca6}\label{class_configuration_a490e50bab0cdb1ccb531ee2472e97ca6}} 
+\index{Configuration@{Configuration}!get\+Ssl\+Key\+Algorithm@{get\+Ssl\+Key\+Algorithm}}
+\index{get\+Ssl\+Key\+Algorithm@{get\+Ssl\+Key\+Algorithm}!Configuration@{Configuration}}
+\subsubsection{\texorpdfstring{get\+Ssl\+Key\+Algorithm()}{getSslKeyAlgorithm()}}
+{\footnotesize\ttfamily Q\+Ssl\+::\+Key\+Algorithm Configuration\+::get\+Ssl\+Key\+Algorithm (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Returns the S\+SL Key Algorithm. The R\+SA is defined by default. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Q\+Ssl\+::\+Key\+Algorithm} & \+: S\+SL key Algorithm. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_configuration_aff6b12e5b77552fb0feb9f9598335049}\label{class_configuration_aff6b12e5b77552fb0feb9f9598335049}} 
+\index{Configuration@{Configuration}!get\+Ssl\+Key\+File@{get\+Ssl\+Key\+File}}
+\index{get\+Ssl\+Key\+File@{get\+Ssl\+Key\+File}!Configuration@{Configuration}}
+\subsubsection{\texorpdfstring{get\+Ssl\+Key\+File()}{getSslKeyFile()}}
+{\footnotesize\ttfamily Q\+String Configuration\+::get\+Ssl\+Key\+File (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Returns the ssl key file. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Q\+String} & \+: ssl\+Key\+File name. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_configuration_abd78f9eb7315e0b0ed5c7d3088ce1795}\label{class_configuration_abd78f9eb7315e0b0ed5c7d3088ce1795}} 
+\index{Configuration@{Configuration}!get\+Ssl\+Key\+Type@{get\+Ssl\+Key\+Type}}
+\index{get\+Ssl\+Key\+Type@{get\+Ssl\+Key\+Type}!Configuration@{Configuration}}
+\subsubsection{\texorpdfstring{get\+Ssl\+Key\+Type()}{getSslKeyType()}}
+{\footnotesize\ttfamily Q\+Ssl\+::\+Key\+Type Configuration\+::get\+Ssl\+Key\+Type (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Returns the S\+SL Key Type. The private is defined by default. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Q\+Ssl\+::\+Key\+Type} & \+: S\+SL key Type. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_configuration_ae5e1bc207332b2f089f2168ada606c48}\label{class_configuration_ae5e1bc207332b2f089f2168ada606c48}} 
+\index{Configuration@{Configuration}!get\+Ssl\+Pass\+Phrase@{get\+Ssl\+Pass\+Phrase}}
+\index{get\+Ssl\+Pass\+Phrase@{get\+Ssl\+Pass\+Phrase}!Configuration@{Configuration}}
+\subsubsection{\texorpdfstring{get\+Ssl\+Pass\+Phrase()}{getSslPassPhrase()}}
+{\footnotesize\ttfamily Q\+Byte\+Array Configuration\+::get\+Ssl\+Pass\+Phrase (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Returns the ssl pass phrase. 
+
+\begin{DoxyReturn}{Returns}
+Q\+Byte\+Array \+: ssl\+Pass\+Phrase. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_configuration_ae7e5872717b012e16dc2255d1741e422}\label{class_configuration_ae7e5872717b012e16dc2255d1741e422}} 
+\index{Configuration@{Configuration}!get\+Ssl\+Peer\+Verify\+Mode@{get\+Ssl\+Peer\+Verify\+Mode}}
+\index{get\+Ssl\+Peer\+Verify\+Mode@{get\+Ssl\+Peer\+Verify\+Mode}!Configuration@{Configuration}}
+\subsubsection{\texorpdfstring{get\+Ssl\+Peer\+Verify\+Mode()}{getSslPeerVerifyMode()}}
+{\footnotesize\ttfamily Q\+Ssl\+Socket\+::\+Peer\+Verify\+Mode Configuration\+::get\+Ssl\+Peer\+Verify\+Mode (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Returns the S\+SL Peer Veryfy Mode. The Verify\+None is defined by default. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Q\+Ssl\+Socket\+::\+Peer\+Verify\+Mode} & \+: Peer Veryfy Mode; \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_configuration_acfe38d1e3f4801c942ad2e57165509f7}\label{class_configuration_acfe38d1e3f4801c942ad2e57165509f7}} 
+\index{Configuration@{Configuration}!get\+Ssl\+Protocol@{get\+Ssl\+Protocol}}
+\index{get\+Ssl\+Protocol@{get\+Ssl\+Protocol}!Configuration@{Configuration}}
+\subsubsection{\texorpdfstring{get\+Ssl\+Protocol()}{getSslProtocol()}}
+{\footnotesize\ttfamily Q\+Ssl\+::\+Ssl\+Protocol Configuration\+::get\+Ssl\+Protocol (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Returns the S\+SL Protocol. The Tls\+V1\+Ssl\+V3 is defined by default. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Q\+Ssl\+::\+Ssl\+Protocol} & \+: S\+SL Protocol; \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_configuration_ab39a76ac734b52df96c9c07f71764ae2}\label{class_configuration_ab39a76ac734b52df96c9c07f71764ae2}} 
+\index{Configuration@{Configuration}!get\+Time\+Out@{get\+Time\+Out}}
+\index{get\+Time\+Out@{get\+Time\+Out}!Configuration@{Configuration}}
+\subsubsection{\texorpdfstring{get\+Time\+Out()}{getTimeOut()}}
+{\footnotesize\ttfamily int Configuration\+::get\+Time\+Out (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Returns the time\+Out property that will be used by the server to expire threads that are not in use. Such threads will be restarted as needed. The default time\+Out is 30000 milliseconds (30 seconds). If time\+Out is negative, newly created threads will not expire, e.\+g., they will not exit until the thread pool is destroyed. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em int} & \+: Time in milliseconds. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_configuration_aad998fe40caeeb4c412f00f0874c67c9}\label{class_configuration_aad998fe40caeeb4c412f00f0874c67c9}} 
+\index{Configuration@{Configuration}!is\+Valid@{is\+Valid}}
+\index{is\+Valid@{is\+Valid}!Configuration@{Configuration}}
+\subsubsection{\texorpdfstring{is\+Valid()}{isValid()}}
+{\footnotesize\ttfamily bool Configuration\+::is\+Valid (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Returns true if the \hyperlink{class_configuration}{Configuration} is ok. Otherwise returns false. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em bool} & \+: is valid. \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+/home/herik/\+C\+P\+P\+Web\+Framework/\+C\+P\+P\+Web\+Framework/cwf/configuration.\+h\item 
+/home/herik/\+C\+P\+P\+Web\+Framework/\+C\+P\+P\+Web\+Framework/cwf/configuration.\+cpp\end{DoxyCompactItemize}

@@ -1,0 +1,140 @@
+\hypertarget{class_http_cookie}{}\section{Http\+Cookie Class Reference}
+\label{class_http_cookie}\index{Http\+Cookie@{Http\+Cookie}}
+
+
+This class represents a H\+T\+TP Cookie.  
+
+
+
+
+{\ttfamily \#include $<$httpcookie.\+h$>$}
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{class_http_cookie_a728bef99b74d352b1762cc98e67cc93c}\label{class_http_cookie_a728bef99b74d352b1762cc98e67cc93c}} 
+\hyperlink{class_http_cookie_a728bef99b74d352b1762cc98e67cc93c}{Http\+Cookie} ()=default
+\begin{DoxyCompactList}\small\item\em This is the cookie\textquotesingle{}s default constructor. \end{DoxyCompactList}\item 
+\hyperlink{class_http_cookie_aeb0f2cb5f7e8ef2fc7503663e29941c4}{Http\+Cookie} (const Q\+Byte\+Array \&source)
+\item 
+\hyperlink{class_http_cookie_a2037d1e3f9a6f65f0f3575df1cfcc200}{Http\+Cookie} (const Q\+Byte\+Array \&name, const Q\+Byte\+Array \&value)
+\begin{DoxyCompactList}\small\item\em This is an overloaded constructor that receives a cookie\textquotesingle{}s name and value. \end{DoxyCompactList}\item 
+Q\+Byte\+Array \hyperlink{class_http_cookie_aef937847dbebf7290e94b94afbb8f9a1}{to\+Byte\+Array} () const
+\item 
+\mbox{\Hypertarget{class_http_cookie_abf6c25aa3654581007514fb8eb05ce7e}\label{class_http_cookie_abf6c25aa3654581007514fb8eb05ce7e}} 
+void \hyperlink{class_http_cookie_abf6c25aa3654581007514fb8eb05ce7e}{set\+Name} (const Q\+Byte\+Array \&value) noexcept
+\begin{DoxyCompactList}\small\item\em set\+Name \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_http_cookie_a7bb2be880561c06f961cda75ed200601}\label{class_http_cookie_a7bb2be880561c06f961cda75ed200601}} 
+void \hyperlink{class_http_cookie_a7bb2be880561c06f961cda75ed200601}{set\+Value} (const Q\+Byte\+Array \&value) noexcept
+\begin{DoxyCompactList}\small\item\em set\+Value \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_http_cookie_a728428f4220ba6678fdbfc225f65ab89}\label{class_http_cookie_a728428f4220ba6678fdbfc225f65ab89}} 
+void \hyperlink{class_http_cookie_a728428f4220ba6678fdbfc225f65ab89}{set\+Comment} (const Q\+Byte\+Array \&value) noexcept
+\begin{DoxyCompactList}\small\item\em set\+Comment \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_http_cookie_a00a6d505032b46606cbe6e573977f686}\label{class_http_cookie_a00a6d505032b46606cbe6e573977f686}} 
+void \hyperlink{class_http_cookie_a00a6d505032b46606cbe6e573977f686}{set\+Domain} (const Q\+Byte\+Array \&value) noexcept
+\begin{DoxyCompactList}\small\item\em set\+Domain \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_http_cookie_a829662d2cc5a445c718217c2651a31ea}\label{class_http_cookie_a829662d2cc5a445c718217c2651a31ea}} 
+void \hyperlink{class_http_cookie_a829662d2cc5a445c718217c2651a31ea}{set\+Max\+Age} (int value) noexcept
+\begin{DoxyCompactList}\small\item\em set\+Max\+Age \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_http_cookie_acdb116a430353e45a95435d8debd5632}\label{class_http_cookie_acdb116a430353e45a95435d8debd5632}} 
+void \hyperlink{class_http_cookie_acdb116a430353e45a95435d8debd5632}{set\+Path} (const Q\+Byte\+Array \&value) noexcept
+\begin{DoxyCompactList}\small\item\em set\+Path \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_http_cookie_ab1caa7eca962c497e765c46523d4747e}\label{class_http_cookie_ab1caa7eca962c497e765c46523d4747e}} 
+void \hyperlink{class_http_cookie_ab1caa7eca962c497e765c46523d4747e}{set\+Secure} (bool value) noexcept
+\begin{DoxyCompactList}\small\item\em set\+Secure \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_http_cookie_ad3370987b4bce5447598d1014c0d0f3b}\label{class_http_cookie_ad3370987b4bce5447598d1014c0d0f3b}} 
+Q\+Byte\+Array \hyperlink{class_http_cookie_ad3370987b4bce5447598d1014c0d0f3b}{get\+Name} () const noexcept
+\begin{DoxyCompactList}\small\item\em get\+Name \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_http_cookie_accaa975ced5c52bb8d5f4057a6bfa08d}\label{class_http_cookie_accaa975ced5c52bb8d5f4057a6bfa08d}} 
+Q\+Byte\+Array \hyperlink{class_http_cookie_accaa975ced5c52bb8d5f4057a6bfa08d}{get\+Value} () const noexcept
+\begin{DoxyCompactList}\small\item\em get\+Value \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_http_cookie_a76890b2f2990c4b6eff5ab34957362ab}\label{class_http_cookie_a76890b2f2990c4b6eff5ab34957362ab}} 
+Q\+Byte\+Array \hyperlink{class_http_cookie_a76890b2f2990c4b6eff5ab34957362ab}{get\+Comment} () const noexcept
+\begin{DoxyCompactList}\small\item\em get\+Comment \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_http_cookie_ab43fbcb808b4e8984a8ac5568c8c49e4}\label{class_http_cookie_ab43fbcb808b4e8984a8ac5568c8c49e4}} 
+Q\+Byte\+Array \hyperlink{class_http_cookie_ab43fbcb808b4e8984a8ac5568c8c49e4}{get\+Domain} () const noexcept
+\begin{DoxyCompactList}\small\item\em get\+Domain \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_http_cookie_a1389aee86b12fe9e62929caa8799704a}\label{class_http_cookie_a1389aee86b12fe9e62929caa8799704a}} 
+int \hyperlink{class_http_cookie_a1389aee86b12fe9e62929caa8799704a}{get\+Max\+Age} () const noexcept
+\begin{DoxyCompactList}\small\item\em get\+Max\+Age \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_http_cookie_aed5277e7667f8b38d1789bab44ee33fc}\label{class_http_cookie_aed5277e7667f8b38d1789bab44ee33fc}} 
+Q\+Byte\+Array \hyperlink{class_http_cookie_aed5277e7667f8b38d1789bab44ee33fc}{get\+Path} () const noexcept
+\begin{DoxyCompactList}\small\item\em get\+Path \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_http_cookie_aba32d79bc73dda77b028f4355c4313ca}\label{class_http_cookie_aba32d79bc73dda77b028f4355c4313ca}} 
+bool \hyperlink{class_http_cookie_aba32d79bc73dda77b028f4355c4313ca}{get\+Secure} () const noexcept
+\begin{DoxyCompactList}\small\item\em get\+Secure \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_http_cookie_ad3c11641e67f8c051eecd5d34f2199fd}\label{class_http_cookie_ad3c11641e67f8c051eecd5d34f2199fd}} 
+int \hyperlink{class_http_cookie_ad3c11641e67f8c051eecd5d34f2199fd}{get\+Version} () const noexcept
+\begin{DoxyCompactList}\small\item\em get\+Version \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static Q\+List$<$ Q\+Byte\+Array $>$ \hyperlink{class_http_cookie_a3f086e32413e23fdab53ffefa70b8b0e}{split\+C\+SV} (const Q\+Byte\+Array \&source)
+\begin{DoxyCompactList}\small\item\em split\+C\+SV \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+This class represents a H\+T\+TP Cookie. 
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{class_http_cookie_aeb0f2cb5f7e8ef2fc7503663e29941c4}\label{class_http_cookie_aeb0f2cb5f7e8ef2fc7503663e29941c4}} 
+\index{Http\+Cookie@{Http\+Cookie}!Http\+Cookie@{Http\+Cookie}}
+\index{Http\+Cookie@{Http\+Cookie}!Http\+Cookie@{Http\+Cookie}}
+\subsubsection{\texorpdfstring{Http\+Cookie()}{HttpCookie()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily C\+W\+F\+\_\+\+B\+E\+G\+I\+N\+\_\+\+N\+A\+M\+E\+S\+P\+A\+CE Http\+Cookie\+::\+Http\+Cookie (\begin{DoxyParamCaption}\item[{const Q\+Byte\+Array \&}]{source }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [explicit]}}
+
+Create a cookie from a string. 
+\begin{DoxyParams}{Parameters}
+{\em source} & String as received in a H\+T\+TP Cookie2 header. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_http_cookie_a2037d1e3f9a6f65f0f3575df1cfcc200}\label{class_http_cookie_a2037d1e3f9a6f65f0f3575df1cfcc200}} 
+\index{Http\+Cookie@{Http\+Cookie}!Http\+Cookie@{Http\+Cookie}}
+\index{Http\+Cookie@{Http\+Cookie}!Http\+Cookie@{Http\+Cookie}}
+\subsubsection{\texorpdfstring{Http\+Cookie()}{HttpCookie()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Http\+Cookie\+::\+Http\+Cookie (\begin{DoxyParamCaption}\item[{const Q\+Byte\+Array \&}]{name,  }\item[{const Q\+Byte\+Array \&}]{value }\end{DoxyParamCaption})}
+
+
+
+This is an overloaded constructor that receives a cookie\textquotesingle{}s name and value. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em name} & \+: This is a reference to a Q\+Byte\+Array. It will change the cookie\textquotesingle{}s name. \\
+\hline
+{\em value} & \+: This is a reference to a Q\+Byte\+Array. It will change the cookie\textquotesingle{}s value. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{class_http_cookie_a3f086e32413e23fdab53ffefa70b8b0e}\label{class_http_cookie_a3f086e32413e23fdab53ffefa70b8b0e}} 
+\index{Http\+Cookie@{Http\+Cookie}!split\+C\+SV@{split\+C\+SV}}
+\index{split\+C\+SV@{split\+C\+SV}!Http\+Cookie@{Http\+Cookie}}
+\subsubsection{\texorpdfstring{split\+C\+S\+V()}{splitCSV()}}
+{\footnotesize\ttfamily Q\+List$<$ Q\+Byte\+Array $>$ Http\+Cookie\+::split\+C\+SV (\begin{DoxyParamCaption}\item[{const Q\+Byte\+Array \&}]{source }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+split\+C\+SV 
+
+
+\begin{DoxyParams}{Parameters}
+{\em source} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_http_cookie_aef937847dbebf7290e94b94afbb8f9a1}\label{class_http_cookie_aef937847dbebf7290e94b94afbb8f9a1}} 
+\index{Http\+Cookie@{Http\+Cookie}!to\+Byte\+Array@{to\+Byte\+Array}}
+\index{to\+Byte\+Array@{to\+Byte\+Array}!Http\+Cookie@{Http\+Cookie}}
+\subsubsection{\texorpdfstring{to\+Byte\+Array()}{toByteArray()}}
+{\footnotesize\ttfamily Q\+Byte\+Array Http\+Cookie\+::to\+Byte\+Array (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+Convert this cookie to a string that may be used in a Set-\/\+Cookie header. 
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+/home/herik/\+C\+P\+P\+Web\+Framework/\+C\+P\+P\+Web\+Framework/cwf/httpcookie.\+h\item 
+/home/herik/\+C\+P\+P\+Web\+Framework/\+C\+P\+P\+Web\+Framework/cwf/httpcookie.\+cpp\end{DoxyCompactItemize}

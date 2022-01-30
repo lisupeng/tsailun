@@ -1,0 +1,284 @@
+\hypertarget{class_q_map_thread_safety}{}\section{Q\+Map\+Thread\+Safety$<$ Key, T $>$ Class Template Reference}
+\label{class_q_map_thread_safety}\index{Q\+Map\+Thread\+Safety$<$ Key, T $>$@{Q\+Map\+Thread\+Safety$<$ Key, T $>$}}
+
+
+The \hyperlink{class_q_map_thread_safety}{Q\+Map\+Thread\+Safety} class is a thread safe Q\+Map.  
+
+
+
+
+{\ttfamily \#include $<$qmapthreadsafety.\+h$>$}
+
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{class_q_map_thread_safety_a454c8af3f68e6d61aecaf1b918aa525b}\label{class_q_map_thread_safety_a454c8af3f68e6d61aecaf1b918aa525b}} 
+typedef Q\+Map$<$ Key, T $>$\+::iterator {\bfseries iterator}
+\item 
+\mbox{\Hypertarget{class_q_map_thread_safety_aa58d8479729f72b33e305a4d0ca957bd}\label{class_q_map_thread_safety_aa58d8479729f72b33e305a4d0ca957bd}} 
+typedef Q\+Map$<$ Key, T $>$\+::const\+\_\+iterator {\bfseries const\+\_\+iterator}
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{class_q_map_thread_safety_a8b1bc71d8c92c4d01b6b3baae9787bb4}\label{class_q_map_thread_safety_a8b1bc71d8c92c4d01b6b3baae9787bb4}} 
+{\bfseries Q\+Map\+Thread\+Safety} (std\+::initializer\+\_\+list$<$ std\+::pair$<$ Key, T $>$$>$ \&list)
+\item 
+\mbox{\Hypertarget{class_q_map_thread_safety_a368c8f4f05a48864209ab6ff5cf2f090}\label{class_q_map_thread_safety_a368c8f4f05a48864209ab6ff5cf2f090}} 
+{\bfseries Q\+Map\+Thread\+Safety} (const Q\+Map$<$ Key, T $>$ \&other)
+\item 
+\mbox{\Hypertarget{class_q_map_thread_safety_a1335c04a2df7eda320f7a778854531fc}\label{class_q_map_thread_safety_a1335c04a2df7eda320f7a778854531fc}} 
+{\bfseries Q\+Map\+Thread\+Safety} (const std\+::map$<$ Key, T $>$ \&other)
+\item 
+\mbox{\Hypertarget{class_q_map_thread_safety_a9aacfb2a81fb927546a222cbfd78000d}\label{class_q_map_thread_safety_a9aacfb2a81fb927546a222cbfd78000d}} 
+{\bfseries Q\+Map\+Thread\+Safety} (Q\+Map$<$ Key, T $>$ \&\&other)
+\item 
+iterator \hyperlink{class_q_map_thread_safety_ac197a5375913e4ac19910b9bc4191a95}{begin} () const
+\begin{DoxyCompactList}\small\item\em This method retuns the begin iterator. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_q_map_thread_safety_aeddc5f7a55aebb3e93d78cf30a3dd2e1}\label{class_q_map_thread_safety_aeddc5f7a55aebb3e93d78cf30a3dd2e1}} 
+const\+\_\+iterator {\bfseries cbegin} () const
+\item 
+\mbox{\Hypertarget{class_q_map_thread_safety_a199144509173057ede04d61f7294b266}\label{class_q_map_thread_safety_a199144509173057ede04d61f7294b266}} 
+const\+\_\+iterator {\bfseries cend} () const
+\item 
+\mbox{\Hypertarget{class_q_map_thread_safety_a300f55a4c8e8ed3b5ccc2824dc18e60c}\label{class_q_map_thread_safety_a300f55a4c8e8ed3b5ccc2824dc18e60c}} 
+const\+\_\+iterator {\bfseries const\+Begin} () const
+\item 
+\mbox{\Hypertarget{class_q_map_thread_safety_aa98a2af8cafc423c6bc6a04fec106b39}\label{class_q_map_thread_safety_aa98a2af8cafc423c6bc6a04fec106b39}} 
+const\+\_\+iterator {\bfseries const\+End} () const
+\item 
+\mbox{\Hypertarget{class_q_map_thread_safety_ac364cabf8837a0b174016656b6bda81b}\label{class_q_map_thread_safety_ac364cabf8837a0b174016656b6bda81b}} 
+const\+\_\+iterator {\bfseries const\+Find} (const Key \&key) const
+\item 
+bool \hyperlink{class_q_map_thread_safety_acaafd9933cb391e27a81c26df712786b}{contains} (const Key \&key) const
+\begin{DoxyCompactList}\small\item\em This method checks if the map contains and specific element given a specific key. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_q_map_thread_safety_a4542fc3dc112550bf8b0833338bfcaaf}\label{class_q_map_thread_safety_a4542fc3dc112550bf8b0833338bfcaaf}} 
+int {\bfseries count} (const Key \&key) const
+\item 
+\mbox{\Hypertarget{class_q_map_thread_safety_a8adacf9b06525045bd79c909cea90f0a}\label{class_q_map_thread_safety_a8adacf9b06525045bd79c909cea90f0a}} 
+int {\bfseries count} () const
+\item 
+\mbox{\Hypertarget{class_q_map_thread_safety_a5becb3980d1b35a27edde74f78ed43e2}\label{class_q_map_thread_safety_a5becb3980d1b35a27edde74f78ed43e2}} 
+bool {\bfseries empty} () const
+\item 
+iterator \hyperlink{class_q_map_thread_safety_a64a700a04a692176f00e119500dd1b23}{end} ()
+\begin{DoxyCompactList}\small\item\em This method retuns the end iterator. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_q_map_thread_safety_aea999f181f31f0ac6bd01bcc016a673c}\label{class_q_map_thread_safety_aea999f181f31f0ac6bd01bcc016a673c}} 
+Q\+Pair$<$ iterator, iterator $>$ {\bfseries equal\+\_\+range} (const Key \&key)
+\item 
+\mbox{\Hypertarget{class_q_map_thread_safety_a11c11617434ce781961ee8f722208d0e}\label{class_q_map_thread_safety_a11c11617434ce781961ee8f722208d0e}} 
+iterator {\bfseries erase} (iterator pos)
+\item 
+\mbox{\Hypertarget{class_q_map_thread_safety_a3e4df3d688c99d259c6245a6f612c096}\label{class_q_map_thread_safety_a3e4df3d688c99d259c6245a6f612c096}} 
+iterator {\bfseries find} (const Key \&key)
+\item 
+\mbox{\Hypertarget{class_q_map_thread_safety_a2564aae6f1946dfc48ae0576f4de0434}\label{class_q_map_thread_safety_a2564aae6f1946dfc48ae0576f4de0434}} 
+const\+\_\+iterator {\bfseries find} (const Key \&key) const
+\item 
+\mbox{\Hypertarget{class_q_map_thread_safety_a3709dc412a794c75c4f678409324006f}\label{class_q_map_thread_safety_a3709dc412a794c75c4f678409324006f}} 
+T \& {\bfseries first} ()
+\item 
+\mbox{\Hypertarget{class_q_map_thread_safety_ac2f2f58bb6a3dbd370134a96d3310222}\label{class_q_map_thread_safety_ac2f2f58bb6a3dbd370134a96d3310222}} 
+const T \& {\bfseries first} () const
+\item 
+\mbox{\Hypertarget{class_q_map_thread_safety_ae1f69d7b72decd18f00f97d70e3daf88}\label{class_q_map_thread_safety_ae1f69d7b72decd18f00f97d70e3daf88}} 
+const Key \& {\bfseries first\+Key} () const
+\item 
+iterator \hyperlink{class_q_map_thread_safety_a156afe871591b26ce155da6ce6409ad6}{insert} (const Key \&key, const T \&value)
+\begin{DoxyCompactList}\small\item\em This method inserts a new key and value in the map. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_q_map_thread_safety_a479e559360d2ba5471304b3dc9deb9dd}\label{class_q_map_thread_safety_a479e559360d2ba5471304b3dc9deb9dd}} 
+iterator {\bfseries insert} (const\+\_\+iterator pos, const Key \&key, const T \&value)
+\item 
+\mbox{\Hypertarget{class_q_map_thread_safety_adb0bc3f6ee968de8b71a141bcc517d4c}\label{class_q_map_thread_safety_adb0bc3f6ee968de8b71a141bcc517d4c}} 
+iterator {\bfseries insert\+Multi} (const Key \&key, const T \&value)
+\item 
+\mbox{\Hypertarget{class_q_map_thread_safety_a2dc915bd74285298d93eb17440587931}\label{class_q_map_thread_safety_a2dc915bd74285298d93eb17440587931}} 
+bool {\bfseries is\+Empty} () const
+\item 
+\mbox{\Hypertarget{class_q_map_thread_safety_a51d0d694a419e2d0958b16f7089ab444}\label{class_q_map_thread_safety_a51d0d694a419e2d0958b16f7089ab444}} 
+Q\+List$<$ Key $>$ {\bfseries keys} () const
+\item 
+\mbox{\Hypertarget{class_q_map_thread_safety_a721c6cae55a5c046a2fca6efc8fa49c3}\label{class_q_map_thread_safety_a721c6cae55a5c046a2fca6efc8fa49c3}} 
+Q\+List$<$ Key $>$ {\bfseries keys} (const T \&value) const
+\item 
+\mbox{\Hypertarget{class_q_map_thread_safety_a87a87d963bc7624cc6330060d5a65f85}\label{class_q_map_thread_safety_a87a87d963bc7624cc6330060d5a65f85}} 
+T \& {\bfseries last} ()
+\item 
+\mbox{\Hypertarget{class_q_map_thread_safety_a60bbb036a7cb0b05254a0171ad81e2db}\label{class_q_map_thread_safety_a60bbb036a7cb0b05254a0171ad81e2db}} 
+const T \& {\bfseries last} () const
+\item 
+\mbox{\Hypertarget{class_q_map_thread_safety_a0589ec5e16479a92c0c50f86b32c1307}\label{class_q_map_thread_safety_a0589ec5e16479a92c0c50f86b32c1307}} 
+iterator {\bfseries lower\+Bound} (const Key \&key)
+\item 
+\mbox{\Hypertarget{class_q_map_thread_safety_a21e8f53194d173f6cedb8d60a86a4a19}\label{class_q_map_thread_safety_a21e8f53194d173f6cedb8d60a86a4a19}} 
+const\+\_\+iterator {\bfseries lower\+Bound} (const Key \&key) const
+\item 
+int \hyperlink{class_q_map_thread_safety_a91e703ad03572023876108c2b7bc3540}{remove} (const Key \&key)
+\begin{DoxyCompactList}\small\item\em This method removes a specific element given a specific key. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_q_map_thread_safety_a0331b4ea9616aa81d1ede4066113c35b}\label{class_q_map_thread_safety_a0331b4ea9616aa81d1ede4066113c35b}} 
+int {\bfseries size} () const
+\item 
+\mbox{\Hypertarget{class_q_map_thread_safety_addcefa9985e7fa96939eca2a8e2b1fcc}\label{class_q_map_thread_safety_addcefa9985e7fa96939eca2a8e2b1fcc}} 
+void {\bfseries swap} (Q\+Map$<$ Key, T $>$ \&other)
+\item 
+\mbox{\Hypertarget{class_q_map_thread_safety_a03f5056559f4d0f2500ddcb8ddf55098}\label{class_q_map_thread_safety_a03f5056559f4d0f2500ddcb8ddf55098}} 
+T {\bfseries take} (const Key \&key)
+\item 
+\mbox{\Hypertarget{class_q_map_thread_safety_ad145bbf62ebe8d796ed1a8216bfbe69d}\label{class_q_map_thread_safety_ad145bbf62ebe8d796ed1a8216bfbe69d}} 
+std\+::map$<$ Key, T $>$ {\bfseries to\+Std\+Map} () const
+\item 
+\mbox{\Hypertarget{class_q_map_thread_safety_a8d3498ec21684e0c221ce2eddb437ecd}\label{class_q_map_thread_safety_a8d3498ec21684e0c221ce2eddb437ecd}} 
+Q\+List$<$ Key $>$ {\bfseries unique\+Keys} () const
+\item 
+\mbox{\Hypertarget{class_q_map_thread_safety_a784205cd91eaed840f8d2554a07d3c22}\label{class_q_map_thread_safety_a784205cd91eaed840f8d2554a07d3c22}} 
+Q\+Map$<$ Key, T $>$ \& {\bfseries unite} (const Q\+Map$<$ Key, T $>$ \&other)
+\item 
+\mbox{\Hypertarget{class_q_map_thread_safety_aa43810522d484b2364777e0701486109}\label{class_q_map_thread_safety_aa43810522d484b2364777e0701486109}} 
+iterator {\bfseries upper\+Bound} (const Key \&key)
+\item 
+\mbox{\Hypertarget{class_q_map_thread_safety_a24c3c21d5d756ff3592a3139a9710995}\label{class_q_map_thread_safety_a24c3c21d5d756ff3592a3139a9710995}} 
+const\+\_\+iterator {\bfseries upper\+Bound} (const Key \&key) const
+\item 
+\mbox{\Hypertarget{class_q_map_thread_safety_a3c5caec402261554fd4d73e36e9ca6bc}\label{class_q_map_thread_safety_a3c5caec402261554fd4d73e36e9ca6bc}} 
+const T {\bfseries value} (const Key \&key, const T \&default\+Value=T()) const
+\item 
+\mbox{\Hypertarget{class_q_map_thread_safety_a6395316e7fec3faea0dcf150a3dab897}\label{class_q_map_thread_safety_a6395316e7fec3faea0dcf150a3dab897}} 
+Q\+List$<$ T $>$ {\bfseries values} () const
+\item 
+\mbox{\Hypertarget{class_q_map_thread_safety_afffdf1fc9bd98f9bfede07549533da53}\label{class_q_map_thread_safety_afffdf1fc9bd98f9bfede07549533da53}} 
+Q\+List$<$ T $>$ {\bfseries values} (const Key \&key) const
+\item 
+\mbox{\Hypertarget{class_q_map_thread_safety_a48d648aa531db7c8ecd7f2efe2153707}\label{class_q_map_thread_safety_a48d648aa531db7c8ecd7f2efe2153707}} 
+bool {\bfseries operator!=} (const Q\+Map$<$ Key, T $>$ \&other) const
+\item 
+\mbox{\Hypertarget{class_q_map_thread_safety_af33ed0b71924a4281f4f25bf5eda1cfd}\label{class_q_map_thread_safety_af33ed0b71924a4281f4f25bf5eda1cfd}} 
+Q\+Map$<$ Key, T $>$ \& {\bfseries operator=} (const Q\+Map$<$ Key, T $>$ \&other)
+\item 
+\mbox{\Hypertarget{class_q_map_thread_safety_a0845272b1bc863dd153607e63efa839d}\label{class_q_map_thread_safety_a0845272b1bc863dd153607e63efa839d}} 
+Q\+Map$<$ Key, T $>$ \& {\bfseries operator=} (Q\+Map$<$ Key, T $>$ \&\&other)
+\item 
+\mbox{\Hypertarget{class_q_map_thread_safety_a343008196414aa4fe66ff2de5ca29986}\label{class_q_map_thread_safety_a343008196414aa4fe66ff2de5ca29986}} 
+bool {\bfseries operator==} (const Q\+Map$<$ Key, T $>$ \&other) const
+\item 
+\mbox{\Hypertarget{class_q_map_thread_safety_ac9c974843e1bbf7f4bff2acc4f88f300}\label{class_q_map_thread_safety_ac9c974843e1bbf7f4bff2acc4f88f300}} 
+T \& {\bfseries operator\mbox{[}$\,$\mbox{]}} (const Key \&key)
+\item 
+const T \hyperlink{class_q_map_thread_safety_a0cdacf0e7048c4ef7e0960a371c32668}{operator\mbox{[}$\,$\mbox{]}} (const Key \&key) const
+\begin{DoxyCompactList}\small\item\em This method is an overload of the operator \mbox{[}\mbox{]} and returns a value given a specific key. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename Key, typename T$>$\newline
+class Q\+Map\+Thread\+Safety$<$ Key, T $>$}
+
+The \hyperlink{class_q_map_thread_safety}{Q\+Map\+Thread\+Safety} class is a thread safe Q\+Map. 
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{class_q_map_thread_safety_ac197a5375913e4ac19910b9bc4191a95}\label{class_q_map_thread_safety_ac197a5375913e4ac19910b9bc4191a95}} 
+\index{Q\+Map\+Thread\+Safety@{Q\+Map\+Thread\+Safety}!begin@{begin}}
+\index{begin@{begin}!Q\+Map\+Thread\+Safety@{Q\+Map\+Thread\+Safety}}
+\subsubsection{\texorpdfstring{begin()}{begin()}}
+{\footnotesize\ttfamily template$<$typename Key, typename T$>$ \\
+iterator \hyperlink{class_q_map_thread_safety}{Q\+Map\+Thread\+Safety}$<$ Key, T $>$\+::begin (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+This method retuns the begin iterator. 
+
+\begin{DoxyReturn}{Returns}
+iterator 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_q_map_thread_safety_acaafd9933cb391e27a81c26df712786b}\label{class_q_map_thread_safety_acaafd9933cb391e27a81c26df712786b}} 
+\index{Q\+Map\+Thread\+Safety@{Q\+Map\+Thread\+Safety}!contains@{contains}}
+\index{contains@{contains}!Q\+Map\+Thread\+Safety@{Q\+Map\+Thread\+Safety}}
+\subsubsection{\texorpdfstring{contains()}{contains()}}
+{\footnotesize\ttfamily template$<$typename Key, typename T$>$ \\
+bool \hyperlink{class_q_map_thread_safety}{Q\+Map\+Thread\+Safety}$<$ Key, T $>$\+::contains (\begin{DoxyParamCaption}\item[{const Key \&}]{key }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+This method checks if the map contains and specific element given a specific key. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em key} & \+: This represents the key that you want to find. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+returns true if find the key and false if not find. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_q_map_thread_safety_a64a700a04a692176f00e119500dd1b23}\label{class_q_map_thread_safety_a64a700a04a692176f00e119500dd1b23}} 
+\index{Q\+Map\+Thread\+Safety@{Q\+Map\+Thread\+Safety}!end@{end}}
+\index{end@{end}!Q\+Map\+Thread\+Safety@{Q\+Map\+Thread\+Safety}}
+\subsubsection{\texorpdfstring{end()}{end()}}
+{\footnotesize\ttfamily template$<$typename Key, typename T$>$ \\
+iterator \hyperlink{class_q_map_thread_safety}{Q\+Map\+Thread\+Safety}$<$ Key, T $>$\+::end (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+This method retuns the end iterator. 
+
+\begin{DoxyReturn}{Returns}
+iterator 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_q_map_thread_safety_a156afe871591b26ce155da6ce6409ad6}\label{class_q_map_thread_safety_a156afe871591b26ce155da6ce6409ad6}} 
+\index{Q\+Map\+Thread\+Safety@{Q\+Map\+Thread\+Safety}!insert@{insert}}
+\index{insert@{insert}!Q\+Map\+Thread\+Safety@{Q\+Map\+Thread\+Safety}}
+\subsubsection{\texorpdfstring{insert()}{insert()}}
+{\footnotesize\ttfamily template$<$typename Key, typename T$>$ \\
+iterator \hyperlink{class_q_map_thread_safety}{Q\+Map\+Thread\+Safety}$<$ Key, T $>$\+::insert (\begin{DoxyParamCaption}\item[{const Key \&}]{key,  }\item[{const T \&}]{value }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+This method inserts a new key and value in the map. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em key} & \+: This represents the key that will be insert. \\
+\hline
+{\em value} & \+: This represents the value that will be insert. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_q_map_thread_safety_a0cdacf0e7048c4ef7e0960a371c32668}\label{class_q_map_thread_safety_a0cdacf0e7048c4ef7e0960a371c32668}} 
+\index{Q\+Map\+Thread\+Safety@{Q\+Map\+Thread\+Safety}!operator\mbox{[}\mbox{]}@{operator[]}}
+\index{operator\mbox{[}\mbox{]}@{operator[]}!Q\+Map\+Thread\+Safety@{Q\+Map\+Thread\+Safety}}
+\subsubsection{\texorpdfstring{operator[]()}{operator[]()}}
+{\footnotesize\ttfamily template$<$typename Key, typename T$>$ \\
+const T \hyperlink{class_q_map_thread_safety}{Q\+Map\+Thread\+Safety}$<$ Key, T $>$\+::operator\mbox{[}$\,$\mbox{]} (\begin{DoxyParamCaption}\item[{const Key \&}]{key }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+This method is an overload of the operator \mbox{[}\mbox{]} and returns a value given a specific key. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em key} & \+: This represents the key that you want to find. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+T 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_q_map_thread_safety_a91e703ad03572023876108c2b7bc3540}\label{class_q_map_thread_safety_a91e703ad03572023876108c2b7bc3540}} 
+\index{Q\+Map\+Thread\+Safety@{Q\+Map\+Thread\+Safety}!remove@{remove}}
+\index{remove@{remove}!Q\+Map\+Thread\+Safety@{Q\+Map\+Thread\+Safety}}
+\subsubsection{\texorpdfstring{remove()}{remove()}}
+{\footnotesize\ttfamily template$<$typename Key, typename T$>$ \\
+int \hyperlink{class_q_map_thread_safety}{Q\+Map\+Thread\+Safety}$<$ Key, T $>$\+::remove (\begin{DoxyParamCaption}\item[{const Key \&}]{key }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+This method removes a specific element given a specific key. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em key} & \+: This represents the key that will be insert. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/herik/\+C\+P\+P\+Web\+Framework/\+C\+P\+P\+Web\+Framework/cwf/qmapthreadsafety.\+h\end{DoxyCompactItemize}
