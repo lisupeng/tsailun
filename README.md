@@ -24,7 +24,7 @@ Search
 Admin Panel
  ![Admin Panel](https://github.com/lisupeng/misc/raw/main/screenshots/v0.9.7/admin.jpg)
 
-## Download
+## Download Prebuilt Binary
 [download link](https://github.com/lisupeng/tsailunreleases)
 
 ## Note
