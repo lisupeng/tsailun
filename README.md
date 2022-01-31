@@ -7,6 +7,8 @@
 - Support multiple document spaces
 - Portable software, no installation required
 
+## Download Prebuilt Binary
+[download link](https://github.com/lisupeng/tsailunreleases)
 
 ## Livedemo
 [link](http://tsailun.com.cn/demo)
@@ -23,9 +25,6 @@ Search
 
 Admin Panel
  ![Admin Panel](https://github.com/lisupeng/misc/raw/main/screenshots/v0.9.7/admin.jpg)
-
-## Download Prebuilt Binary
-[download link](https://github.com/lisupeng/tsailunreleases)
 
 ## Note
 Admin account and password: admin/admin
