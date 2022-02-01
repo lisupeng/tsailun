@@ -203,7 +203,7 @@ export default function Editorwrap() {
               plugins: [
                 "advlist autolink lists link image charmap print preview anchor",
                 "searchreplace visualblocks code fullscreen",
-                "insertdatetime media table paste code help wordcount",
+                "insertdatetime media table help wordcount",
               ],
               toolbar: [
                 "undo redo | bold italic underline strikethrough forecolor backcolor | fontselect | fontsizeselect | formatselect| bullist numlist | lineheight outdent indent alignleft aligncenter alignright alignjustify | table image link anchor | removeformat",
