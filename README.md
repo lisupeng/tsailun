@@ -13,7 +13,8 @@
 ## Livedemo
 [link](http://tsailun.com.cn/demo)
 
-Note: Admin panel are unavailable in livedemo
+Note: Admin panel are unavailable in livedemo.
+If you want to try it, please download and deploy a server.
 
 ## Screenshots
 Main UI
