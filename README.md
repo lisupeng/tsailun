@@ -26,5 +26,8 @@ Search
 Admin Panel
  ![Admin Panel](https://github.com/lisupeng/misc/raw/main/screenshots/v0.9.7/admin.jpg)
 
+i18n, multi language support
+ ![Admin Panel](https://github.com/lisupeng/misc/raw/main/screenshots/v0.9.7/i18n.jpg)
+
 ## Note
 Admin account and password: admin/admin
