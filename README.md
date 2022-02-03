@@ -16,6 +16,12 @@
 Note: Admin panel are unavailable in livedemo.
 If you want to try it, please download and deploy a server.
 
+## Doc
+
+User Manual (Coming soon)
+
+Build Steps: please refer to tsailun/doc/Howtobuild.md
+
 ## Screenshots
 Main UI
  ![Main UI](https://github.com/lisupeng/misc/raw/main/screenshots/v0.9.7/view.jpg)
