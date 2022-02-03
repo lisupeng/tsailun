@@ -18,7 +18,7 @@ If you want to try it, please download and deploy a server.
 
 ## Doc
 
-User Manual (Coming soon)
+[User Manual](http://tsailun.com.cn/spaces/doc/pages/Getting_Started/Launch?op=view)
 
 Build Steps: please refer to tsailun/doc/Howtobuild.md
 
