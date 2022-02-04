@@ -23,20 +23,27 @@ If you want to try it, please download and deploy a server.
 Build Steps: please refer to tsailun/doc/Howtobuild.md
 
 ## Screenshots
+ 
 Main UI
  ![Main UI](https://github.com/lisupeng/misc/raw/main/screenshots/v0.9.7/view.jpg)
 
+Editing
+ ![Editing](https://github.com/lisupeng/misc/raw/main/screenshots/v0.9.7/edit.jpg)
+ 
 Automatic Versioning
  ![Automatic Versioning](https://github.com/lisupeng/misc/raw/main/screenshots/v0.9.7/versioning.jpg)
 
 Search
  ![Search](https://github.com/lisupeng/misc/raw/main/screenshots/v0.9.7/search.jpg)
 
-Admin Panel
- ![Admin Panel](https://github.com/lisupeng/misc/raw/main/screenshots/v0.9.7/admin.jpg)
-
 i18n, multi language support
  ![Admin Panel](https://github.com/lisupeng/misc/raw/main/screenshots/v0.9.7/i18n.jpg)
+ 
+Admin - User Management
+ ![User Managementl](https://github.com/lisupeng/misc/raw/main/screenshots/v0.9.7/usermgmt.jpg)
+ 
+Admin - Setup Doc Space Permission
+ ![Space Permission](https://github.com/lisupeng/misc/raw/main/screenshots/v0.9.7/spaceperm.jpg)
 
 ## Note
 Admin account and password: admin/admin
