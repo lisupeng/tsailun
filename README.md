@@ -44,8 +44,11 @@ Admin - User Management
  
 Admin - Setup Doc Space Permission
  ![Space Permission](https://github.com/lisupeng/misc/raw/main/screenshots/v0.9.7/spaceperm.jpg)
+
  
 Access on phone
+
+
  ![phoneUI](https://github.com/lisupeng/misc/raw/main/screenshots/v0.9.7/phone.gif)
 
 ## Note
