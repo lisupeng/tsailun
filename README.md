@@ -53,3 +53,10 @@ Access on phone
 
 ## Note
 Admin account and password: admin/admin
+
+## TODO
+
+- Support insert Video to document
+- Support Table of Content
+- Search enhancement - index based fast search and page ranking
+- Support epoll/IOCP
