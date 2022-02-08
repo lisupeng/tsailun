@@ -87,7 +87,7 @@ protected:
 	void handle_moveup(CWF::Request &req, CWF::Response &response, REQ_CONTEXT &ctx);
 	void handle_movedown(CWF::Request &req, CWF::Response &response, REQ_CONTEXT &ctx);
 	void handle_renamepage(CWF::Request &req, CWF::Response &response, REQ_CONTEXT &ctx);
-	// handle_renamepage
+	void handle_test(CWF::Request &req, CWF::Response &response, REQ_CONTEXT &ctx);
 
 protected:
 	std::map<std::string, PHANDLER> m_handlerMap;

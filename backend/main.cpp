@@ -18,6 +18,7 @@
 
 #include <cwf/cppwebapplication.h>
 #include <QString>
+#include <QThread>
 
 #include "serverapp.h"
 #include "utils.h"
@@ -34,6 +35,14 @@ extern SpaceDbMgr    g_spaceDbMgr;
 extern GroupDbMgr    g_groupDbMgr;
 extern Syslog        g_syslog;
 
+#define EXIT_APP() \
+         do { \
+           QThread::sleep(3000); \
+           return -1; \
+		 } while (0);
+
+void static exitApp()
+{}
 
 int main(int argc, char *argv[])
 {
@@ -54,17 +63,18 @@ int main(int argc, char *argv[])
 		{
 			g_syslog.logMessage(SYSLOG_LEVEL_ERROR, "", "Unknown internal error.");
 		}
-		return -1;
+
+		EXIT_APP();
 	}
 
 	if (!g_userDbMgr.init() || !g_spaceDbMgr.init() || !g_groupDbMgr.init())
 	{
-		return -1;
+		EXIT_APP();
 	}
 
 	if (!g_syslog.init())
 	{
-		return -1;
+		EXIT_APP();
 	}
 
 

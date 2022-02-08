@@ -31,6 +31,9 @@ public:
 	bool searchTitle(const QString &sid, const QString &searchInput, QJsonArray &searchResult);
 	bool searchTitleInSpace(const QString &spacePath, const QStringList &processedSearchInput, QJsonArray &searchResult);
 
+	// searchText will search full text in html including title
+	bool searchText(const QString &sid, const QString &searchInput, QJsonArray &searchResult);
+	bool searchTextInSpace(const QString &spacePath, const QStringList &processedSearchInput, QJsonArray &searchResult);
 };
 
 #endif // _SEARCH_H

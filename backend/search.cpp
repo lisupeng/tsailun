@@ -21,6 +21,7 @@
 #include "auth.h"
 #include "configmgr.h"
 #include "pagelistmgr.h"
+#include "htmlparser/src/htmlparser_interface.h"
 #include "syslog.h"
 #include <QJsonObject>
 #include <QDirIterator>
@@ -169,6 +170,123 @@ bool SearchMgr::searchTitleInSpace(const QString &spacePath, const QStringList &
 				searchResEntry.insert("title", title);
 				QString pageRelativePath = _getPageRelativePath(pagedir, listFilePath);
 				searchResEntry.insert("path", pageRelativePath);
+
+				searchResult.append(searchResEntry);
+			}
+		}
+	}
+
+	return true;
+}
+
+bool SearchMgr::searchText(const QString &sid, const QString &searchInput, QJsonArray &searchResult)
+{
+	// 1.get space list
+	QJsonArray list;
+	if (!g_spaceDbMgr.getSpaceList(list))
+	{
+		return false;
+	}
+
+	// 2.filter out space that can't be read by user
+	QJsonArray listAfterFiltering;
+	for (int i = 0; i < list.size(); i++)
+	{
+		QJsonObject obj = list.at(i).toObject();
+
+		QString spaceName = obj.value("spacename").toString();
+
+		int authres = AuthMgr::SpaceReadPermissionCheckBySpaceName(sid, spaceName);
+
+		if (authres == AUTH_RET_SUCCESS)
+		{
+			listAfterFiltering.append(obj);
+		}
+	}
+
+	// 3. preprocess searchInput
+	QStringList processedSearchInput = preprocessSearchInput(searchInput);
+
+	// 4.enumerate page title in space and check if contains searchInput
+	for (int i = 0; i < listAfterFiltering.size(); i++)
+	{
+		QJsonObject spaceObj = listAfterFiltering.at(i).toObject();
+
+		QString spaceName = spaceObj.value("spacename").toString();
+		QString spacePath = spaceObj.value("path").toString();
+
+		searchTextInSpace(spacePath, processedSearchInput, searchResult);
+	}
+
+	return true;
+}
+
+bool SearchMgr::searchTextInSpace(const QString &spacePath, const QStringList &processedSearchInput, QJsonArray &searchResult)
+{
+	ConfigMgr *cfgMgr = ConfigMgr::GetInstance();
+	QString appRootPath = cfgMgr->getAppRootDir();
+	QString spaceFullPath = appRootPath + "/data" + spacePath + "/pages";
+
+	QStringList filter;
+	filter << "index.html";
+
+	QDirIterator it(spaceFullPath, filter, QDir::AllEntries | QDir::NoSymLinks | QDir::NoDotAndDotDot, QDirIterator::Subdirectories);
+
+	QStringList pageFiles;
+	while (it.hasNext())
+	{
+		QString filename = it.next();
+		pageFiles << filename;
+	}
+
+	for (int i = 0; i < pageFiles.size(); i++)
+	{
+		QString pagefilename = pageFiles[i];
+		QFile file(pagefilename);
+
+		if (file.open(QIODevice::ReadOnly))
+		{
+			std::string cleantext = retrieve_text_from_html(&(file.readAll()));
+			// TODO-0 perf optimize
+			QString text = QString::fromUtf8(cleantext.c_str());
+
+			// TODO-0 make sure processedSearchInput doesn't contain regular expression special characters
+			// e.g. "c++"-->"c\+\+"
+
+			QRegExp re;
+			QString pattern = "";
+
+			for (int j = 0; j < processedSearchInput.size(); j++)
+			{
+				if (pattern.size() == 0)
+				{
+					pattern = processedSearchInput[j];
+				}
+				else
+				{
+					pattern = pattern + "|" + processedSearchInput[j];
+				}
+			}
+
+			re.setPattern("(" + pattern + ")");
+			re.setCaseSensitivity(Qt::CaseInsensitive);
+
+			if (text.contains(re))
+			{
+				QJsonObject searchResEntry;
+				//searchResEntry.insert("title", "unknown");
+				QString pageRelativePath = _getPageRelativePathByHtmlFile(pagefilename);
+				searchResEntry.insert("path", pageRelativePath);
+
+				QStringList dirnamelist = pageRelativePath.split("/");
+				if (dirnamelist.size() > 0)
+				{
+					searchResEntry.insert("title", dirnamelist[dirnamelist.size()-1]);
+				}
+				else
+				{
+					searchResEntry.insert("title", "___");
+				}
 
 				searchResult.append(searchResEntry);
 			}

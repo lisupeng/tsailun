@@ -89,8 +89,7 @@ OpcodeHandler::OpcodeHandler()
 	m_handlerMap["moveup"] = &OpcodeHandler::handle_moveup;
 	m_handlerMap["movedown"] = &OpcodeHandler::handle_movedown;
 	m_handlerMap["rename"] = &OpcodeHandler::handle_renamepage;
-	// rename
-
+	m_handlerMap["test"] = &OpcodeHandler::handle_test;
 }
 
 static QString getSpaceFullPathByUrl(QString url)
@@ -544,7 +543,44 @@ void handle_page_save(const QString &path, QString content, const QString &sid, 
 		return;
 	}
 
+	QString author = "";
+	if (sid == "")
+		author = "guest";
+	else
+	{
+		QJsonObject sessionobj;
+		if (g_sessionMgr.getSession(sid, sessionobj))
+		{
+			if (sessionobj.contains("account"))
+				author = sessionobj.value("account").toString();
+			/*
+			else if (sessionobj.contains("email"))
+			{
+			// Actually sessionobj should always contain 'account'. Not likely hit here
+			author = sessionobj.value("email").toString();
+			}
+			*/
+		}
+	}
 
+	// File crash on English Win10 OS, due to Chinese characters in path
+	// TODO need improvement here to avoid copy workaround
+	QTemporaryFile newTmpFile;
+	newTmpFile.open();
+	newTmpFile.close();
+	if (!ForceCopy(indexFilepath, newTmpFile.fileName()))
+	{
+		g_syslog.logMessage(SYSLOG_LEVEL_ERROR, "", "ForceCopy failed.");
+		return;
+	}
+
+	// save version to history
+	if (!g_historyMgr.addVersion(page.getUid(), old.fileName(), newTmpFile.fileName(), author))
+	{
+		g_syslog.logMessage(SYSLOG_LEVEL_ERROR, "", "addVersion failed.");
+	}
+
+	// set status:ok
 	result.insert("status", "ok");
 }
 
@@ -563,10 +599,99 @@ void handle_page_read(const QString &path, const QString &ver, bool keepBodyTag,
 
 	Page verPage;
 
-    page = &currentPage;
+	// TODO-5 this value inputed from web, should check it
+	if (ver.size() > 0)
+	{
+		QTemporaryFile tmp;
+		tmp.open();
+		if (!g_historyMgr.getVersion(currentPage.getUid(), ver.toInt(), tmp.fileName()))
+		{
+			result.insert("status", "error");
+			return;
+		}
+
+		if (!verPage.readFromFile(tmp.fileName()))
+		{
+			result.insert("status", "error");
+			return;
+		}
+		page = &verPage;
+	}
+	else
+		page = &currentPage;
 
 	// get creator, last modified date
 	QString sUid = page->getUid();
+	QJsonArray list;
+	if (g_historyMgr.getVersionList(sUid, list))
+	{
+		QString author;
+		QString modifiedBy;
+		QString modifiedDate;
+		QString createdDate;
+
+		if (list.size() > 0)
+		{
+			author = list[0].toObject().value("author").toString();
+			createdDate = list[0].toObject().value("date").toString();
+		}
+
+		int curVerIndex = 0;
+
+		// TODO show modified info of latest version instead of current displayed version ?
+		if (list.size() > 0)
+			curVerIndex = list.size() - 1;
+
+		if (curVerIndex <= list.size() - 1)
+		{
+			modifiedBy = list[curVerIndex].toObject().value("author").toString();
+			modifiedDate = list[curVerIndex].toObject().value("date").toString();
+		}
+
+		if (author.size() > 0)
+		{
+			result.insert("author", author);
+			QJsonObject userInfo;
+			if (g_userDbMgr.getUserInfoByAccount(author, userInfo))
+			{
+				QString author_email = userInfo.value("email").toString();
+				QString author_fullname = userInfo.value("fullname").toString();
+
+				if (author_email.size() > 0)
+					result.insert("author_email", author_email);
+
+				if (author_fullname.size() > 0)
+					result.insert("author_fullname", author_fullname);
+			}
+		}
+
+		if (modifiedBy.size() > 0)
+		{
+			result.insert("last_by", modifiedBy);
+			QJsonObject userInfo;
+			if (g_userDbMgr.getUserInfoByAccount(modifiedBy, userInfo))
+			{
+				QString lastby_email = userInfo.value("email").toString();
+				QString lasyby_fullname = userInfo.value("fullname").toString();
+
+				if (lastby_email.size() > 0)
+					result.insert("lastby_email", lastby_email);
+
+				if (lasyby_fullname.size() > 0)
+					result.insert("lasyby_fullname", lasyby_fullname);
+			}
+		}
+
+		if (createdDate.size() > 0)
+		{
+			result.insert("created_date", createdDate);
+		}
+
+		if (modifiedDate.size() > 0)
+		{
+			result.insert("last_modified_date", modifiedDate);
+		}
+	}
 
 	// read page content
 	QString body = page->getContent();
@@ -664,6 +789,17 @@ void handleListPages(QString path, QJsonObject &result)
 	result.insert("list", jsonarray);
 }
 
+static bool _verify_username(const QString &email, const QString &name)
+{
+	if (email == "*")
+		return false;
+
+	if (name == "*")
+		return false;
+
+	return true;
+}
+
 void handleSignUp(QJsonObject &postobj, QJsonObject &result)
 {
 	QString email = postobj.value("email").toString();
@@ -672,6 +808,12 @@ void handleSignUp(QJsonObject &postobj, QJsonObject &result)
 	QString credential = postobj.value("credential").toString();
 
 	QString err;
+
+	if (!_verify_username(email, fullname))
+	{
+		result.insert("status", "fail");
+		return;
+	}
 
 	if (g_userDbMgr.createNewUser(email, fullname, credential, err) == false)
 	{
@@ -700,8 +842,11 @@ void _handle_listversion(const QString &path, QJsonObject &result)
 	}
 
 	QJsonArray list;
-
-    // TODO set list
+	if (!g_historyMgr.getVersionList(currentPage.getUid(), list))
+	{
+		result.insert("status", "error");
+		return;
+	}
 
 	result.insert("status", "ok");
 	result.insert("list", list);
@@ -1178,7 +1323,7 @@ void OpcodeHandler::handle_search(CWF::Request &req, CWF::Response &response, RE
 	QString sSearchInput = QString::fromUtf8(QByteArray::fromPercentEncoding(searchinput));
 
 	QJsonArray searchResult;
-	if (g_searchMgr.searchTitle(*(ctx.sid), sSearchInput, searchResult))
+	if (g_searchMgr.searchText(*(ctx.sid), sSearchInput, searchResult))
 		//if (g_searchMgr.searchTitle(sid, sSearchInput, searchResult))
 	{
 		result.insert("status", "ok");
@@ -1893,6 +2038,9 @@ void OpcodeHandler::handle_createspace(CWF::Request &req, CWF::Response &respons
 		result.insert("status", "error");
 	}
 
+	g_spaceDbMgr.addToSpaceRlist("spaceName", "user", "*");
+	g_spaceDbMgr.addToSpaceWlist("spaceName", "user", "*");
+
 	QString out = QString(QJsonDocument(result).toJson(QJsonDocument::Compact));
 
 	response.write(out.toUtf8());
@@ -2329,6 +2477,20 @@ void OpcodeHandler::handle_renamepage(CWF::Request &req, CWF::Response &response
 	QString stitle = QString::fromUtf8(QByteArray::fromPercentEncoding(title));
 
 	_handle_page_rename(path, stitle, result);
+	QString out = QString(QJsonDocument(result).toJson(QJsonDocument::Compact));
+
+	response.write(out.toUtf8());
+	return;
+}
+
+void OpcodeHandler::handle_test(CWF::Request &req, CWF::Response &response, REQ_CONTEXT &ctx)
+{
+	QJsonObject result;
+
+	sendMail();
+
+	result.insert("status", "ok");
+
 	QString out = QString(QJsonDocument(result).toJson(QJsonDocument::Compact));
 
 	response.write(out.toUtf8());

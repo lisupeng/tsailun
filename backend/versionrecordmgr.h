@@ -48,8 +48,7 @@ protected:
 	void recordToJson(QSqlRecord &rec, QSqlQuery &sql_query, QJsonObject &jsonobj);
 
 protected:
-	bool          m_bInit;
-	QSqlDatabase  m_database;
+	QString       m_dbFile;
 };
 
 #endif // _VERSIONRECORDMGR_H

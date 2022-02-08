@@ -20,8 +20,13 @@ find_package(Qt5Core REQUIRED)
 
 
 add_subdirectory(../CWF/CPPWebFramework CPPWebFramework)
+add_subdirectory (./xdiff xdiff)
+add_subdirectory (./htmlparser htmlparser)
+add_subdirectory (./SMTPEmail SMTPEmail)
 include_directories(.
     ../CWF/CPPWebFramework/
+    ../htmlparser/src/
+    ../SMTPEmail/src/
     ${CMAKE_CURRENT_BINARY_DIR}
 )
 
@@ -32,4 +37,4 @@ add_executable(${PROJECT_NAME} main.cpp utils.h utils.cpp pagemgr.h pagemgr.cpp 
     auth.h auth.cpp syslog.h syslog.cpp search.h search.cpp stats.h stats.cpp serverapp.h serverapp.cpp demomgr.h demomgr.cpp 
     urlhandlers.h urlhandlers.cpp sysdefs.h opcodehandlers.h opcodehandlers.cpp)
 
-target_link_libraries(${PROJECT_NAME} Qt5::Core  CPPWebFramework)
+target_link_libraries(${PROJECT_NAME} Qt5::Core  CPPWebFramework xdiff htmlparser SMTPEmail)

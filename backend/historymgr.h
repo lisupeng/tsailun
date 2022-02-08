@@ -26,7 +26,27 @@
 class HistoryMgr
 {
 public:
+	HistoryMgr();
 
+public:
+	// getPageVersionCount
+	bool getVersionList(const QString &uid, QJsonArray &list);
+	bool addVersion(const QString &uid, const QString &oldfile, const QString &newfile, const QString &author);
+	bool getVersion(const QString &uid, int ver, const QString &outputfile);
+
+protected:
+	bool diff(QString oldfile, QString newfile, QString patchfile);
+	bool patch(QString oldfile, QString patchfile, QString newfile, QString rejfile);
+
+	bool validatePatchFile(QString oldfile, QString patchfile, QString sha);
+
+	QString getDirForUid(const QString &uid);
+	QString createDirForUid(const QString &uid);
+
+protected:
+	QMutex        m_mutex;
+
+	static bool   m_init;
 };
 
 #endif // _HISTORYMGR_H

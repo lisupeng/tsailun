@@ -224,7 +224,17 @@ protected:
 
 		if (url == "/")
 		{
-            response.sendRedirect("/signin");
+			ConfigMgr *cfgMgr = ConfigMgr::GetInstance();
+			QString appRootPath = cfgMgr->getAppRootDir();
+			QString siteIndex = appRootPath + "/site.html";
+
+			if (QFile(siteIndex).exists())
+			{
+				g_statsMgr.increaseSiteRequestStatsCounter();
+				response.sendRedirect("/site.html");
+			}
+			else
+				response.sendRedirect("/signin");
 		}
 
 		else if (url == (URL_SIGNIN) || url == (URL_SIGNUP))

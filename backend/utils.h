@@ -41,5 +41,7 @@ void    copyPath(QString src, QString dst);
 
 QString getSpaceAndPagePathByUrl(QString url);
 
+bool    sendMail();
+
 
 #endif // _UTILS_H
