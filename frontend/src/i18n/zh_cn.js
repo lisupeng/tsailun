@@ -29,6 +29,7 @@ var lang_zhch = {
     str_menu_attachment: '附件管理',
     str_menu_space: '文档空间',
     str_menu_export: '导出页面',
+    str_menu_language: '语言',
     
     str_search_no_match: '没有搜索到匹配的项',
     str_search_search_results: '搜索结果',
@@ -90,6 +91,8 @@ var lang_zhch = {
     str_dlg_change_space: "切换文档空间",
     
     str_dlg_about_title: "系统版本",
+    
+    str_dlg_lang_refresh: "注意：修改语言将在刷新后生效",
     
     str_pageview_author_modify_date: "由{author}创建，最后由{lastModifiedBy}修改于{localDate}。",
     str_pageview_edit: "编辑",   

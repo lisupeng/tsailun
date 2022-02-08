@@ -29,6 +29,7 @@ var lang_en = {
     str_menu_attachment: 'Attachment',
     str_menu_space: 'Space',
     str_menu_export: 'Export',
+    str_menu_language: 'Language',
     
     str_search_no_match: 'No match found',
     str_search_search_results: 'Search Results',
@@ -90,6 +91,8 @@ var lang_en = {
     str_dlg_change_space: "Redirect to Space",
     
     str_dlg_about_title: "System Version",
+    
+    str_dlg_lang_refresh: "Note: New language takes effect after a refreshing.",
     
     str_pageview_author_modify_date: "Created by {author}, last modified by {lastModifiedBy} on {localDate}.",
     str_pageview_edit: "Edit",

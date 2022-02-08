@@ -1,5 +1,5 @@
 /*
- * This file is part of the Tsailun project
+ * This file is part of the Tsailun project 
  *
  * Copyright (c) 2021-2022 Li Supeng
  *
@@ -99,6 +99,7 @@ export default function Editorwrap() {
   const [gotcontent, setGotcontent] = React.useState(false);
   const [exitPromp, setExitPromp] = React.useState(true);
   const [forceRedrawCnt, setForceRedrawCnt] = React.useState(0);
+  const [saving, setSaving] = React.useState(false);
 
   //var initContent = "";
 
@@ -145,6 +146,10 @@ export default function Editorwrap() {
       var page_full_path = window.location.pathname;
       var url_save = page_full_path + "?op=save";
 
+      if (saving === false) {
+        setSaving(true);
+      }
+
       // save page data and redirect to view page
       fetch(url_save, {
         method: "post",
@@ -152,6 +157,8 @@ export default function Editorwrap() {
       })
         .then((response) => response.text())
         .then((data) => {
+          setSaving(false);
+
           var res = JSON.parse(data);
           if (res.status === "ok") {
             setExitPromp(false);
@@ -163,7 +170,10 @@ export default function Editorwrap() {
             console.log("Unexpected error");
           }
         })
-        .catch((error) => console.log("error is", error));
+        .catch((error) => {
+          console.log("error is", error);
+          setSaving(false);
+        });
     }
   };
 
@@ -177,56 +187,64 @@ export default function Editorwrap() {
   if (gotcontent)
     return (
       <>
-        <div>
-          <Prompt
-            when={exitPromp}
-            message={() => Lang.str_editor_leave_confirm}
-          />
-        </div>
+        {saving === false && (
+          <>
+            <div>
+              <Prompt
+                when={exitPromp}
+                message={() => Lang.str_editor_leave_confirm}
+              />
+            </div>
 
-        <Paper
-          sx={{
-            p: 0,
-            display: "flex",
-            flexDirection: "column",
-            height: `calc(100vh - ${Globaldata.appBarHeight}px)`,
-          }}
-        >
-          <Editor
-            onInit={(evt, editor) => (editorRef.current = editor)}
-            initialValue={initContent}
-            init={{
-              height: editorHeight,
-              menubar: false,
-              statusbar: false,
+            <Paper
+              sx={{
+                p: 0,
+                display: "flex",
+                flexDirection: "column",
+                height: `calc(100vh - ${Globaldata.appBarHeight}px)`,
+              }}
+            >
+              <Editor
+                onInit={(evt, editor) => (editorRef.current = editor)}
+                initialValue={initContent}
+                init={{
+                  height: editorHeight,
+                  menubar: false,
+                  statusbar: false,
 
-              plugins: [
-                "advlist autolink lists link image charmap print preview anchor",
-                "searchreplace visualblocks code fullscreen",
-                "insertdatetime media table help wordcount",
-              ],
-              toolbar: [
-                "undo redo | bold italic underline strikethrough forecolor backcolor | fontselect | fontsizeselect | formatselect| bullist numlist | lineheight outdent indent alignleft aligncenter alignright alignjustify | table image link anchor | removeformat",
-              ],
-              content_style:
-                "body { font-family:Helvetica,Arial,sans-serif; font-size:16px }",
-              relative_urls: false,
-              automatic_uploads: false,
-              images_replace_blob_uris: false,
-            }}
-          />
+                  plugins: [
+                    "advlist autolink lists link image charmap print preview anchor",
+                    "searchreplace visualblocks code fullscreen",
+                    "insertdatetime media table powerpaste code help wordcount", // DON'T use paste plugin, otherwise unable paste images.
+                  ],
+                  toolbar: [
+                    "undo redo | bold italic underline strikethrough forecolor backcolor | fontselect | fontsizeselect | formatselect| bullist numlist | lineheight outdent indent alignleft aligncenter alignright alignjustify | table image link anchor | removeformat",
+                  ],
+                  content_style:
+                    "body { font-family:Helvetica,Arial,sans-serif; font-size:16px }",
+                  relative_urls: false,
+                  automatic_uploads: false,
+                  images_replace_blob_uris: false,
+                  /*,
+               paste_data_images: true,
+               images_upload_handler: example_image_upload_handler
+               */
+                }}
+              />
 
-          <Fab
-            color="primary"
-            size="small"
-            aria-label="save"
-            onClick={onSave}
-            style={buttonStyle}
-          >
-            <DoneIcon />
-          </Fab>
-        </Paper>
-        {/*<button onClick={onSave}>Save</button>*/}
+              <Fab
+                color="primary"
+                size="small"
+                aria-label="save"
+                onClick={onSave}
+                style={buttonStyle}
+              >
+                <DoneIcon />
+              </Fab>
+            </Paper>
+            {/*<button onClick={onSave}>Save</button>*/}
+          </>
+        )}
       </>
     );
   else return <div></div>;

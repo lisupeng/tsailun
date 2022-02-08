@@ -1,5 +1,5 @@
 /*
- * This file is part of the Tsailun project
+ * This file is part of the Tsailun project 
  *
  * Copyright (c) 2021-2022 Li Supeng
  *
@@ -69,6 +69,12 @@ import GlobalVarMgr from "../GlobalVarMgr";
 import Lang from "../../i18n/Lang";
 import Select from "@material-ui/core/Select";
 import Link from "@material-ui/core/Link";
+
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import FormLabel from "@material-ui/core/FormLabel";
+import Radio from "@material-ui/core/Radio";
+import RadioGroup from "@material-ui/core/RadioGroup";
+import FormControl from "@material-ui/core/FormControl";
 
 var searchInput = "";
 
@@ -696,7 +702,7 @@ function MainViewContent() {
       "/pages" +
       path +
       "?op=create&title=" +
-      pageTitle;
+      encodeURIComponent(pageTitle);
 
     // append location param
     var loc = "";
@@ -1055,6 +1061,36 @@ function MainViewContent() {
       .catch((error) => console.log("error is", error));
   };
 
+  //language dialog
+  var curLang;
+  if (GlobalVarMgr.getLang() === "zh_cn") curLang = "简体中文";
+  else curLang = "English";
+
+  const [langDlgOpen, setLangDlgOpen] = React.useState(false);
+  const [langValue, setLangValue] = React.useState(curLang);
+
+  const handleLangChange = (event) => {
+    setLangValue(event.target.value);
+  };
+
+  const handleCloseLangDlg = () => {
+    setLangDlgOpen(false);
+  };
+
+  const handleLangDlgOk = () => {
+    if (langValue === "简体中文") GlobalVarMgr.setLang("zh_cn");
+    else GlobalVarMgr.setLang("en");
+
+    setLangDlgOpen(false);
+  };
+
+  const handleLangMenuItemClicked = () => {
+    // close menu
+    setAnchorEl(null);
+
+    setLangDlgOpen(true);
+  };
+
   function RenderSearchBox() {
     //if (!Utils.windowIsNarrow())
     if (1) {
@@ -1179,7 +1215,9 @@ function MainViewContent() {
               {Lang.str_menu_del_page}
             </MenuItem>
             {/*<MenuItem onClick={handleRenamePageMenuItemClicked}>{Lang.str_menu_rename}</MenuItem>*/}
-            {/*<MenuItem onClick={handlePageHistoryMenuItemClicked}>{Lang.str_menu_page_history}</MenuItem>*/}
+            <MenuItem onClick={handlePageHistoryMenuItemClicked}>
+              {Lang.str_menu_page_history}
+            </MenuItem>
             <MenuItem onClick={handleAttachmentMenuItemClicked}>
               {Lang.str_menu_attachment}
             </MenuItem>
@@ -1191,6 +1229,9 @@ function MainViewContent() {
             </MenuItem>
             <MenuItem onClick={handleAdminMenuItemClicked}>
               {Lang.str_menu_admin_panel}
+            </MenuItem>
+            <MenuItem onClick={handleLangMenuItemClicked}>
+              {Lang.str_menu_language}
             </MenuItem>
             <MenuItem onClick={handleAboutMenuItemClicked}>
               {Lang.str_dlg_about_title}
@@ -1474,6 +1515,60 @@ function MainViewContent() {
           </Dialog>
 
           <Dialog
+            open={langDlgOpen}
+            onClose={handleCloseLangDlg}
+            aria-labelledby="form-dialog-title-lang"
+            fullWidth={true}
+            maxWidth={"sm"}
+          >
+            <DialogTitle id="form-dialog-title-lang">
+              {Lang.str_menu_language}
+            </DialogTitle>
+            <DialogContent>
+              <Paper
+                elevation={0}
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                }}
+              >
+                <Typography variant="caption">
+                  {Lang.str_dlg_lang_refresh}
+                </Typography>
+
+                <FormControl>
+                  <FormLabel id="language-radio-buttons-group"></FormLabel>
+                  <RadioGroup
+                    aria-labelledby="language-radio-buttons-group"
+                    name="lang-radio-buttons-group"
+                    value={langValue}
+                    onChange={handleLangChange}
+                  >
+                    <FormControlLabel
+                      value="English"
+                      control={<Radio />}
+                      label="English"
+                    />
+                    <FormControlLabel
+                      value="简体中文"
+                      control={<Radio />}
+                      label="简体中文"
+                    />
+                  </RadioGroup>
+                </FormControl>
+              </Paper>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleLangDlgOk} color="primary">
+                {Lang.str_dlg_btn_ok}
+              </Button>
+              <Button onClick={handleCloseLangDlg} color="primary">
+                {Lang.str_dlg_btn_cancel}
+              </Button>
+            </DialogActions>
+          </Dialog>
+
+          <Dialog
             open={aboutDlgOpen}
             onClose={handleCloseAboutDlg}
             aria-labelledby="form-dialog-title-about"
@@ -1492,7 +1587,7 @@ function MainViewContent() {
                 }}
               >
                 <Typography variant="body2">
-                  <Link href="http://tsailun.com.cn?src=1">{sysVer}</Link>
+                  <Link href="https://github.com/lisupeng/tsailun">{sysVer}</Link>
                 </Typography>
               </Paper>
             </DialogContent>

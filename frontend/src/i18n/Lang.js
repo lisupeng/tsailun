@@ -18,6 +18,7 @@
 
 import lang_zhcn from './zh_cn';
 import lang_en from './en';
+import GlobalVarMgr from "../components/GlobalVarMgr";
 
 var Lang = {
     
@@ -26,8 +27,7 @@ var Lang = {
 
 }
 
-var setting_lang = 'en';
-//var setting_lang = '';
+var setting_lang = GlobalVarMgr.getLang();
 
 if (setting_lang === 'zh_cn')
     Lang = lang_zhcn;

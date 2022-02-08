@@ -1,5 +1,5 @@
 /*
- * This file is part of the Tsailun project
+ * This file is part of the Tsailun project 
  *
  * Copyright (c) 2021-2022 Li Supeng
  *
@@ -17,6 +17,17 @@
  */
 
 const GlobalVarMgr = {
+  getLang() {
+    if (!window.sessionStorage.lang)
+      window.sessionStorage.lang = "en";
+
+    return window.sessionStorage.lang;
+  },
+
+  setLang(val) {
+    window.sessionStorage.lang = val;
+  },
+  
   getSearchInput() {
     if (!window.sessionStorage.searchInput)
       window.sessionStorage.searchInput = "";

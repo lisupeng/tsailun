@@ -1,5 +1,5 @@
 /*
- * This file is part of the Tsailun project
+ * This file is part of the Tsailun project 
  *
  * Copyright (c) 2021-2022 Li Supeng
  *
@@ -250,12 +250,14 @@ export default function SignUp() {
               />
             </Grid>
 
+            {/*
             <Grid item xs={12}>
               <FormControlLabel
                 control={<Checkbox value="allowExtraEmails" color="primary" />}
                 label={Lang.str_signup_accept_email}
               />
             </Grid>
+            */}
           </Grid>
           <Button
             fullWidth

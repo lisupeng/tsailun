@@ -1,5 +1,5 @@
 /*
- * This file is part of the Tsailun project
+ * This file is part of the Tsailun project 
  *
  * Copyright (c) 2021-2022 Li Supeng
  *
@@ -170,6 +170,13 @@ export default function SpaceEditView() {
                     var res3 = JSON.parse(data);
                     if (res3.status === "ok") {
                       var pRows = [];
+
+                      pRows.push({
+                        item: "*",
+                        itemtype: "user",
+                        read: false,
+                        write: false,
+                      });
 
                       if (res2.list) {
                         addUserListToPermisionTable(pRows, res2.list);

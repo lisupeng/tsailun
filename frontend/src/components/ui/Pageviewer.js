@@ -1,5 +1,5 @@
 /*
- * This file is part of the Tsailun project
+ * This file is part of the Tsailun project 
  *
  * Copyright (c) 2021-2022 Li Supeng
  *
@@ -36,6 +36,8 @@ import Globaldata from "../Globaldata";
 
 import Lang from "../../i18n/Lang";
 import Fab from "@material-ui/core/Fab";
+import Backdrop from "@material-ui/core/Backdrop";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 //import Paper from '@material-ui/core/Paper';
 
@@ -69,6 +71,7 @@ class Pageviewer extends React.Component {
   state = {
     alertOpen: false,
     errmsg: "",
+    showProgress: false,
   };
 
   constructor(props) {
@@ -195,8 +198,9 @@ class Pageviewer extends React.Component {
   render() {
     // fetch page data if url changed
     if (
-      this.path_rendering !== window.location.pathname ||
-      Globaldata.invalidatePageCache === true
+      Globaldata.readingPage !== true &&
+      (this.path_rendering !== window.location.pathname ||
+        Globaldata.invalidatePageCache === true)
     ) {
       this.clearPageContent();
       Globaldata.invalidatePageCache = false;
@@ -211,6 +215,14 @@ class Pageviewer extends React.Component {
 
       var backurl = window.location.pathname + window.location.search;
 
+      Globaldata.readingPage = true;
+
+      setTimeout(() => {
+        if (Globaldata.readingPage === true) {
+          this.setState({ showProgress: true });
+        }
+      }, 2000);
+
       // get page data
       fetch(url_readpage, {
         method: "post",
@@ -218,6 +230,8 @@ class Pageviewer extends React.Component {
       })
         .then((response) => response.text())
         .then((data) => {
+          Globaldata.readingPage = false;
+          this.setState({ showProgress: false });
           this.path_rendering = page_full_path;
 
           var res = JSON.parse(data);
@@ -275,7 +289,11 @@ class Pageviewer extends React.Component {
             }
           }
         })
-        .catch((error) => console.log("error is", error));
+        .catch((error) => {
+          console.log("error is", error);
+          Globaldata.readingPage = false;
+          this.setState({ showProgress: false });
+        });
     }
 
     thisptr = this;
@@ -293,6 +311,17 @@ class Pageviewer extends React.Component {
             {this.state.errmsg}{" "}
           </Alert>
         </Snackbar>
+
+        {this.state.showProgress && (
+          <Backdrop
+            sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+            open={true}
+          >
+            <CircularProgress color="inherit" />
+          </Backdrop>
+        )}
+
+        {/*TODO: make progress indicator looks better <CircularProgress color="primary" sx={{position: 'fixed', top: window.innerWidth/2, left: window.innerHeight/2, zIndex: 1500}}/>*/}
 
         {thisptr && thisptr.msg && thisptr.msg.length !== 0 && (
           <Fab
@@ -314,7 +343,12 @@ class Pageviewer extends React.Component {
 
         <this.renderPageHead />
 
-        <div id="pgviewer" dangerouslySetInnerHTML={{ __html: this.msg }}></div>
+        <div
+          id="pgviewer"
+          dangerouslySetInnerHTML={{
+            __html: "<style>p{ margin:2px 0}</style>" + this.msg,
+          }}
+        ></div>
       </>
     );
   }

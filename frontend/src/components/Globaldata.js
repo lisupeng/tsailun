@@ -1,5 +1,5 @@
 /*
- * This file is part of the Tsailun project
+ * This file is part of the Tsailun project 
  *
  * Copyright (c) 2021-2022 Li Supeng
  *
@@ -36,6 +36,7 @@ let Globaldata = {
   searchString: "",
 
   invalidatePageCache: false,
+  readingPage: false,
 };
 
 export default Globaldata;
