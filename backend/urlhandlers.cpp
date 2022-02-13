@@ -339,6 +339,7 @@ void InitUrlHandlers(ServerApp &server)
 	server.addController<TslController>("/search/*");
 	server.addController<TslController>("/demo");
 	server.addController<TslController>("/demo/*");
+	server.addController<TslController>("/api");
 
 	// don't allow below urls.
 	server.addController<TslController>("/config/ssl/*");

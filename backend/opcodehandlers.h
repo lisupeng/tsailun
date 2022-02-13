@@ -87,6 +87,7 @@ protected:
 	void handle_moveup(CWF::Request &req, CWF::Response &response, REQ_CONTEXT &ctx);
 	void handle_movedown(CWF::Request &req, CWF::Response &response, REQ_CONTEXT &ctx);
 	void handle_renamepage(CWF::Request &req, CWF::Response &response, REQ_CONTEXT &ctx);
+	void handle_checkupdate(CWF::Request &req, CWF::Response &response, REQ_CONTEXT &ctx);
 	void handle_test(CWF::Request &req, CWF::Response &response, REQ_CONTEXT &ctx);
 
 protected:

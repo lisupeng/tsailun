@@ -89,6 +89,7 @@ OpcodeHandler::OpcodeHandler()
 	m_handlerMap["moveup"] = &OpcodeHandler::handle_moveup;
 	m_handlerMap["movedown"] = &OpcodeHandler::handle_movedown;
 	m_handlerMap["rename"] = &OpcodeHandler::handle_renamepage;
+	m_handlerMap["checkupdate"] = &OpcodeHandler::handle_checkupdate;
 	m_handlerMap["test"] = &OpcodeHandler::handle_test;
 }
 
@@ -2481,6 +2482,11 @@ void OpcodeHandler::handle_renamepage(CWF::Request &req, CWF::Response &response
 
 	response.write(out.toUtf8());
 	return;
+}
+
+void OpcodeHandler::handle_checkupdate(CWF::Request &req, CWF::Response &response, REQ_CONTEXT &ctx)
+{
+
 }
 
 void OpcodeHandler::handle_test(CWF::Request &req, CWF::Response &response, REQ_CONTEXT &ctx)

@@ -147,6 +147,35 @@ function DelPageDlgText(props) {
 
 const initialDrawerWidth = 240;
 
+function jsonpReq(url, id) {
+    var script = window.document.getElementById(id);
+    if (script) {
+        window.document.body.removeChild(script);
+    }
+
+    script = window.document.createElement("script");
+    script.setAttribute("src", url);
+    script.setAttribute("id",id);
+
+    window.document.body.appendChild(script);
+}
+
+// function CheckUpdateCB
+
+function __CheckUpdate() {
+    var date = new Date();
+    var d = date.getDate();
+    
+    if (d == GlobalVarMgr.getLastCheckupdateDay())
+    {
+        return;
+    }
+    
+    GlobalVarMgr.setLastCheckupdateDay(d);
+    
+    jsonpReq("http://tsailun.com.cn/api?op=checkupdate", "id_script_chkupdate");
+}
+
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== "open",
 })(({ theme, open }) => ({
@@ -234,6 +263,9 @@ function MainViewContent() {
         }
       })
       .catch((error) => console.log("error is", error));
+      
+    __CheckUpdate();
+
   }, []);
 
   const handleMenu = (event) => {

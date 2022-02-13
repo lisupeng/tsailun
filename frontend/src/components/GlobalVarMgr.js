@@ -38,6 +38,17 @@ const GlobalVarMgr = {
   setSearchInput(val) {
     window.sessionStorage.searchInput = val;
   },
+  
+  getLastCheckupdateDay() {
+    if (!window.sessionStorage.LastCheckupdateDay)
+      window.sessionStorage.LastCheckupdateDay = -1;
+
+    return window.sessionStorage.LastCheckupdateDay;
+  },
+
+  setLastCheckupdateDay(val) {
+    window.sessionStorage.LastCheckupdateDay = val;
+  },
 };
 
 export default GlobalVarMgr;
