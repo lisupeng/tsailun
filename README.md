@@ -49,6 +49,9 @@ Admin - Setup Doc Space Permission
  
 Access from phone
 
+![phone](https://user-images.githubusercontent.com/97643149/154686394-491d1031-184a-44ab-a7f2-29d9405a5839.gif)
+
+
 
 ## Note
 Admin account and password: admin/admin
