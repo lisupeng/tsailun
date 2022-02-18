@@ -26,31 +26,29 @@ Build Steps: please refer to tsailun/doc/Howtobuild.md
 ## Screenshots
  
 Main UI
- ![Main UI](https://github.com/lisupeng/misc/raw/main/screenshots/v0.9.7/view.jpg)
+![view](https://user-images.githubusercontent.com/97643149/154651761-0873d01e-5cf3-45ae-8860-3198195981e6.jpg)
 
 Editing
- ![Editing](https://raw.githubusercontent.com/lisupeng/misc/main/screenshots/v0.9.7/edit.jpg)
- 
+![edit](https://user-images.githubusercontent.com/97643149/154651941-ca750eb4-8e6e-4763-a888-53f1eea15ac9.jpg)
+
 Automatic Versioning
- ![Automatic Versioning](https://github.com/lisupeng/misc/raw/main/screenshots/v0.9.7/versioning.jpg)
+![versioning](https://user-images.githubusercontent.com/97643149/154652101-fbbb0080-2b1e-4d91-b682-b6ca9911d1db.jpg)
 
 Search
- ![Search](https://github.com/lisupeng/misc/raw/main/screenshots/v0.9.7/search.jpg)
+![search](https://user-images.githubusercontent.com/97643149/154652156-69d8df1b-cc86-492e-b92c-7ede69605ff6.jpg)
 
 i18n, multi language support
- ![Admin Panel](https://github.com/lisupeng/misc/raw/main/screenshots/v0.9.7/i18n.jpg)
+![i18n](https://user-images.githubusercontent.com/97643149/154652191-51b3f12a-c0c0-430a-bd14-996faf4eb5fb.jpg)
  
 Admin - User Management
- ![User Managementl](https://github.com/lisupeng/misc/raw/main/screenshots/v0.9.7/usermgmt.jpg)
- 
+![usermgmt](https://user-images.githubusercontent.com/97643149/154652353-96523317-06f3-46c0-9aa4-4b4a77f885cd.jpg)
+
 Admin - Setup Doc Space Permission
- ![Space Permission](https://github.com/lisupeng/misc/raw/main/screenshots/v0.9.7/spaceperm.jpg)
+![spaceperm](https://user-images.githubusercontent.com/97643149/154652512-bef5a086-ec97-4a1b-ac0c-433ee52fcbcc.jpg)
 
  
 Access from phone
 
-
- ![phoneUI](https://github.com/lisupeng/misc/raw/main/screenshots/v0.9.7/phone.gif)
 
 ## Note
 Admin account and password: admin/admin
