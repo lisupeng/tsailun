@@ -5,6 +5,7 @@
 - Documents stored in separate standard HTML files, easy to migrate and convert
 - Automatic document versioning
 - Support multiple document spaces
+- Full text search across docs
 - Portable software, no installation required
 
 ## Download Prebuilt Binary
@@ -28,7 +29,7 @@ Main UI
  ![Main UI](https://github.com/lisupeng/misc/raw/main/screenshots/v0.9.7/view.jpg)
 
 Editing
- ![Editing](https://github.com/lisupeng/misc/raw/main/screenshots/v0.9.7/edit.jpg)
+ ![Editing](https://raw.githubusercontent.com/lisupeng/misc/main/screenshots/v0.9.7/edit.jpg)
  
 Automatic Versioning
  ![Automatic Versioning](https://github.com/lisupeng/misc/raw/main/screenshots/v0.9.7/versioning.jpg)
@@ -46,7 +47,7 @@ Admin - Setup Doc Space Permission
  ![Space Permission](https://github.com/lisupeng/misc/raw/main/screenshots/v0.9.7/spaceperm.jpg)
 
  
-Access on phone
+Access from phone
 
 
  ![phoneUI](https://github.com/lisupeng/misc/raw/main/screenshots/v0.9.7/phone.gif)
