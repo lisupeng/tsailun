@@ -639,6 +639,12 @@ const Utils = {
 
     document.body.removeChild(downLink);
   },
+  
+  genRand(Min,Max) {
+    var Range = Max - Min;   
+    var Rand = Math.random();   
+    return(Min + Math.round(Rand * Range));
+  },
 };
 
 export default Utils;

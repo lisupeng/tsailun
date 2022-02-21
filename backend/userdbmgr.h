@@ -72,13 +72,13 @@ protected:
 	void recordToJson(QSqlRecord &rec, QSqlQuery &sql_query, QJsonObject &jsonobj);
 
 	bool __getDbConnections(QSqlDatabase &database);
+	void __releaseDbConnections(QSqlDatabase &database);
 
 protected:
 	QMutex        *m_mutex; // inited to recursive mode
 
 protected:
 
-	QMap<Qt::HANDLE, QSqlDatabase> m_dbConnections;
 };
 
 #endif // _USERDBMGR_H

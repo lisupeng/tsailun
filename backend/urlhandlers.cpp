@@ -179,6 +179,14 @@ protected:
 		if (op.size() > 0)
 			logmsg = logmsg + ", op: " + op;
 
+		if (op == "checkupdate")
+		{
+			QByteArray bRn = req.getHttpParser().getParameter("rn", true, false);
+			QString rn = QString::fromUtf8(QByteArray::fromPercentEncoding(bRn));
+
+			logmsg = logmsg + ", rn: " + rn;
+		}
+
 		QByteArray src = req.getHttpParser().getParameter("src");
 
 		if (src.size() > 0)

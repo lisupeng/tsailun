@@ -140,7 +140,7 @@ var lang_zhch = {
     str_err_sigin_as_admin: '访问被拒绝。请以管理员身份登录。',
     
     str_pageviewer_no_page: '当前文档空间没有内容',
-    str_pageviewer_create_first_page: "请使用 '新建页面' 菜单项创建你的第一个页面",
+    str_pageviewer_create_first_page: "请使用 '+' 按钮创建你的第一个页面",
     
     str_editor_leave_confirm: '离开正在编辑的页面，放弃保存？',
     

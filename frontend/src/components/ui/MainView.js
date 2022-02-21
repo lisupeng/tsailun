@@ -35,6 +35,7 @@ import Container from "@material-ui/core/Container";
 //import Link from '@material-ui/core/Link';
 import MenuIcon from "@material-ui/icons/Menu";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
+import AddIcon from '@material-ui/icons/Add';
 //import NotificationsIcon from '@material-ui/icons/Notifications';
 import MoreIcon from "@material-ui/icons/MoreVert";
 //import { mainListItems, secondaryListItems } from './listItems';
@@ -173,7 +174,11 @@ function __CheckUpdate() {
     
     GlobalVarMgr.setLastCheckupdateDay(d);
     
-    jsonpReq("http://tsailun.com.cn/api?op=checkupdate", "id_script_chkupdate");
+    var rn=Utils.genRand(0, 100000);
+    
+    var url = "http://tsailun.com.cn/api?op=checkupdate&rn="+rn;
+    
+    jsonpReq(url, "id_script_chkupdate");
 }
 
 const AppBar = styled(MuiAppBar, {
@@ -1202,6 +1207,16 @@ function MainViewContent() {
           <IconButton
             aria-controls="menu-appbarSignnin"
             aria-haspopup="true"
+            onClick={handleCreateNewPageMenuClicked}
+            edge="end"
+            color="inherit"
+          >
+            <AddIcon />
+          </IconButton>
+
+          <IconButton
+            aria-controls="menu-appbarSignnin"
+            aria-haspopup="true"
             onClick={handleSignInMenu}
             edge="end"
             color="inherit"
@@ -1638,7 +1653,7 @@ function MainViewContent() {
         onMouseDown={onTreeviewMouseDown}
       >
         <Toolbar
-          style={{ backgroundColor: "#1976d2" }}
+          style={{ backgroundColor: "#f5f5f5" }}
           sx={{
             display: "flex",
             alignItems: "center",

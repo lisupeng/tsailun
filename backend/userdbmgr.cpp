@@ -43,21 +43,13 @@ UserDbMgr::~UserDbMgr()
 
 bool UserDbMgr::init()
 {
-	QSqlDatabase  database;
-	if (!__getDbConnections(database))
-	{
-		return false;
-	}
-
 	if (!init_user_table())
 	{
-		database.close();
 		return false;
 	}
 
 	if (!init_user_autocreate_table())
 	{
-		database.close();
 		return false;
 	}
 
@@ -80,6 +72,7 @@ bool UserDbMgr::init_user_autocreate_table()
 
 	if (!sql_query.exec())
 	{
+		__releaseDbConnections(database);
 		return false;
 	}
 
@@ -87,6 +80,7 @@ bool UserDbMgr::init_user_autocreate_table()
 	sql_query.prepare(sql);
 	if (!sql_query.exec())
 	{
+		__releaseDbConnections(database);
 		return false;
 	}
 
@@ -102,10 +96,12 @@ bool UserDbMgr::init_user_autocreate_table()
 
 		if (!sql_query.exec(sql))
 		{
+			__releaseDbConnections(database);
 			return false;
 		}
 	}
 
+	__releaseDbConnections(database);
 	return true;
 }
 
@@ -127,6 +123,7 @@ bool UserDbMgr::init_user_table()
 
 	if (!sql_query.exec())
 	{
+		__releaseDbConnections(database);
 		return false;
 	}
 
@@ -134,6 +131,7 @@ bool UserDbMgr::init_user_table()
 	sql_query.prepare(sql);
 	if (!sql_query.exec())
 	{
+		__releaseDbConnections(database);
 		return false;
 	}
 
@@ -149,6 +147,7 @@ bool UserDbMgr::init_user_table()
 
 		if (!sql_query.exec(sql))
 		{
+			__releaseDbConnections(database);
 			return false;
 		}
 
@@ -158,10 +157,12 @@ bool UserDbMgr::init_user_table()
 
 		if (!sql_query.exec(sql))
 		{
+			__releaseDbConnections(database);
 			return false;
 		}
 	}
 
+	__releaseDbConnections(database);
 	return true;
 }
 
@@ -185,12 +186,16 @@ QJsonObject UserDbMgr::getUserInfo(QString keytype, QString value)
 	else if (keytype == "email")
 		sql = "SELECT * FROM user_table where email='" + value + "'";
 	else
+	{
+		__releaseDbConnections(database);
 		return jsonobj;
+	}
 
 	sql_query.prepare(sql);
 
 	if (!sql_query.exec())
 	{
+		__releaseDbConnections(database);
 		return jsonobj;
 	}
 
@@ -200,10 +205,13 @@ QJsonObject UserDbMgr::getUserInfo(QString keytype, QString value)
 	 
 	if (!sql_query.next())
 	{
+		__releaseDbConnections(database);
 		return jsonobj;
 	}
 
 	recordToJson(rec, sql_query, jsonobj);
+
+	__releaseDbConnections(database);
 
 	return jsonobj;
 }
@@ -249,6 +257,7 @@ bool UserDbMgr::getUserList(QJsonArray &list)
 
 	if (!sql_query.exec())
 	{
+		__releaseDbConnections(database);
 		return false;
 	}
 
@@ -263,6 +272,8 @@ bool UserDbMgr::getUserList(QJsonArray &list)
 		list.append(jsonobj);
 	}
 
+	__releaseDbConnections(database);
+
 	return true;
 }
 
@@ -270,17 +281,17 @@ bool UserDbMgr::createNewUser(const QString &email, const QString &fullname, con
 {
 	QMutexLocker autolock(m_mutex);
 
-	QSqlDatabase  database;
-	if (!__getDbConnections(database))
-	{
-		return false;
-	}
-
 	// make sure use doesn't exist already
 	QJsonObject existingObj = getUserInfoByEmail(email);
 	if (!existingObj.isEmpty())
 	{
 		err = "email_already_exists";
+		return false;
+	}
+
+	QSqlDatabase  database;
+	if (!__getDbConnections(database))
+	{
 		return false;
 	}
 
@@ -293,8 +304,11 @@ bool UserDbMgr::createNewUser(const QString &email, const QString &fullname, con
 
 	if (!sql_query.exec())
 	{
+		__releaseDbConnections(database);
 		return false;
 	}
+
+	__releaseDbConnections(database);
 
 	return true;
 }
@@ -304,14 +318,14 @@ bool UserDbMgr::createNewUserEx(const QString &account, const QString &email, co
 {
 	QMutexLocker autolock(m_mutex);
 
-	QSqlDatabase  database;
-	if (!__getDbConnections(database))
+	// make sure use doesn't exist already
+	if (isUserAccountExists(account))
 	{
 		return false;
 	}
 
-	// make sure use doesn't exist already
-	if (isUserAccountExists(account))
+	QSqlDatabase  database;
+	if (!__getDbConnections(database))
 	{
 		return false;
 	}
@@ -325,8 +339,11 @@ bool UserDbMgr::createNewUserEx(const QString &account, const QString &email, co
 
 	if (!sql_query.exec())
 	{
+		__releaseDbConnections(database);
 		return false;
 	}
+
+	__releaseDbConnections(database);
 
 	return true;
 }
@@ -357,50 +374,37 @@ bool UserDbMgr::deleteUser(const QString &account)
 
 	if (!sql_query.exec())
 	{
+		__releaseDbConnections(database);
 		return false;
 	}
+
+	__releaseDbConnections(database);
 
 	return true;
 }
 
 bool UserDbMgr::__getDbConnections(QSqlDatabase &database)
 {
-	Qt::HANDLE threadId = QThread::currentThreadId();
-
-	QSqlDatabase db;
-
-	if (m_dbConnections.contains(threadId))
-	{
-		db = m_dbConnections[threadId];
-	}
-
-	if (db.isValid() && db.isOpen())
-	{
-		database = db;
-		return true;
-	}
-
 	// create one
 	ConfigMgr *cfgMgr = ConfigMgr::GetInstance();
 	QString appRootPath = cfgMgr->getAppRootDir();
 	QString userDbFile = appRootPath + "/data/db/users.db";
 
-	char szName[64];
-	sprintf(szName, "conn_%p", threadId);
-	QString connName = szName;
-	db = QSqlDatabase::addDatabase("QSQLITE", connName);
+	database = QSqlDatabase::addDatabase("QSQLITE");
 
-	db.setDatabaseName(userDbFile);
+	database.setDatabaseName(userDbFile);
 
-	if (!db.open())
+	if (!database.open() || !database.isValid())
 	{
 		return false;
 	}
 
-	m_dbConnections[threadId] = db;
-	database = db;
-
 	return true;
+}
+
+void UserDbMgr::__releaseDbConnections(QSqlDatabase &database)
+{
+	database.close();
 }
 
 bool UserDbMgr::getUserInfoByAccount(const QString &account, QJsonObject &userInfo)
@@ -430,8 +434,11 @@ bool UserDbMgr::updateUser(const QString &account, const QString &fullname, cons
 
 	if (!sql_query.exec())
 	{
+		__releaseDbConnections(database);
 		return false;
 	}
+
+	__releaseDbConnections(database);
 
 	return true;
 }
@@ -466,8 +473,11 @@ bool UserDbMgr::updateCredential(const QString &account, const QString &oldcrede
 
 	if (!sql_query.exec())
 	{
+		__releaseDbConnections(database);
 		return false;
 	}
+
+	__releaseDbConnections(database);
 
 	return true;
 }
@@ -494,6 +504,7 @@ bool UserDbMgr::isUserAccountExists(const QString &account)
 
 	if (!sql_query.exec())
 	{
+		__releaseDbConnections(database);
 		return false;
 	}
 
@@ -503,8 +514,11 @@ bool UserDbMgr::isUserAccountExists(const QString &account)
 	 
 	if (!sql_query.next())
 	{
+		__releaseDbConnections(database);
 		return false;
 	}
+
+	__releaseDbConnections(database);
 
 	return true;
 }
@@ -524,12 +538,15 @@ bool UserDbMgr::getUserCount(int &count)
 	sql_query.prepare(sql);
 	if (!sql_query.exec())
 	{
+		__releaseDbConnections(database);
 		return false;
 	}
 
 	sql_query.next();
 
 	count = sql_query.value(0).toInt();
+
+	__releaseDbConnections(database);
 
 	return true;
 }
@@ -548,6 +565,7 @@ QString UserDbMgr::autoGenUserAccount()
 	sql_query.prepare(sql);
 	if (!sql_query.exec())
 	{
+		__releaseDbConnections(database);
 		return "";
 	}
 
@@ -557,6 +575,7 @@ QString UserDbMgr::autoGenUserAccount()
 	 
 	if (!sql_query.next())
 	{
+		__releaseDbConnections(database);
 		return "";
 	}
 
@@ -571,8 +590,11 @@ QString UserDbMgr::autoGenUserAccount()
 
 	if (!sql_query.exec())
 	{
+		__releaseDbConnections(database);
 		return "";
 	}
+
+	__releaseDbConnections(database);
 
 	return account;
 }

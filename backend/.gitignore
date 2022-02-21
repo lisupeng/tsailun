@@ -3,6 +3,7 @@
 # build output
 /build
 /build_linux64_dev
+/build_linux64_dbg
 /build_linux64
 /build_nmake_dev
 /build_nmake

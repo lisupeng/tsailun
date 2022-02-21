@@ -139,7 +139,7 @@ var lang_en = {
     str_err_sigin_as_admin: 'Access denied. Please Sign In as Administrator.',
     
     str_pageviewer_no_page: 'No page in space.',
-    str_pageviewer_create_first_page: "Create your first page by clicking 'Create New Page' menu item.",
+    str_pageviewer_create_first_page: "Click '+' button to create your first page.",
     
     str_editor_leave_confirm: "Leave current page and don't save?",
     

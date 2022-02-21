@@ -27,6 +27,8 @@
 #include "crypto.h"
 #include <QJsonDocument>
 #include "urlhandlers.h"
+#include "configmgr.h"
+#include "utils.h"
 
 extern UserDbMgr     g_userDbMgr;
 extern SpaceDbMgr    g_spaceDbMgr;
@@ -81,6 +83,27 @@ static QString createSpaceAndUser()
 	return "";
 }
 
+static void copyDemodataToDemospace(const QString &account)
+{
+
+	ConfigMgr *cfgMgr = ConfigMgr::GetInstance();
+	QString appRootPath = cfgMgr->getAppRootDir();
+
+	QString srcPath = appRootPath + "/misc/demodata/pages";
+	QString destPath = appRootPath + "/data/spaces/" + account + "/pages";
+
+	copyPath(srcPath, destPath);
+	// void    copyPath(QString src, QString dst);
+	/*
+	// create space path
+	ConfigMgr *cfgMgr = ConfigMgr::GetInstance();
+	QString appRootPath = cfgMgr->getAppRootDir();
+	QString spacePath = appRootPath + "/data"+path+"/pages";
+	QDir dir(spacePath);
+	if (!dir.mkpath(spacePath))
+		return false;
+	*/
+}
 
 static void _handle_create_demo_instance(QJsonObject &result)
 {
@@ -90,6 +113,11 @@ static void _handle_create_demo_instance(QJsonObject &result)
 	{
 		result.insert("status", "error");
 		return;
+	}
+
+	if (useraccount != "")
+	{
+		copyDemodataToDemospace(useraccount);
 	}
 
 	QJsonObject obj;
