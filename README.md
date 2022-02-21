@@ -4,7 +4,7 @@
 - Access your documents from any device with a browser (PC, Mac, mobile phone and ipad...)
 - Documents stored in separate standard HTML files, easy to migrate and convert
 - Automatic document versioning
-- Support multiple document spaces
+- Support multiple document spaces (different spaces are usually used to host docs for different departments/teams)
 - Full text search across docs
 - Portable software, no installation required
 
@@ -25,32 +25,31 @@ Build Steps: please refer to tsailun/doc/Howtobuild.md
 
 ## Screenshots
  
-Main UI
+#### Main UI
 ![view](https://user-images.githubusercontent.com/97643149/154651761-0873d01e-5cf3-45ae-8860-3198195981e6.jpg)
 
-Editing
+#### Editing
 ![edit](https://user-images.githubusercontent.com/97643149/154651941-ca750eb4-8e6e-4763-a888-53f1eea15ac9.jpg)
 
-Automatic Versioning
+#### Automatic Versioning
 ![versioning](https://user-images.githubusercontent.com/97643149/154652101-fbbb0080-2b1e-4d91-b682-b6ca9911d1db.jpg)
 
-Search
+#### Search
 ![search](https://user-images.githubusercontent.com/97643149/154652156-69d8df1b-cc86-492e-b92c-7ede69605ff6.jpg)
 
-i18n, multi language support
+#### i18n, multi language support
 ![i18n](https://user-images.githubusercontent.com/97643149/154652191-51b3f12a-c0c0-430a-bd14-996faf4eb5fb.jpg)
  
-Admin - User Management
+#### Admin - User Management
 ![usermgmt](https://user-images.githubusercontent.com/97643149/154652353-96523317-06f3-46c0-9aa4-4b4a77f885cd.jpg)
 
-Admin - Setup Doc Space Permission
+#### Admin - Setup Doc Space Permission
 ![spaceperm](https://user-images.githubusercontent.com/97643149/154652512-bef5a086-ec97-4a1b-ac0c-433ee52fcbcc.jpg)
 
-Access from iPad
+#### Access from iPad
 ![ipad](https://user-images.githubusercontent.com/97643149/154877668-ecb257d9-f1ff-4457-b577-878a9a15f25d.png)
 
-Access from phone
-
+#### Access from phone
 ![phone](https://user-images.githubusercontent.com/97643149/154686394-491d1031-184a-44ab-a7f2-29d9405a5839.gif)
 
 
