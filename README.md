@@ -46,7 +46,9 @@ Admin - User Management
 Admin - Setup Doc Space Permission
 ![spaceperm](https://user-images.githubusercontent.com/97643149/154652512-bef5a086-ec97-4a1b-ac0c-433ee52fcbcc.jpg)
 
- 
+Access from iPad
+![ipad](https://user-images.githubusercontent.com/97643149/154877668-ecb257d9-f1ff-4457-b577-878a9a15f25d.png)
+
 Access from phone
 
 ![phone](https://user-images.githubusercontent.com/97643149/154686394-491d1031-184a-44ab-a7f2-29d9405a5839.gif)
