@@ -80,7 +80,8 @@ class Pageviewer extends React.Component {
     this.path_rendering = "";
   }
 
-  componentDidMount() {}
+  componentDidMount() {
+  }
 
   clearPageContent() {
     pagetitle = "";
@@ -168,6 +169,11 @@ class Pageviewer extends React.Component {
     var _last;
     if (lastByFullname.length > 0) _last = lastByFullname;
     else _last = lastModifiedBy;
+    
+    if (pagetitle.length > 0)
+        document.title = "Tsailun - "+pagetitle;
+    else
+        document.title = "Tsailun";
 
     if (thisptr && thisptr.msg && thisptr.msg.length !== 0) {
       return (

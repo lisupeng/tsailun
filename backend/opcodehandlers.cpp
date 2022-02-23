@@ -227,6 +227,8 @@ static bool move_dir_to_trash(QDir &dir)
 
 void _handle_page_create(QString path, QString title, QString loc, QString curPageDir, QString &output)
 {
+	QJsonObject jsonobj;
+
 	// Lock list file dir
 	QString dirLockfileName = PathNameConcat(path, QString(".lock"));
 	QLockFile listDirLock(dirLockfileName);
@@ -240,8 +242,14 @@ void _handle_page_create(QString path, QString title, QString loc, QString curPa
 	QString pageDir = title;
 	if (!generateDirnameForPage(path, title, pageDir))
 	{
-		g_syslog.logMessage(SYSLOG_LEVEL_ERROR, "", "Page already exists.");
-		output = "<html></html>";
+		//g_syslog.logMessage(SYSLOG_LEVEL_ERROR, "", "Page already exists.");
+		// report to client
+
+		jsonobj.insert("status", "fail");
+		jsonobj.insert("errcode", "already_exist");
+
+		output = QString(QJsonDocument(jsonobj).toJson(QJsonDocument::Compact));
+
 		return;
 	}
 
@@ -365,7 +373,6 @@ void _handle_page_create(QString path, QString title, QString loc, QString curPa
 
 	listMgr.save(listFilepath);
 
-	QJsonObject jsonobj;
 	jsonobj.insert("status", "ok");
 	jsonobj.insert("pagedir", pageDir);
 	jsonobj.insert("uid", uid);

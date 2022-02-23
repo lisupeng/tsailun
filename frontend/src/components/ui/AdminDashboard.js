@@ -233,5 +233,12 @@ function DashboardContent() {
 }
 
 export default function AdminDashboard() {
+    
+  React.useEffect(() => {
+      
+      document.title = 'Tsailun Admin Panel';
+
+  }, []);
+
   return <DashboardContent />;
 }

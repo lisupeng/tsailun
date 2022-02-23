@@ -236,6 +236,8 @@ function MainViewContent() {
   );
 
   const [userReadableSpaces, setUserReadableSpaces] = React.useState([]);
+  
+  const [newpgDlgErrmsg, setNewpgDlgErrmsg] = React.useState("");
 
   const toggleDrawer = () => {
     setOpen(!open);
@@ -309,6 +311,7 @@ function MainViewContent() {
         var res = JSON.parse(data);
         if (res.status === "ok") {
           // show dlg
+          setNewpgDlgErrmsg("");
           setNewPageDlgOpen(true);
         } else {
           if (res.errcode === "invalid_session") {
@@ -719,6 +722,13 @@ function MainViewContent() {
     if (pageTitle.length === 0) {
       return;
     }
+    
+    var re = /\%/;
+    if (re.test(pageTitle)) {
+    //if (pageTitle.contains('%')) {
+        setNewpgDlgErrmsg("Title could not contain '%'");
+        return;
+    }
 
     var path = "";
     // check if node selected
@@ -805,6 +815,14 @@ function MainViewContent() {
           );
           history.push(url_edit);
         } else {
+            if (res && res.errcode && res.errcode == 'already_exist')
+            {
+                // setMsg
+                setErrMsg("Page already exist.");
+                setSev("error");
+                // setOpen
+                setMsgBarOpen(true);
+            }
           console.log("Unexpected error");
         }
       })
@@ -1365,6 +1383,11 @@ function MainViewContent() {
                     </>
                   )}
               </Paper>
+              
+              <Typography variant="caption" style={{ color: "#ff0000" }}>
+                {newpgDlgErrmsg}
+              </Typography>
+          
             </DialogContent>
             <DialogActions>
               <Button onClick={handleCreateNewPage} color="primary">
