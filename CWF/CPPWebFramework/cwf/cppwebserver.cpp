@@ -15,14 +15,17 @@ CppWebServer::CppWebServer(const Configuration &configuration, Filter *filter) :
     ssl = SslLoader(configuration).getSslConfiguration();
     this->thread()->setPriority(QThread::TimeCriticalPriority);
     pool.setMaxThreadCount(configuration.getMaxThread());
-    pool.setExpiryTimeout(configuration.getTimeOut());
+    pool.setExpiryTimeout(-1/*configuration.getTimeOut()*/);
     if(!filter)
     {
         this->filter = new Filter;
     }
+
+	/*
     timer = new QTimer;
     connect(timer, &QTimer::timeout, this, &CppWebServer::doClean);
     timer->start(configuration.getCleanupInterval());
+	*/
 }
 
 CppWebServer::~CppWebServer()
