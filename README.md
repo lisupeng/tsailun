@@ -8,7 +8,7 @@
 - Full text search across docs
 - Portable software, no installation required. By default no configuration required too.
 
-## Download Prebuilt Binary
+## Download
 [download link](https://github.com/lisupeng/tsailunreleases)
 
 ## Livedemo
@@ -31,7 +31,7 @@ Build Steps: please refer to tsailun/doc/Howtobuild.md
 #### Editing
 ![edit](https://user-images.githubusercontent.com/97643149/154651941-ca750eb4-8e6e-4763-a888-53f1eea15ac9.jpg)
 
-#### Attach Files to Doc (feature will be ready soon)
+#### Attach Files to Doc (this feature will be ready soon)
 ![fileattachment](https://user-images.githubusercontent.com/97643149/155712235-0762bfd9-0a9c-4e8a-92e5-2f5039102c06.png)
 
 #### Automatic Versioning
