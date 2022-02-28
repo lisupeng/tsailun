@@ -204,7 +204,7 @@ class AttachementView extends React.Component {
                       hover
                       role="checkbox"
                       tabIndex={-1}
-                      key={row.version}
+                      key={row.file}
                     >
                       {columns.map((column) => {
                         if (column.id === "operate") {
@@ -258,6 +258,7 @@ class AttachementView extends React.Component {
 
         <p />
 
+        {/*
         <div>
           <input type="file" onChange={this.onFileChange} />
 
@@ -270,6 +271,7 @@ class AttachementView extends React.Component {
             {Lang.str_fileview_upload}
           </Button>
         </div>
+        */}
         <p />
 
         <p />

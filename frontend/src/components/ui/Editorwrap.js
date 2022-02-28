@@ -31,6 +31,8 @@ import { Prompt } from "react-router-dom";
 
 import Lang from "../../i18n/Lang";
 
+import axios from 'axios';
+
 var initContent = "";
 
 var editorHeight = 700;
@@ -43,6 +45,48 @@ const buttonStyle = {
   left: "auto",
   position: "fixed",
 };
+
+function upload(file, successCallback, failureCallback, progressCallback) {
+    
+    var reader = new FileReader();
+
+    reader.onload = function (event) {
+        
+        var _filedata = event.target.result;
+
+        var ibegin = _filedata.indexOf(";base64,");
+        if (ibegin === -1) return;
+
+        ibegin = ibegin + ";base64,".length;
+        var filedata = _filedata.substring(ibegin);
+
+        var url = window.location.pathname + "?op=upload&filename=" + file.name;
+        
+        axios.post(url, JSON.stringify({ sid: Utils.getSessionId(), size:file.size, filedata }), {
+            onUploadProgress: function(e) {
+                
+                const progress = (e.loaded / e.total * 100 | 0) + '%';
+                progressCallback(progress);
+            }
+        }).then((response) => {
+            
+            if (response && response.data && response.data.url)
+            {
+                successCallback(response.data.url);
+            }
+            else
+            {
+                failureCallback('Upload failed');
+            }
+
+        }).catch((error) => {
+            //failureCallback(`fail:${error.message}`)
+            failureCallback('Upload failed');
+        });
+    }
+    
+    reader.readAsDataURL(file); // increase 33.3% size
+}
 
 function example_image_upload_handler(blobInfo, success, failure, progress) {
   console.log("example_image_upload_handler()");
@@ -93,6 +137,13 @@ function example_image_upload_handler(blobInfo, success, failure, progress) {
   xhr.send(formData);
   */
 }
+
+const content_style = "body { font-family:Helvetica,Arial,sans-serif; font-size:16px } p{ margin:2px 0} " + 
+                      ".attachment {cursor: pointer !important; } " + 
+                      ".upload_error {background: #FFE5E0; border: 1px solid #EA644A; } " + 
+                      ".attachment > img {     width: 32px;    vertical-align: middle;    padding-right:4px;} " + 
+                      ".attachment > a {    text-decoration: none;    vertical-align: middle;} " + 
+                      ".attachment > span {    vertical-align: middle;    padding-right:4px;}";
 
 export default function Editorwrap() {
   let history = useHistory();
@@ -215,16 +266,23 @@ export default function Editorwrap() {
                   plugins: [
                     "advlist autolink lists link image charmap print preview anchor",
                     "searchreplace visualblocks code fullscreen",
-                    "insertdatetime media table powerpaste code help wordcount", // DON'T use paste plugin, otherwise unable paste images.
+                    "insertdatetime media table powerpaste code help wordcount attachment", // DON'T use paste plugin, otherwise unable paste images.
                   ],
                   toolbar: [
-                    "undo redo | bold italic underline strikethrough forecolor backcolor | fontselect | fontsizeselect | formatselect| bullist numlist | lineheight outdent indent alignleft aligncenter alignright alignjustify | table image link anchor | removeformat",
+                    "undo redo | bold italic underline strikethrough forecolor backcolor | fontselect | fontsizeselect | formatselect| bullist numlist | lineheight outdent indent alignleft aligncenter alignright alignjustify | table image link anchor | removeformat attachment",
                   ],
-                  content_style:
-                    "body { font-family:Helvetica,Arial,sans-serif; font-size:16px }",
+                  content_style: content_style,
                   relative_urls: false,
                   automatic_uploads: false,
                   images_replace_blob_uris: false,
+                  
+                  // TODO - Temporary limit to 200 M. Split big file to blocks and remove 200M limit.
+                  attachment_max_size: 200 * 1024 * 1024,
+                  attachment_assets_path: '/misc/assets/icons/',
+                  attachment_upload_handler: upload,
+                  
+                  /*block_unsupported_drop: false*/
+                  
                   /*,
                paste_data_images: true,
                images_upload_handler: example_image_upload_handler

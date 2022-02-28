@@ -23,6 +23,7 @@
     "@testing-library/user-event": "^12.1.10",
     "@tinymce/tinymce-react": "^3.12.6",
     "antd": "^4.16.10",
+    "axios": "^0.26.0",
     "material-ui-popup-state": "^1.4.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",

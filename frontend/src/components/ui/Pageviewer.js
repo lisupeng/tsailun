@@ -171,7 +171,7 @@ class Pageviewer extends React.Component {
     else _last = lastModifiedBy;
     
     if (pagetitle.length > 0)
-        document.title = "Tsailun - "+pagetitle;
+        document.title = pagetitle + ' - tsailun';
     else
         document.title = "Tsailun";
 
