@@ -32,7 +32,7 @@ Build Steps: please refer to tsailun/doc/Howtobuild.md
 ![edit](https://user-images.githubusercontent.com/97643149/154651941-ca750eb4-8e6e-4763-a888-53f1eea15ac9.jpg)
 
 #### Drop files into Doc
-![fileattachment](https://user-images.githubusercontent.com/97643149/155712235-0762bfd9-0a9c-4e8a-92e5-2f5039102c06.png)
+![fileattachment-new](https://user-images.githubusercontent.com/97643149/155987297-f0456561-6407-45b0-9b20-520d60bd855c.png)
 
 #### Automatic Versioning
 ![versioning](https://user-images.githubusercontent.com/97643149/154652101-fbbb0080-2b1e-4d91-b682-b6ca9911d1db.jpg)
@@ -55,10 +55,11 @@ Build Steps: please refer to tsailun/doc/Howtobuild.md
 #### Access from phone
 ![phone](https://user-images.githubusercontent.com/97643149/154686394-491d1031-184a-44ab-a7f2-29d9405a5839.gif)
 
-
-
 ## Note
 Admin account and password: admin/admin
+
+## Contact
+Any question, feel free to contact me: 11954794#qq.com (replace # with @)
 
 ## Thanks
 Thanks to all the opensource projects that Tsailun depends on.
