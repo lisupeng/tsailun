@@ -31,7 +31,7 @@ Build Steps: please refer to tsailun/doc/Howtobuild.md
 #### Editing
 ![edit](https://user-images.githubusercontent.com/97643149/154651941-ca750eb4-8e6e-4763-a888-53f1eea15ac9.jpg)
 
-#### Attach Files to Doc (this feature will be ready soon)
+#### Drop files into Doc
 ![fileattachment](https://user-images.githubusercontent.com/97643149/155712235-0762bfd9-0a9c-4e8a-92e5-2f5039102c06.png)
 
 #### Automatic Versioning
@@ -59,4 +59,8 @@ Build Steps: please refer to tsailun/doc/Howtobuild.md
 
 ## Note
 Admin account and password: admin/admin
+
+## Thanks
+Thanks to all the opensource projects that Tsailun depends on.
+Tsailun can't be implemented without them.
 
