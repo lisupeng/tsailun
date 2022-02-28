@@ -2086,6 +2086,77 @@ void OpcodeHandler::handle_dirinfo(CWF::Request &req, CWF::Response &response, R
 	return;
 }
 
+static void _buildContentType(CWF::Response &response, const QString &name)
+{
+	// TODO use parser tree to improve performance if necessary
+	if (name.endsWith(".jpg", Qt::CaseInsensitive))
+	{
+		response.addHeader(CWF::HTTP::CONTENT_TYPE, "image/jpeg");
+		response.addHeader("content-disposition", ("inline; filename=" + name.toUtf8()));
+	}
+	else if (name.endsWith(".jpeg", Qt::CaseInsensitive))
+	{
+		response.addHeader(CWF::HTTP::CONTENT_TYPE, "image/jpeg");
+		response.addHeader("content-disposition", ("inline; filename=" + name.toUtf8()));
+	}
+	else if (name.endsWith(".png", Qt::CaseInsensitive))
+	{
+		response.addHeader(CWF::HTTP::CONTENT_TYPE, "image/png");
+		response.addHeader("content-disposition", ("inline; filename=" + name.toUtf8()));
+	}
+	else if (name.endsWith(".gif", Qt::CaseInsensitive))
+	{
+		response.addHeader(CWF::HTTP::CONTENT_TYPE, "image/gif");
+		response.addHeader("content-disposition", ("inline; filename=" + name.toUtf8()));
+	}
+	else if (name.endsWith(".mp3", Qt::CaseInsensitive))
+	{
+		response.addHeader(CWF::HTTP::CONTENT_TYPE, "audio/mp3");
+		response.addHeader("content-disposition", ("inline; filename=" + name.toUtf8()));
+	}
+	else if (name.endsWith(".wav", Qt::CaseInsensitive))
+	{
+		response.addHeader(CWF::HTTP::CONTENT_TYPE, "audio/wav");
+		response.addHeader("content-disposition", ("inline; filename=" + name.toUtf8()));
+	}
+	else if (name.endsWith(".mp4", Qt::CaseInsensitive))
+	{
+		response.addHeader(CWF::HTTP::CONTENT_TYPE, "video/mpeg4");
+		response.addHeader("content-disposition", ("inline; filename=" + name.toUtf8()));
+	}
+	else if (name.endsWith(".pdf", Qt::CaseInsensitive))
+	{
+		response.addHeader(CWF::HTTP::CONTENT_TYPE, "application/pdf");
+		response.addHeader("content-disposition", ("inline; filename=" + name.toUtf8()));
+	}
+	else if (name.endsWith(".html", Qt::CaseInsensitive))
+	{
+		response.addHeader(CWF::HTTP::CONTENT_TYPE, "text/html");
+		response.addHeader("content-disposition", ("inline; filename=" + name.toUtf8()));
+	}
+	else if (name.endsWith(".htm", Qt::CaseInsensitive))
+	{
+		response.addHeader(CWF::HTTP::CONTENT_TYPE, "text/htm");
+		response.addHeader("content-disposition", ("inline; filename=" + name.toUtf8()));
+	}
+	else if (name.endsWith(".txt", Qt::CaseInsensitive))
+	{
+		response.addHeader(CWF::HTTP::CONTENT_TYPE, "text/plain");
+		response.addHeader("content-disposition", ("inline; filename=" + name.toUtf8()));
+	}
+	else if (name.endsWith(".svg", Qt::CaseInsensitive))
+	{
+		response.addHeader(CWF::HTTP::CONTENT_TYPE, "text/xml");
+		response.addHeader("content-disposition", ("inline; filename=" + name.toUtf8()));
+	}
+	else
+	{
+		response.addHeader(CWF::HTTP::CONTENT_TYPE, "application/octet-stream");
+		response.addHeader("Content-Disposition", ("attachment; filename=" + name.toUtf8()));
+	}
+
+}
+
 void OpcodeHandler::handle_viewfile(CWF::Request &req, CWF::Response &response, REQ_CONTEXT &ctx)
 {
 	QByteArray __url_ = req.getHttpParser().getUrl();
@@ -2109,7 +2180,8 @@ void OpcodeHandler::handle_viewfile(CWF::Request &req, CWF::Response &response, 
 	QFile file(fullFilePath);
 	if (file.open(QIODevice::ReadOnly))
 	{
-		response.addHeader("content-disposition", ("inline; filename=" + name.toUtf8()));
+		_buildContentType(response, name);
+
 		response.write(file.readAll());
 	}
 	else
@@ -2221,6 +2293,8 @@ void OpcodeHandler::handle_upload(CWF::Request &req, CWF::Response &response, RE
 
 	QByteArray filebytes = QByteArray::fromBase64(filedata.toLatin1());
 
+	QString fileurl = url + "?op=viewfile&name=" + filename;
+
 	QString pagepath = getSpaceAndPagePathByUrl(url);
 
 	// if "upload" dir doesn't exist, create it
@@ -2236,16 +2310,42 @@ void OpcodeHandler::handle_upload(CWF::Request &req, CWF::Response &response, RE
 		}
 	}
 
-	// TODO-7 if file already exists, append a <NUM> to filename
+	// if file already exists, append a <NUM> to filename
 	QString fullfileName = uploadDir + "/" + filename;
 
 	if (QFile(fullfileName).exists())
 	{
-		// TODO
-		return;
+		QFileInfo fi(fullfileName);
+
+		QString baseName = fi.baseName();
+		QString ext = fi.completeSuffix();
+
+		bool found = false;
+
+		for (int i = 1; i < 1000; i++)
+		{
+			QString _fullfilename = uploadDir + "/" + baseName + QString("-%1").arg(i) + "." + ext;
+
+			if (!(QFile(_fullfilename).exists()))
+			{
+				fullfileName = _fullfilename;
+				fileurl = url + "?op=viewfile&name=" + baseName + QString("-%1").arg(i) + "." + ext;
+
+				found = true;
+
+				break;
+			}
+			
+		}
+
+		if (!found)
+		{
+			// can't find proper name
+			return;
+		}
 	}
 
-	// TODO write
+	// write
 	QFile fd(fullfileName);
 
 	if (!fd.open(QFile::WriteOnly))
@@ -2258,6 +2358,7 @@ void OpcodeHandler::handle_upload(CWF::Request &req, CWF::Response &response, RE
 	fd.write(filebytes);
 	fd.close();
 
+	result.insert("url", fileurl);
 	result.insert("status", "ok");
 
 	QString out = QString(QJsonDocument(result).toJson(QJsonDocument::Compact));
@@ -2500,7 +2601,7 @@ void OpcodeHandler::handle_test(CWF::Request &req, CWF::Response &response, REQ_
 {
 	QJsonObject result;
 
-	sendMail();
+	//sendMail();
 
 	result.insert("status", "ok");
 
