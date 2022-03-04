@@ -8,8 +8,8 @@
 - Full text search across docs
 - Portable software, no installation required. By default no configuration required too.
 
-## Download
-[download link](https://github.com/lisupeng/tsailunreleases)
+## Release Download
+[download](https://github.com/lisupeng/tsailunreleases)
 
 ## Livedemo
 [link](http://tsailun.com.cn/demo)
