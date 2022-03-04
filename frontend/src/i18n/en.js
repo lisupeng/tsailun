@@ -30,6 +30,9 @@ var lang_en = {
     str_menu_space: 'Space',
     str_menu_export: 'Export',
     str_menu_language: 'Language',
+
+    str_ctxmenu_new: 'New Page',
+    str_ctxmenu_new_child: 'New Child Page',
     
     str_search_no_match: 'No match found',
     str_search_search_results: 'Search Results',

@@ -31,6 +31,9 @@ var lang_zhch = {
     str_menu_export: '导出页面',
     str_menu_language: '语言',
     
+    str_ctxmenu_new: '新建页面',
+    str_ctxmenu_new_child: '新建子页面',
+    
     str_search_no_match: '没有搜索到匹配的项',
     str_search_search_results: '搜索结果',
     

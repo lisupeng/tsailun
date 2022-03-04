@@ -19,7 +19,7 @@
 #ifndef _SYSDEFS_H
 #define _SYSDEFS_H
 
-#define  __SYS_VERSION_        "1.1.0 build20220228"
+#define  __SYS_VERSION_        "1.1.5 build20220304"
 
 #define URL_SIGNIN             "/signin"
 #define URL_SIGNUP             "/signup"

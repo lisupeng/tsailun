@@ -249,6 +249,16 @@ function MainViewContent() {
   // signin/out menu
   const [anchorElSignin, setAnchorElSignin] = React.useState(null);
   const menuSigninOpen = Boolean(anchorElSignin);
+  
+  // tree context menu
+  //const [anchorTreeContextMenu, setAnchorTreeContextMenu] = React.useState(null);
+  const [contextMenuX, setContextMenuX] = React.useState(0);
+  const [contextMenuY, setContextMenuY] = React.useState(0);
+  const [treeContextMenuOpen, setTreeContextMenuOpen] = React.useState(false);
+
+  const handleTreeContextMenuClose = () => {
+    setTreeContextMenuOpen(false);
+  };
 
   /* DOM did mount */
   React.useEffect(() => {
@@ -328,6 +338,22 @@ function MainViewContent() {
         }
       })
       .catch((error) => console.log("error is", error));
+  };
+  
+  const handleNewPageContextMenuItemClicked = () => {
+      setTreeContextMenuOpen(false);
+      
+      setPageLocation(Lang.str_createpagedlg_putpageafter);
+      
+      handleCreateNewPageMenuClicked();
+  };
+  
+  const handleNewChildPageContextMenuItemClicked = () => {
+      setTreeContextMenuOpen(false);
+      
+      setPageLocation(Lang.str_createpagedlg_putpagechild);
+      
+      handleCreateNewPageMenuClicked();
   };
 
   const handlePageHistoryMenuItemClicked = () => {
@@ -1071,6 +1097,10 @@ function MainViewContent() {
   const onTreeviewContextMenu = (event) => {
     event.preventDefault();
     document.removeEventListener("contextmenu", onTreeviewContextMenu);
+    
+    setContextMenuX(event.clientX);
+    setContextMenuY(event.clientY);
+    setTreeContextMenuOpen(true);
   };
 
   const onTreeviewMouseDown = (event) => {
@@ -1286,9 +1316,10 @@ function MainViewContent() {
             <MenuItem onClick={handleAttachmentMenuItemClicked}>
               {Lang.str_menu_attachment}
             </MenuItem>
+            {/*
             <MenuItem onClick={handleExportPageMenuItemClicked}>
               {Lang.str_menu_export}
-            </MenuItem>
+            </MenuItem>*/}
             <MenuItem onClick={handleChangeSpaceMenuItemClicked}>
               {Lang.str_menu_space}
             </MenuItem>
@@ -1323,6 +1354,31 @@ function MainViewContent() {
 
             <MenuItem onClick={handleSignInMenuItemClicked}>
               <SignInMenuText />
+            </MenuItem>
+          </Menu>
+
+          <Menu
+            id="menu-treeContext"
+            anchorReference="anchorPosition"
+            anchorPosition={{ top: contextMenuY, left: contextMenuX }}
+            anchorOrigin={{
+              vertical: "top",
+              horizontal: "left",
+            }}
+            keepMounted
+            transformOrigin={{
+              vertical: "top",
+              horizontal: "left",
+            }}
+            open={treeContextMenuOpen}
+            onClose={handleTreeContextMenuClose}
+          >
+
+            <MenuItem onClick={handleNewPageContextMenuItemClicked}>
+            {Lang.str_ctxmenu_new}
+            </MenuItem>
+            <MenuItem onClick={handleNewChildPageContextMenuItemClicked}>
+            {Lang.str_ctxmenu_new_child}
             </MenuItem>
           </Menu>
 

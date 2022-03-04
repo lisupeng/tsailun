@@ -2293,7 +2293,7 @@ void OpcodeHandler::handle_upload(CWF::Request &req, CWF::Response &response, RE
 
 	QByteArray filebytes = QByteArray::fromBase64(filedata.toLatin1());
 
-	QString fileurl = url + "?op=viewfile&name=" + filename;
+	QString fileurl = url + "?op=viewfile&name=" + QUrl::toPercentEncoding(filename);
 
 	QString pagepath = getSpaceAndPagePathByUrl(url);
 

@@ -60,7 +60,7 @@ function upload(file, successCallback, failureCallback, progressCallback) {
         ibegin = ibegin + ";base64,".length;
         var filedata = _filedata.substring(ibegin);
 
-        var url = window.location.pathname + "?op=upload&filename=" + file.name;
+        var url = window.location.pathname + "?op=upload&filename=" + encodeURIComponent(file.name);
         
         axios.post(url, JSON.stringify({ sid: Utils.getSessionId(), size:file.size, filedata }), {
             onUploadProgress: function(e) {
@@ -149,7 +149,7 @@ export default function Editorwrap() {
   let history = useHistory();
   const [gotcontent, setGotcontent] = React.useState(false);
   const [exitPromp, setExitPromp] = React.useState(true);
-  const [forceRedrawCnt, setForceRedrawCnt] = React.useState(0);
+  //const [forceRedrawCnt, setForceRedrawCnt] = React.useState(0);
   const [saving, setSaving] = React.useState(false);
 
   //var initContent = "";
@@ -172,7 +172,9 @@ export default function Editorwrap() {
         var res = JSON.parse(data);
         if (res.status === "ok") {
           if (res.body) {
-            //console.log("body="+res.body);
+
+            document.title = 'Edit - '+res.title;
+            
             initContent = res.body;
             setGotcontent(true);
           }
@@ -231,8 +233,14 @@ export default function Editorwrap() {
   editorHeight = window.innerHeight - Globaldata.appBarHeight;
 
   window.onresize = function () {
-    // force redraw to resize editor
-    setForceRedrawCnt(forceRedrawCnt + 1);
+    editorHeight = window.innerHeight - Globaldata.appBarHeight;
+    
+    // resize editor
+    if (editorRef.current && editorRef.current.editorContainer)
+    {
+        editorRef.current.editorContainer.style.height = ""+editorHeight+"px";
+    }
+
   };
 
   if (gotcontent)

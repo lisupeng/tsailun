@@ -37,7 +37,7 @@ extern Syslog        g_syslog;
 
 #define EXIT_APP() \
          do { \
-           QThread::sleep(3000); \
+           QThread::msleep(3000); \
            return -1; \
 		 } while (0);
 
