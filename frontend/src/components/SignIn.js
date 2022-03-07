@@ -168,6 +168,13 @@ export default function SignIn() {
       })
       .catch((error) => console.log("error is", error));
   };
+  
+  const onPwdTextInputKeyPress = (e) => {
+    if (e.key === "Enter") {
+      handleSubmit();
+      e.preventDefault();
+    }
+  };
 
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {
@@ -220,6 +227,7 @@ export default function SignIn() {
             type="password"
             id="signin_pwd"
             onChange={handlePwdInputChange}
+            onKeyPress={onPwdTextInputKeyPress}
             autoComplete="signin_pwd"
           />
 

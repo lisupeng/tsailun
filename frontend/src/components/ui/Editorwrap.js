@@ -46,46 +46,90 @@ const buttonStyle = {
   position: "fixed",
 };
 
-function upload(file, successCallback, failureCallback, progressCallback) {
+function axiowrapper (url, data) {
+
+    return new Promise((resolve, reject) => {
+        axios.post(url, data).then((res) => {
+          resolve(res);
+        }).catch((err) => {
+          reject(err);
+        })
+      })
+}
+
+function readfilewrapper (file) {
+
+ return new Promise(function (resolve, reject) {
+
+  let reader = new FileReader();
+
+  reader.onload = function () {
+   resolve(reader);
+  };
+
+  reader.onerror = reject;
+
+  reader.readAsDataURL(file);
+ });
+}
+
+async function upload(file, successCallback, failureCallback, progressCallback) {
     
-    var reader = new FileReader();
+    const chunk_size = 10 * 1024 * 1024;
+    
+    //const chunk_size = 30 * 1024;
+    
+    var seq = 0;
+    var url = '';
+    
+    var done = false;
+    
+    var fileurl = '';
+    
+    var id = Utils.genUUID();
 
-    reader.onload = function (event) {
+    while (done === false)
+    {
+        var begin = seq*chunk_size;
+        var end = (seq+1)*chunk_size;
         
-        var _filedata = event.target.result;
-
-        var ibegin = _filedata.indexOf(";base64,");
+        if (begin >= file.size)
+        {
+            done = true;
+            break;
+        }
+        
+        var blob = file.slice(begin, end);
+        let read_ret = await readfilewrapper(blob);
+        
+        var _chunkdata = read_ret.result
+        
+        if (!(_chunkdata))
+        {
+            failureCallback('Upload failed');
+            return;
+        }
+        
+        var ibegin = _chunkdata.indexOf(";base64,");
         if (ibegin === -1) return;
 
         ibegin = ibegin + ";base64,".length;
-        var filedata = _filedata.substring(ibegin);
-
-        var url = window.location.pathname + "?op=upload&filename=" + encodeURIComponent(file.name);
+        var chunkdata = _chunkdata.substring(ibegin);
         
-        axios.post(url, JSON.stringify({ sid: Utils.getSessionId(), size:file.size, filedata }), {
-            onUploadProgress: function(e) {
-                
-                const progress = (e.loaded / e.total * 100 | 0) + '%';
-                progressCallback(progress);
-            }
-        }).then((response) => {
-            
-            if (response && response.data && response.data.url)
-            {
-                successCallback(response.data.url);
-            }
-            else
-            {
-                failureCallback('Upload failed');
-            }
-
-        }).catch((error) => {
-            //failureCallback(`fail:${error.message}`)
-            failureCallback('Upload failed');
-        });
+        var postdata = JSON.stringify({ sid: Utils.getSessionId(), chunkdata })
+    
+        url = window.location.pathname + "?op=uploadchunk&filename=" + encodeURIComponent(file.name)+"&seq="+seq+"&chunksize="+chunk_size+"&tid="+id;
+        let ret = await axiowrapper(url, postdata);
+        
+        fileurl = ret.data.url;
+        
+        seq++;
+        
+        const progress = (seq*chunk_size / file.size * 100 | 0) + '%';
+        progressCallback(progress);
     }
     
-    reader.readAsDataURL(file); // increase 33.3% size
+    successCallback(fileurl);
 }
 
 function example_image_upload_handler(blobInfo, success, failure, progress) {
@@ -284,8 +328,8 @@ export default function Editorwrap() {
                   automatic_uploads: false,
                   images_replace_blob_uris: false,
                   
-                  // TODO - Temporary limit to 200 M. Split big file to blocks and remove 200M limit.
-                  attachment_max_size: 200 * 1024 * 1024,
+                  // Limit to 1T
+                  attachment_max_size: 1000 * 1000 * 1024 * 1024,
                   attachment_assets_path: '/misc/assets/icons/',
                   attachment_upload_handler: upload,
                   

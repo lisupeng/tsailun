@@ -81,7 +81,7 @@ void sendHeaders(int statusCode,
 
 void Response::flushBuffer()
 {
-    const int max = 32768;
+    const int max = 32768; // increase this ?
     if(!content.isEmpty())
     {
         int timeOut = configuration.getTimeOut();
@@ -159,6 +159,60 @@ void Response::write(const QByteArray &data, bool flush)
     content += data;
     if(flush)
         flushBuffer();
+}
+
+void Response::write_large_file(const QString &filepath, QString contentType, QString contentDisposition)
+{
+	//const int max = 32768;
+	const int max = 10 * 1024 * 1024;
+
+	headers.insert(CWF::HTTP::CONTENT_TYPE, contentType.toUtf8());
+	headers.insert("content-disposition", contentDisposition.toUtf8());
+
+	QFile file(filepath);
+	qint64 filesize = file.size();
+
+	if (!(file.open(QIODevice::ReadOnly)))
+		goto CLOSE_SOCKET;
+
+	int timeOut = configuration.getTimeOut();
+	bool biggerThanLimit = filesize > max;
+	headers.insert(HTTP::CONTENT_LENGTH, QByteArray::number(filesize));
+	headers.insert(HTTP::SERVER, HTTP::SERVER_VERSION);
+	headers.insert(HTTP::DATA, QByteArray(QDateTime::currentDateTime().toString("ddd, dd MMM yyyy hh:mm:ss").toLatin1() + " GMT"));
+
+	if (!biggerThanLimit)
+	{
+		sendHeaders(statusCode, timeOut, statusText, headers, cookies, socket);
+
+		QByteArray data = file.read(max);
+		sendBytes(socket, data, timeOut);
+	}
+	else
+	{
+		headers.insert(HTTP::TRANSFER_ENCODING, HTTP::CHUNKED);
+		sendHeaders(statusCode, timeOut, statusText, headers, cookies, socket);
+
+		qint64 total = (filesize / max) + 1;
+
+		for (qint64 i = 0; i < total; ++i)
+		{
+			QByteArray data = file.read(max);
+
+			if (!data.isEmpty())
+			{
+				sendBytes(socket, (QByteArray::number(data.size(), 16) + HTTP::END_LINE), timeOut);
+				sendBytes(socket, data, timeOut);
+				sendBytes(socket, HTTP::END_LINE, timeOut);
+			}
+		}
+		sendBytes(socket, HTTP::END_OF_MESSAGE_WITH_ZERO, timeOut);
+	}
+
+CLOSE_SOCKET:
+
+	socket.disconnectFromHost();
+	content.clear();
 }
 
 void Response::setStatus(int statusCode, const QByteArray &description)

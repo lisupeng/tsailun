@@ -44,6 +44,8 @@ public:
 
     void write(const QByteArray &data, bool flush = true);
 
+	void write_large_file(const QString &filepath, QString contentType, QString contentDisposition);
+
     void sendError(int sc, const QByteArray &msg);
 
     void flushBuffer();

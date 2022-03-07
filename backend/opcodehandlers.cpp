@@ -32,6 +32,7 @@
 #include "demomgr.h"
 #include "stats.h"
 #include "sysdefs.h"
+#include "uploadmgr.h"
 #include <QDir>
 #include <QLockFile>
 #include <QTemporaryFile>
@@ -45,6 +46,7 @@ HistoryMgr       g_historyMgr;
 SearchMgr        g_searchMgr;
 DemoMgr          g_demoMgr;
 StatsMgr         g_statsMgr;
+UploadMgr        g_uploadMgr;
 
 
 OpcodeHandler::OpcodeHandler()
@@ -78,6 +80,7 @@ OpcodeHandler::OpcodeHandler()
 	m_handlerMap["viewfile"] = &OpcodeHandler::handle_viewfile;
 	m_handlerMap["listfile"] = &OpcodeHandler::handle_listfile;
 	m_handlerMap["upload"] = &OpcodeHandler::handle_upload;
+	m_handlerMap["uploadchunk"] = &OpcodeHandler::handle_uploadchunk;
 	m_handlerMap["register"] = &OpcodeHandler::handle_register;
 	m_handlerMap["listversion"] = &OpcodeHandler::handle_listversion;
 	m_handlerMap["restore"] = &OpcodeHandler::handle_restore;
@@ -2086,75 +2089,74 @@ void OpcodeHandler::handle_dirinfo(CWF::Request &req, CWF::Response &response, R
 	return;
 }
 
-static void _buildContentType(CWF::Response &response, const QString &name)
+static void _buildContentType(const QString &name, QString &contentType, QString &disposition)
 {
 	// TODO use parser tree to improve performance if necessary
 	if (name.endsWith(".jpg", Qt::CaseInsensitive))
 	{
-		response.addHeader(CWF::HTTP::CONTENT_TYPE, "image/jpeg");
-		response.addHeader("content-disposition", ("inline; filename=" + name.toUtf8()));
+		contentType = "image/jpeg";
+		disposition = "inline; filename=" + name.toUtf8();
 	}
 	else if (name.endsWith(".jpeg", Qt::CaseInsensitive))
 	{
-		response.addHeader(CWF::HTTP::CONTENT_TYPE, "image/jpeg");
-		response.addHeader("content-disposition", ("inline; filename=" + name.toUtf8()));
+		contentType = "image/jpeg";
+		disposition = "inline; filename=" + name.toUtf8();
 	}
 	else if (name.endsWith(".png", Qt::CaseInsensitive))
 	{
-		response.addHeader(CWF::HTTP::CONTENT_TYPE, "image/png");
-		response.addHeader("content-disposition", ("inline; filename=" + name.toUtf8()));
+		contentType = "image/png";
+		disposition = "inline; filename=" + name.toUtf8();
 	}
 	else if (name.endsWith(".gif", Qt::CaseInsensitive))
 	{
-		response.addHeader(CWF::HTTP::CONTENT_TYPE, "image/gif");
-		response.addHeader("content-disposition", ("inline; filename=" + name.toUtf8()));
+		contentType = "image/gif";
+		disposition = "inline; filename=" + name.toUtf8();
 	}
 	else if (name.endsWith(".mp3", Qt::CaseInsensitive))
 	{
-		response.addHeader(CWF::HTTP::CONTENT_TYPE, "audio/mp3");
-		response.addHeader("content-disposition", ("inline; filename=" + name.toUtf8()));
+		contentType = "audio/mp3";
+		disposition = "inline; filename=" + name.toUtf8();
 	}
 	else if (name.endsWith(".wav", Qt::CaseInsensitive))
 	{
-		response.addHeader(CWF::HTTP::CONTENT_TYPE, "audio/wav");
-		response.addHeader("content-disposition", ("inline; filename=" + name.toUtf8()));
+		contentType = "audio/wav";
+		disposition = "inline; filename=" + name.toUtf8();
 	}
 	else if (name.endsWith(".mp4", Qt::CaseInsensitive))
 	{
-		response.addHeader(CWF::HTTP::CONTENT_TYPE, "video/mpeg4");
-		response.addHeader("content-disposition", ("inline; filename=" + name.toUtf8()));
+		contentType = "video/mpeg4";
+		disposition = "inline; filename=" + name.toUtf8();
 	}
 	else if (name.endsWith(".pdf", Qt::CaseInsensitive))
 	{
-		response.addHeader(CWF::HTTP::CONTENT_TYPE, "application/pdf");
-		response.addHeader("content-disposition", ("inline; filename=" + name.toUtf8()));
+		contentType = "application/pdf";
+		disposition = "inline; filename=" + name.toUtf8();
 	}
 	else if (name.endsWith(".html", Qt::CaseInsensitive))
 	{
-		response.addHeader(CWF::HTTP::CONTENT_TYPE, "text/html");
-		response.addHeader("content-disposition", ("inline; filename=" + name.toUtf8()));
+		contentType = "text/html";
+		disposition = "inline; filename=" + name.toUtf8();
 	}
 	else if (name.endsWith(".htm", Qt::CaseInsensitive))
 	{
-		response.addHeader(CWF::HTTP::CONTENT_TYPE, "text/htm");
-		response.addHeader("content-disposition", ("inline; filename=" + name.toUtf8()));
+		contentType = "text/htm";
+		disposition = "inline; filename=" + name.toUtf8();
 	}
 	else if (name.endsWith(".txt", Qt::CaseInsensitive))
 	{
-		response.addHeader(CWF::HTTP::CONTENT_TYPE, "text/plain");
-		response.addHeader("content-disposition", ("inline; filename=" + name.toUtf8()));
+		contentType = "text/plain";
+		disposition = "inline; filename=" + name.toUtf8();
 	}
 	else if (name.endsWith(".svg", Qt::CaseInsensitive))
 	{
-		response.addHeader(CWF::HTTP::CONTENT_TYPE, "text/xml");
-		response.addHeader("content-disposition", ("inline; filename=" + name.toUtf8()));
+		contentType = "text/xml";
+		disposition = "inline; filename=" + name.toUtf8();
 	}
 	else
 	{
-		response.addHeader(CWF::HTTP::CONTENT_TYPE, "application/octet-stream");
-		response.addHeader("Content-Disposition", ("attachment; filename=" + name.toUtf8()));
+		contentType = "application/octet-stream";
+		disposition = "attachment; filename=" + name.toUtf8();
 	}
-
 }
 
 void OpcodeHandler::handle_viewfile(CWF::Request &req, CWF::Response &response, REQ_CONTEXT &ctx)
@@ -2178,11 +2180,15 @@ void OpcodeHandler::handle_viewfile(CWF::Request &req, CWF::Response &response, 
 	}
 
 	QFile file(fullFilePath);
-	if (file.open(QIODevice::ReadOnly))
+	if (file.exists())
 	{
-		_buildContentType(response, name);
+		QString contentType;
+		QString disposition;
+		_buildContentType(name, contentType, disposition);
 
-		response.write(file.readAll());
+		response.write_large_file(fullFilePath, contentType, disposition);
+
+		//response.write(file.readAll());
 	}
 	else
 	{
@@ -2356,6 +2362,144 @@ void OpcodeHandler::handle_upload(CWF::Request &req, CWF::Response &response, RE
 	}
 
 	fd.write(filebytes);
+	fd.close();
+
+	result.insert("url", fileurl);
+	result.insert("status", "ok");
+
+	QString out = QString(QJsonDocument(result).toJson(QJsonDocument::Compact));
+	response.write(out.toUtf8());
+	return;
+}
+
+void OpcodeHandler::handle_uploadchunk(CWF::Request &req, CWF::Response &response, REQ_CONTEXT &ctx)
+{
+	QByteArray __url_ = req.getHttpParser().getUrl();
+	QString url = QString::fromUtf8(QByteArray::fromPercentEncoding(__url_));
+
+	QJsonObject result;
+
+	// TODO only check permission when creating file first time
+
+	if (!(*(ctx.postobj)).contains("chunkdata"))
+	{
+		result.insert("status", "fail");
+
+		QString out = QString(QJsonDocument(result).toJson(QJsonDocument::Compact));
+		response.write(out.toUtf8());
+		return;
+	}
+
+	QByteArray _filename = req.getHttpParser().getParameter("filename", true, false);
+	QString filename = QString::fromUtf8(QByteArray::fromPercentEncoding(_filename));
+
+	QByteArray _seq = req.getHttpParser().getParameter("seq", true, false);
+	QString sSeq = QString::fromUtf8(QByteArray::fromPercentEncoding(_seq));
+
+	QByteArray _tid = req.getHttpParser().getParameter("tid", true, false);
+	QString tid = QString::fromUtf8(QByteArray::fromPercentEncoding(_tid));
+
+	int seq = sSeq.toInt();
+
+	QString chunkdata = (*(ctx.postobj)).value("chunkdata").toString();
+	//int seq = (*(ctx.postobj)).value("seq").toInt();
+	//int size = (*(ctx.postobj)).value("size").toInt();
+
+	QByteArray chunkbytes = QByteArray::fromBase64(chunkdata.toLatin1());
+
+	QString fileurl = url + "?op=viewfile&name=" + QUrl::toPercentEncoding(filename);
+
+	QString pagepath = getSpaceAndPagePathByUrl(url);
+
+	// if "upload" dir doesn't exist, create it
+	QString uploadDir = pagepath + "/upload";
+	if (!QDir(uploadDir).exists())
+	{
+		QDir pageDir(pagepath);
+		if (!(pageDir.mkdir("upload")))
+		{
+			g_syslog.logMessage(SYSLOG_LEVEL_ERROR, "", "Unable create 'upload' dir.");
+			result.insert("status", "fail");
+			return;
+		}
+	}
+
+	QString fullfileName = uploadDir + "/" + filename;
+
+	if (seq == 0 && QFile(fullfileName).exists())
+	{
+		QFileInfo fi(fullfileName);
+
+		QString baseName = fi.baseName();
+		QString ext = fi.completeSuffix();
+
+		bool found = false;
+
+		for (int i = 1; i < 1000; i++)
+		{
+			QString _fullfilename = uploadDir + "/" + baseName + QString("-%1").arg(i) + "." + ext;
+
+			if (!(QFile(_fullfilename).exists()))
+			{
+				fullfileName = _fullfilename;
+				fileurl = url + "?op=viewfile&name=" + baseName + QString("-%1").arg(i) + "." + ext;
+
+				found = true;
+
+				UploadData rec;
+				rec.filename = baseName + QString("-%1").arg(i) + "." + ext;
+				rec.tid = tid;
+				rec.path = uploadDir;
+
+				g_uploadMgr.addRecord(tid, rec);
+
+				break;
+			}
+
+		}
+
+		if (!found)
+		{
+			// can't find proper name
+			return;
+		}
+	}
+	else if (seq == 0 && !(QFile(fullfileName).exists()))
+	{
+		UploadData rec;
+		rec.filename = filename;
+		rec.tid = tid;
+		rec.path = uploadDir;
+
+		g_uploadMgr.addRecord(tid, rec);
+	}
+	else if (seq != 0)
+	{
+		UploadData _rec;
+		if (!g_uploadMgr.getRecord(tid, _rec))
+			return;
+
+		QString _fullfilename = uploadDir + "/" + _rec.filename;
+		fileurl = url + "?op=viewfile&name=" + _rec.filename;
+
+		fullfileName = _fullfilename;
+	}
+
+	// write
+	QFile fd(fullfileName);
+
+	QFile::OpenMode mode = QIODevice::Append;
+	if (seq == 0)
+		mode = QFile::WriteOnly;
+
+	if (!fd.open(mode))
+	{
+		g_syslog.logMessage(SYSLOG_LEVEL_ERROR, "", "Failed to open file.");
+		result.insert("status", "fail");
+		return;
+	}
+
+	fd.write(chunkbytes);
 	fd.close();
 
 	result.insert("url", fileurl);

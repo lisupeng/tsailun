@@ -76,6 +76,7 @@ protected:
 	void handle_viewfile(CWF::Request &req, CWF::Response &response, REQ_CONTEXT &ctx);
 	void handle_listfile(CWF::Request &req, CWF::Response &response, REQ_CONTEXT &ctx);
 	void handle_upload(CWF::Request &req, CWF::Response &response, REQ_CONTEXT &ctx);
+	void handle_uploadchunk(CWF::Request &req, CWF::Response &response, REQ_CONTEXT &ctx);
 	void handle_register(CWF::Request &req, CWF::Response &response, REQ_CONTEXT &ctx);
 	void handle_listversion(CWF::Request &req, CWF::Response &response, REQ_CONTEXT &ctx);
 	void handle_restore(CWF::Request &req, CWF::Response &response, REQ_CONTEXT &ctx);
