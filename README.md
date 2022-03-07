@@ -6,7 +6,7 @@
 - Automatic document versioning
 - Support multiple document spaces (different spaces are usually used to host docs for different departments/teams)
 - Full text search across docs
-- Portable software, no installation required. By default no configuration required too.
+- Portable software, no installation required. By default no configuration required either.
 
 ## Release Download
 [download](https://github.com/lisupeng/tsailunreleases)
