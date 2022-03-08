@@ -6,6 +6,7 @@
 - Automatic document versioning
 - Support multiple document spaces (different spaces are usually used to host docs for different departments/teams)
 - Full text search across docs
+- Drop files into your doc
 - Portable software, no installation required. By default no configuration required either.
 
 ## Release Download
