@@ -43,7 +43,7 @@ public:
     //void write(const QJsonArray &array, bool writeContentType = true);
 
     //void write(QByteArray &&data);
-	void write(QByteArray &data);
+	void write(const QByteArray &data);
 
     //void write(const QByteArray &data, bool flush = true);
 

@@ -170,7 +170,7 @@ void Response::write(QByteArray &&data)
 }
 */
 
-void Response::write(QByteArray &data)
+void Response::write(const QByteArray &data)
 {
 	// avoid mem copy in the future
 	content = data;
