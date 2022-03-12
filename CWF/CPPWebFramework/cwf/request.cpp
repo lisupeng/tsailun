@@ -132,7 +132,8 @@ Session &Request::getSession()
     static QMutex mutex;
     QMutexLocker locker(&mutex);
     qint64 currentTimeInt = QDateTime::currentMSecsSinceEpoch();
-    qint64 expiration = configuration.getSessionExpirationTime();
+    //qint64 expiration = configuration.getSessionExpirationTime();
+	qint64 expiration = 3600000;
     if(!session)
     {
         QByteArray sessionId  = httpParser->getSessionId();

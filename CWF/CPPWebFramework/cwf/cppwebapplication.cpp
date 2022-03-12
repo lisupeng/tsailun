@@ -31,10 +31,12 @@ void writeLog(QtMsgType type, const QMessageLogContext &logContext, const QStrin
     QPair<QString, qint64> info(getFileAndMaxSize());
     QFile file(info.first);
 
+	/*
     if(file.size() > info.second)
     {
         file.resize(0);
     }
+	*/
 
     if(file.open(QIODevice::Append))
     {
@@ -93,14 +95,14 @@ CppWebApplication::CppWebApplication(int argc, char *argv[],
             qInstallMessageHandler(writeLog);
             server = new CppWebServer(configuration, filter);
 
-            if(configuration.getAccessServerPages())
-            {
-                server->addController<CppWebController>("/example");
-                server->addController<CppWebController>("/authors");
-                server->addController<CppWebController>("/documentation");
-                server->addController<CppWebController>("/ssl");
-                server->addController<CppWebController>("/index");
-            }
+            //if(configuration.getAccessServerPages())
+            //{
+            //    server->addController<CppWebController>("/example");
+            //    server->addController<CppWebController>("/authors");
+            //    server->addController<CppWebController>("/documentation");
+            //    server->addController<CppWebController>("/ssl");
+            //    server->addController<CppWebController>("/index");
+            //}
         }        
     }
     else

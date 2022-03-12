@@ -118,7 +118,7 @@ void Configuration::configure()
         sslKeyFile            = settings.value("sslKeyFile").toString();
         sslCertFile           = settings.value("sslCertFile").toString();
         sessionExpirationTime = settings.value("sessionExpirationTime").toInt();
-        maxUploadFile         = settings.value("maxUploadFile").toLongLong();
+		maxUploadFile = 10 * 1024 * 1024; // settings.value("maxUploadFile").toLongLong();
         indexPage             = settings.value("indexPage").toString();
         accessCPPWebIni       = settings.value("accessCPPWebIni").toBool();
         accessServerPages     = settings.value("accessServerPages").toBool();

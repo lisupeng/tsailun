@@ -38,9 +38,9 @@ class CPPWEBFRAMEWORKSHARED_EXPORT FilterChain final
      * @param name     : This is a reference to the QByteArray.
      * @param value    : This is a reference to the QByteArray.
      */
-    void write(Response &response, const QString &path, const QString &url, const QByteArray &name, const QByteArray &value) const;
+    //void write(Response &response, const QString &path, const QString &url, const QByteArray &name, const QByteArray &value) const;
 
-	void write_NoType(Response &response, const QString &path, const QString &url) const;
+	//void write_NoType(Response &response, const QString &path, const QString &url) const;
 public:
     /**
      * @brief FilterChain

@@ -6,8 +6,10 @@
 */
 
 #include "response.h"
+#include "request.h"
 #include "configuration.h"
 #include <QDateTime>
+#include <QFileInfo>
 
 CWF_BEGIN_NAMESPACE
 
@@ -82,23 +84,29 @@ void sendHeaders(int statusCode,
 void Response::flushBuffer()
 {
     const int max = 32768; // increase this ?
-    if(!content.isEmpty())
-    {
-        int timeOut = configuration.getTimeOut();
-        bool biggerThanLimit = content.size() > max;
-        headers.insert(HTTP::CONTENT_LENGTH, QByteArray::number(content.size()));
-        headers.insert(HTTP::SERVER, HTTP::SERVER_VERSION);
-        headers.insert(HTTP::DATA, QByteArray(QDateTime::currentDateTime().toString("ddd, dd MMM yyyy hh:mm:ss").toLatin1() + " GMT"));
+
+	int timeOut = 100000;//configuration.getTimeOut();
+	bool biggerThanLimit = content.size() > max;
+	headers.insert(HTTP::CONTENT_LENGTH, QByteArray::number(content.size()));
+	headers.insert(HTTP::SERVER, HTTP::SERVER_VERSION);
+	headers.insert(HTTP::DATA, QByteArray(QDateTime::currentDateTime().toString("ddd, dd MMM yyyy hh:mm:ss").toLatin1() + " GMT"));
+
+	if (biggerThanLimit)
+		headers.insert(HTTP::TRANSFER_ENCODING, HTTP::CHUNKED);
+
+	sendHeaders(statusCode, timeOut, statusText, headers, cookies, socket);
+
+
+    if (!content.isEmpty())
+	{
+
 
         if(!biggerThanLimit)
         {
-            sendHeaders(statusCode, timeOut, statusText, headers, cookies, socket);
             sendBytes(socket, content, timeOut);
         }
         else
         {
-            headers.insert(HTTP::TRANSFER_ENCODING, HTTP::CHUNKED);
-            sendHeaders(statusCode, timeOut, statusText, headers, cookies, socket);
             int total = (content.size() / max) + 1, last = 0;
 
             QVector<QByteArray> vetor;
@@ -120,18 +128,21 @@ void Response::flushBuffer()
             }
             sendBytes(socket, HTTP::END_OF_MESSAGE_WITH_ZERO, timeOut);
         }
-        socket.disconnectFromHost();
-        content.clear();
+
     }
+
+	socket.disconnectFromHost();
+	content.clear();
 }
 
 void Response::sendError(int sc, const QByteArray &msg)
 {
-    int timeOut = configuration.getTimeOut();
+	int timeOut = 1000000;// configuration.getTimeOut();
     sendHeaders(statusCode, timeOut, statusText, headers, cookies, socket);
     sendBytes(socket, "<html><body><h1>" + QByteArray::number(sc) + " " + msg + "</h1></body></html>", timeOut);
 }
 
+/*
 void Response::write(const QJsonObject &json, bool writeContentType)
 {
     if(writeContentType)
@@ -139,7 +150,9 @@ void Response::write(const QJsonObject &json, bool writeContentType)
     content = QJsonDocument(json).toJson();
     flushBuffer();
 }
+*/
 
+/*
 void Response::write(const QJsonArray &array, bool writeContentType)
 {
     if(writeContentType)
@@ -147,27 +160,148 @@ void Response::write(const QJsonArray &array, bool writeContentType)
     content = QJsonDocument(array).toJson();
     flushBuffer();
 }
+*/
 
+/*
 void Response::write(QByteArray &&data)
 {
     content = std::move(data);
     flushBuffer();
 }
+*/
 
+void Response::write(QByteArray &data)
+{
+	// avoid mem copy in the future
+	content = data;
+	flushBuffer();
+}
+
+/*
 void Response::write(const QByteArray &data, bool flush)
 {
     content += data;
     if(flush)
         flushBuffer();
 }
+*/
 
-void Response::write_large_file(const QString &filepath, QString contentType, QString contentDisposition)
+bool Response::handle_etag(Request &request, const QString &filepath)
+{
+	QByteArray etag = request.getHttpParser().getHeaderField("If-None-Match");
+
+	if (etag.size() == 0)
+		return false;
+
+	QString curEtag = getFileEtag(filepath);
+
+	if (curEtag.toUtf8() != etag)
+		return false;
+
+	setStatus(304, "Not Modified");
+
+	// send_data
+	QByteArray data;
+	write(data);
+
+	return true;
+}
+
+bool Response::handle_partialcontent(Request &request, const QString &filepath)
+{
+	QByteArray range = request.getHttpParser().getHeaderField("Range");
+
+	if (range.size() == 0)
+		return false;
+
+	QString srange = range;
+	srange = srange.remove("bytes=");
+
+	// split by '-'
+	QStringList list = srange.split('-');
+
+	if (list.size() <= 1)
+		return false;
+
+	qint64 start = list[0].toLongLong();
+	qint64 end = 0;
+
+	if (list.size() >= 2)
+		end = list[1].toLongLong();
+
+	QFile file(filepath);
+
+	if (!(file.open(QIODevice::ReadOnly)))
+		return false;
+
+	if (!file.seek(start))
+		return false;
+
+	// read a range between 1M and 20M
+	qint64 size;
+	if (end <= start)
+		size = 1 * 1024 * 1024;
+	else if (((end - start) >= 20 * 1024 * 1024) || ((end - start) <= 1 * 1024 * 1024))
+		size = 20 * 1024 * 1024;
+	else
+		size = (end - start) + 1;
+
+	QByteArray _data = file.read(size);
+
+	if (_data.size() <= 0)
+		return false;
+
+	size = _data.size();
+
+	end = start + size - 1;
+
+	addEtagToHeader(filepath);
+
+	// set range
+	QString contentRange = QString("bytes %1-%2/%3").arg(start).arg(end).arg(file.size());
+	headers.insert("Content-Range", contentRange.toUtf8());
+
+	setStatus(206, "Partial Content");
+
+	// send_data
+	write(_data);
+
+	return true;
+}
+
+QString Response::getFileEtag(const QString &filename)
+{
+	QFileInfo info(filename);
+	qint64 ts = info.lastModified().toMSecsSinceEpoch();
+	qint64 total = QFile(filename).size();
+	QString etag = QString::number(ts, 16) + "-" + QString::number(total, 16);
+
+	return etag;
+}
+
+void Response::addEtagToHeader(const QString &filename)
+{
+	QString etag = getFileEtag(filename);
+
+	headers.insert("ETag", etag.toUtf8());
+}
+
+void Response::write_file(Request &request, const QString &filepath, QString contentType, QString contentDisposition)
 {
 	//const int max = 32768;
-	const int max = 10 * 1024 * 1024;
+	const int max = 1 * 1024 * 1024;
 
-	headers.insert(CWF::HTTP::CONTENT_TYPE, contentType.toUtf8());
-	headers.insert("content-disposition", contentDisposition.toUtf8());
+	if (contentType.size() > 0)
+		headers.insert(CWF::HTTP::CONTENT_TYPE, contentType.toUtf8());
+
+	if (contentDisposition.size() > 0)
+		headers.insert("content-disposition", contentDisposition.toUtf8());
+
+	if (handle_etag(request, filepath))
+		return;
+
+	if (handle_partialcontent(request, filepath))
+		return;
 
 	QFile file(filepath);
 	qint64 filesize = file.size();
@@ -175,11 +309,13 @@ void Response::write_large_file(const QString &filepath, QString contentType, QS
 	if (!(file.open(QIODevice::ReadOnly)))
 		goto CLOSE_SOCKET;
 
-	int timeOut = configuration.getTimeOut();
+	int timeOut = 1000000;// configuration.getTimeOut();
 	bool biggerThanLimit = filesize > max;
 	headers.insert(HTTP::CONTENT_LENGTH, QByteArray::number(filesize));
 	headers.insert(HTTP::SERVER, HTTP::SERVER_VERSION);
 	headers.insert(HTTP::DATA, QByteArray(QDateTime::currentDateTime().toString("ddd, dd MMM yyyy hh:mm:ss").toLatin1() + " GMT"));
+
+	addEtagToHeader(filepath);
 
 	if (!biggerThanLimit)
 	{
@@ -225,7 +361,10 @@ void Response::sendRedirect(const QByteArray &url)
 {
     setStatus(Response::SC_SEE_OTHER, HTTP::SEE_OTHER);
     addHeader(HTTP::LOCATION, url);
-    write(HTTP::REDIRECT, true);
+    //write(HTTP::REDIRECT, true);
+
+	content += HTTP::REDIRECT;
+	flushBuffer();
 }
 
 const int Response::SC_CONTINUE = 100;

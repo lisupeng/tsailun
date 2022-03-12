@@ -18,6 +18,8 @@
 
 CWF_BEGIN_NAMESPACE
 
+class Request;
+
 class Configuration;
 /**
  * @brief The Response class is responsable to response a Http request.
@@ -36,15 +38,16 @@ public:
 
     ~Response() noexcept {}
 
-    void write(const QJsonObject &json, bool writeContentType = true);
+    //void write(const QJsonObject &json, bool writeContentType = true);
 
-    void write(const QJsonArray &array, bool writeContentType = true);
+    //void write(const QJsonArray &array, bool writeContentType = true);
 
-    void write(QByteArray &&data);
+    //void write(QByteArray &&data);
+	void write(QByteArray &data);
 
-    void write(const QByteArray &data, bool flush = true);
+    //void write(const QByteArray &data, bool flush = true);
 
-	void write_large_file(const QString &filepath, QString contentType, QString contentDisposition);
+	void write_file(Request &request, const QString &filepath, QString contentType = "", QString contentDisposition = "");
 
     void sendError(int sc, const QByteArray &msg);
 
@@ -141,6 +144,14 @@ public:
     static const int SC_GATEWAY_TIMEOUT;
 
     static const int SC_HTTP_VERSION_NOT_SUPPORTED;
+
+protected:
+	bool handle_partialcontent(Request &request, const QString &filepath);
+	bool handle_etag(Request &request, const QString &filepath);
+
+	void addEtagToHeader(const QString &filename);
+
+	QString getFileEtag(const QString &filename);
 };
 
 CWF_END_NAMESPACE

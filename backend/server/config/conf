@@ -2,10 +2,4 @@
 host=Any
 port=80
 maxThread=15
-cleanupInterval=60000
-timeOut=7200000
-sessionExpirationTime=3600000
-maxUploadFile=90000000000
-maxLogFile=100000000
 indexPage=/site.html
-accessServerPages=true

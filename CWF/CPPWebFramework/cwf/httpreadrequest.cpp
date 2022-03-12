@@ -137,7 +137,7 @@ bool HttpReadRequest::readBody(HttpParser &parser, Request &request, Response &r
 {
     qint64 contentLength = parser.contentLenght;
     QByteArray content(std::move(parser.body));
-    int maximumTime = configuration.getTimeOut() / 2;
+	int maximumTime = 1000000; configuration.getTimeOut() / 2;
     std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
 
     while(true)

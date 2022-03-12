@@ -2186,7 +2186,7 @@ void OpcodeHandler::handle_viewfile(CWF::Request &req, CWF::Response &response, 
 		QString disposition;
 		_buildContentType(name, contentType, disposition);
 
-		response.write_large_file(fullFilePath, contentType, disposition);
+		response.write_file(req, fullFilePath, contentType, disposition);
 
 		//response.write(file.readAll());
 	}

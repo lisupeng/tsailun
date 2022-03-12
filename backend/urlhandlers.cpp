@@ -313,7 +313,7 @@ protected:
 
 	void send_response_msg(CWF::Response &response, const char *msg) const
 	{
-		response.write(msg);
+		response.write(QByteArray(msg));
 	}
 
 	bool sessionCheck(QString sid) const
