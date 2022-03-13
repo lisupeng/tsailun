@@ -19,17 +19,73 @@ Response::Response(QTcpSocket &socket, const Configuration &configuration) : soc
 {
 }
 
-void sendBytes(QTcpSocket &socket, const QByteArray &text, int timeOut)
+static bool waitForSend(QTcpSocket &socket)
 {
-    if(socket.ConnectingState > 0 && text.size() > 0)
-    {
-        socket.write(text, text.size());
-        socket.flush();
+	int retry = 0;
+	qint64 left = -1;
+	qint64 left_last = -1;
 
-        if(socket.ConnectingState > 0)
-        {
-            socket.waitForBytesWritten(timeOut);
-        }
+	do
+	{
+		socket.flush();
+
+		if (socket.ConnectingState > 0)
+		{
+			socket.waitForBytesWritten(60 * 1000);
+		}
+		else
+		{
+			return false;
+		}
+
+		left = socket.bytesToWrite();
+
+		if (left == 0)
+			break;
+
+		if (left_last != -1 && left == left_last)
+			return false;
+
+		left_last = left;
+
+		retry++;
+
+	} while ((left > 0) && retry <= 60);
+
+	if (left == 0)
+		return true;
+	else
+		return false;
+}
+
+static void sendBytes(QTcpSocket &socket, const QByteArray &bytes, int timeOutms)
+{
+	qint64 total = bytes.size();
+	qint64 bytes_left = total;
+
+	int retry = 0;
+    if(socket.ConnectingState > 0 && bytes.size() > 0)
+    {
+		while (bytes_left > 0 && retry <= 20)
+		{
+			qint64 ret = socket.write((bytes.data()) + (total - bytes_left), bytes_left);
+			if (ret >= 0)
+				bytes_left -= ret;
+			else
+				return;
+
+			if (bytes_left == 0)
+				break;
+
+			QThread::msleep(20);
+			retry++;
+		}
+        //socket.flush();
+
+        //if(socket.ConnectingState > 0)
+        //{
+        //    socket.waitForBytesWritten(timeOut);
+        //}
     }
 }
 
@@ -85,7 +141,7 @@ void Response::flushBuffer()
 {
     const int max = 32768; // increase this ?
 
-	int timeOut = 100000;//configuration.getTimeOut();
+	int timeOut = 3600000;//configuration.getTimeOut();
 	bool biggerThanLimit = content.size() > max;
 	headers.insert(HTTP::CONTENT_LENGTH, QByteArray::number(content.size()));
 	headers.insert(HTTP::SERVER, HTTP::SERVER_VERSION);
@@ -131,13 +187,15 @@ void Response::flushBuffer()
 
     }
 
+	waitForSend(socket);
+
 	socket.disconnectFromHost();
 	content.clear();
 }
 
 void Response::sendError(int sc, const QByteArray &msg)
 {
-	int timeOut = 1000000;// configuration.getTimeOut();
+	int timeOut = 3600000;// configuration.getTimeOut();
     sendHeaders(statusCode, timeOut, statusText, headers, cookies, socket);
     sendBytes(socket, "<html><body><h1>" + QByteArray::number(sc) + " " + msg + "</h1></body></html>", timeOut);
 }
@@ -309,7 +367,7 @@ void Response::write_file(Request &request, const QString &filepath, QString con
 	if (!(file.open(QIODevice::ReadOnly)))
 		goto CLOSE_SOCKET;
 
-	int timeOut = 1000000;// configuration.getTimeOut();
+	int timeOut = 3600000;// configuration.getTimeOut();
 	bool biggerThanLimit = filesize > max;
 	headers.insert(HTTP::CONTENT_LENGTH, QByteArray::number(filesize));
 	headers.insert(HTTP::SERVER, HTTP::SERVER_VERSION);
@@ -347,7 +405,10 @@ void Response::write_file(Request &request, const QString &filepath, QString con
 
 CLOSE_SOCKET:
 
+	waitForSend(socket);
+
 	socket.disconnectFromHost();
+	socket.close();
 	content.clear();
 }
 

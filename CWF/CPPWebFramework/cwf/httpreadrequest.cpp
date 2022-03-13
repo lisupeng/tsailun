@@ -59,8 +59,8 @@ void HttpReadRequest::buildSocket()
 void HttpReadRequest::run()
 {
     buildSocket();
-    maxUploadFile = configuration.getMaxUploadFile();
-    socket->setReadBufferSize(maxUploadFile);
+    //maxUploadFile = configuration.getMaxUploadFile();
+    //socket->setReadBufferSize(maxUploadFile);
     if(socket->ConnectedState > 0)
     {
         if(socket->waitForReadyRead())
@@ -137,12 +137,12 @@ bool HttpReadRequest::readBody(HttpParser &parser, Request &request, Response &r
 {
     qint64 contentLength = parser.contentLenght;
     QByteArray content(std::move(parser.body));
-	int maximumTime = 1000000; configuration.getTimeOut() / 2;
+	int maximumTime = 3600000; //configuration.getTimeOut() / 2;
     std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
 
     while(true)
     {
-        if(socket->waitForReadyRead(10))
+        if(socket->waitForReadyRead(2000))
         {
             if (content.size() > maxUploadFile) {
                 socket->readAll();// what if the  internal buffer throws a
