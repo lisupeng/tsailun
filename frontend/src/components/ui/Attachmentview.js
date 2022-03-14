@@ -223,7 +223,7 @@ class AttachementView extends React.Component {
                               <a
                                 href={
                                   window.location.pathname +
-                                  "?op=viewfile&name=" +
+                                  "/upload/" +
                                   value
                                 }
                                 download={value}

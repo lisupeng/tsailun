@@ -2089,76 +2089,6 @@ void OpcodeHandler::handle_dirinfo(CWF::Request &req, CWF::Response &response, R
 	return;
 }
 
-static void _buildContentType(const QString &name, QString &contentType, QString &disposition)
-{
-	// TODO use parser tree to improve performance if necessary
-	if (name.endsWith(".jpg", Qt::CaseInsensitive))
-	{
-		contentType = "image/jpeg";
-		disposition = "inline; filename=" + name.toUtf8();
-	}
-	else if (name.endsWith(".jpeg", Qt::CaseInsensitive))
-	{
-		contentType = "image/jpeg";
-		disposition = "inline; filename=" + name.toUtf8();
-	}
-	else if (name.endsWith(".png", Qt::CaseInsensitive))
-	{
-		contentType = "image/png";
-		disposition = "inline; filename=" + name.toUtf8();
-	}
-	else if (name.endsWith(".gif", Qt::CaseInsensitive))
-	{
-		contentType = "image/gif";
-		disposition = "inline; filename=" + name.toUtf8();
-	}
-	else if (name.endsWith(".mp3", Qt::CaseInsensitive))
-	{
-		contentType = "audio/mp3";
-		disposition = "inline; filename=" + name.toUtf8();
-	}
-	else if (name.endsWith(".wav", Qt::CaseInsensitive))
-	{
-		contentType = "audio/wav";
-		disposition = "inline; filename=" + name.toUtf8();
-	}
-	else if (name.endsWith(".mp4", Qt::CaseInsensitive))
-	{
-		contentType = "video/mpeg4";
-		disposition = "inline; filename=" + name.toUtf8();
-	}
-	else if (name.endsWith(".pdf", Qt::CaseInsensitive))
-	{
-		contentType = "application/pdf";
-		disposition = "inline; filename=" + name.toUtf8();
-	}
-	else if (name.endsWith(".html", Qt::CaseInsensitive))
-	{
-		contentType = "text/html";
-		disposition = "inline; filename=" + name.toUtf8();
-	}
-	else if (name.endsWith(".htm", Qt::CaseInsensitive))
-	{
-		contentType = "text/htm";
-		disposition = "inline; filename=" + name.toUtf8();
-	}
-	else if (name.endsWith(".txt", Qt::CaseInsensitive))
-	{
-		contentType = "text/plain";
-		disposition = "inline; filename=" + name.toUtf8();
-	}
-	else if (name.endsWith(".svg", Qt::CaseInsensitive))
-	{
-		contentType = "text/xml";
-		disposition = "inline; filename=" + name.toUtf8();
-	}
-	else
-	{
-		contentType = "application/octet-stream";
-		disposition = "attachment; filename=" + name.toUtf8();
-	}
-}
-
 void OpcodeHandler::handle_viewfile(CWF::Request &req, CWF::Response &response, REQ_CONTEXT &ctx)
 {
 	QByteArray __url_ = req.getHttpParser().getUrl();
@@ -2184,7 +2114,7 @@ void OpcodeHandler::handle_viewfile(CWF::Request &req, CWF::Response &response, 
 	{
 		QString contentType;
 		QString disposition;
-		_buildContentType(name, contentType, disposition);
+		buildContentType(name, contentType, disposition);
 
 		response.write_file(req, fullFilePath, contentType, disposition);
 
@@ -2407,7 +2337,7 @@ void OpcodeHandler::handle_uploadchunk(CWF::Request &req, CWF::Response &respons
 
 	QByteArray chunkbytes = QByteArray::fromBase64(chunkdata.toLatin1());
 
-	QString fileurl = url + "?op=viewfile&name=" + QUrl::toPercentEncoding(filename);
+	QString fileurl = url + "/upload/" + QUrl::toPercentEncoding(filename);
 
 	QString pagepath = getSpaceAndPagePathByUrl(url);
 
@@ -2442,7 +2372,7 @@ void OpcodeHandler::handle_uploadchunk(CWF::Request &req, CWF::Response &respons
 			if (!(QFile(_fullfilename).exists()))
 			{
 				fullfileName = _fullfilename;
-				fileurl = url + "?op=viewfile&name=" + baseName + QString("-%1").arg(i) + "." + ext;
+				fileurl = url + "/upload/" + baseName + QString("-%1").arg(i) + "." + ext;
 
 				found = true;
 
@@ -2480,7 +2410,7 @@ void OpcodeHandler::handle_uploadchunk(CWF::Request &req, CWF::Response &respons
 			return;
 
 		QString _fullfilename = uploadDir + "/" + _rec.filename;
-		fileurl = url + "?op=viewfile&name=" + _rec.filename;
+		fileurl = url + "/upload/" + _rec.filename;
 
 		fullfileName = _fullfilename;
 	}

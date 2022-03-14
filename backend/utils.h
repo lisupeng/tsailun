@@ -43,5 +43,7 @@ QString getSpaceAndPagePathByUrl(QString url);
 
 bool    sendMail();
 
+void    buildContentType(const QString &name, QString &contentType, QString &disposition);
+
 
 #endif // _UTILS_H

@@ -221,3 +221,73 @@ bool sendMail()
 	smtp.quit();
 	return true;
 }
+
+void buildContentType(const QString &name, QString &contentType, QString &disposition)
+{
+	// TODO use parser tree to improve performance if necessary
+	if (name.endsWith(".jpg", Qt::CaseInsensitive))
+	{
+		contentType = "image/jpeg";
+		disposition = "inline; filename=" + name.toUtf8();
+	}
+	else if (name.endsWith(".jpeg", Qt::CaseInsensitive))
+	{
+		contentType = "image/jpeg";
+		disposition = "inline; filename=" + name.toUtf8();
+	}
+	else if (name.endsWith(".png", Qt::CaseInsensitive))
+	{
+		contentType = "image/png";
+		disposition = "inline; filename=" + name.toUtf8();
+	}
+	else if (name.endsWith(".gif", Qt::CaseInsensitive))
+	{
+		contentType = "image/gif";
+		disposition = "inline; filename=" + name.toUtf8();
+	}
+	else if (name.endsWith(".mp3", Qt::CaseInsensitive))
+	{
+		contentType = "audio/mp3";
+		disposition = "inline; filename=" + name.toUtf8();
+	}
+	else if (name.endsWith(".wav", Qt::CaseInsensitive))
+	{
+		contentType = "audio/wav";
+		disposition = "inline; filename=" + name.toUtf8();
+	}
+	else if (name.endsWith(".mp4", Qt::CaseInsensitive))
+	{
+		contentType = "video/mpeg4";
+		disposition = "inline; filename=" + name.toUtf8();
+	}
+	else if (name.endsWith(".pdf", Qt::CaseInsensitive))
+	{
+		contentType = "application/pdf";
+		disposition = "inline; filename=" + name.toUtf8();
+	}
+	else if (name.endsWith(".html", Qt::CaseInsensitive))
+	{
+		contentType = "text/html";
+		disposition = "inline; filename=" + name.toUtf8();
+	}
+	else if (name.endsWith(".htm", Qt::CaseInsensitive))
+	{
+		contentType = "text/htm";
+		disposition = "inline; filename=" + name.toUtf8();
+	}
+	else if (name.endsWith(".txt", Qt::CaseInsensitive))
+	{
+		contentType = "text/plain";
+		disposition = "inline; filename=" + name.toUtf8();
+	}
+	else if (name.endsWith(".svg", Qt::CaseInsensitive))
+	{
+		contentType = "text/xml";
+		disposition = "inline; filename=" + name.toUtf8();
+	}
+	else
+	{
+		contentType = "application/octet-stream";
+		disposition = "attachment; filename=" + name.toUtf8();
+	}
+}

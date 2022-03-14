@@ -300,8 +300,11 @@ bool Response::handle_partialcontent(Request &request, const QString &filepath)
 	qint64 size;
 	if (end <= start)
 		size = 1 * 1024 * 1024;
+
+	/*
 	else if (((end - start) >= 20 * 1024 * 1024) || ((end - start) <= 1 * 1024 * 1024))
 		size = 20 * 1024 * 1024;
+		*/
 	else
 		size = (end - start) + 1;
 

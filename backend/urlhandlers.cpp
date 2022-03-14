@@ -147,6 +147,18 @@ void _handleSignIn(QString data, QJsonObject &result)
 	result.insert("status", "ok");
 }
 
+static bool access_upload_file(const QString &url)
+{
+	QStringList list = url.split("/");
+	int n = list.size();
+
+	QString upload = list.at(n - 2);
+	if (upload != "upload")
+		return false;
+	else
+		return true;
+}
+
 
 class TslController : public CWF::Controller
 {
@@ -244,14 +256,20 @@ protected:
 			else
 				response.sendRedirect("/signin");
 		}
-
+		else if (url.startsWith("/file/"))
+		{
+			//handle_file_access(req, response);
+		}
 		else if (url == (URL_SIGNIN) || url == (URL_SIGNUP))
 		{
 			handle_frontend_routing(response);
 		}
 		else if (url.startsWith("/spaces"))
 		{
-			handle_frontend_routing(response);
+			if (access_upload_file(url))
+				handle_file_access(req, response);
+			else
+				handle_frontend_routing(response);
 		}
 		else if (url.startsWith("/admin") || url.startsWith("/search"))
 		{
@@ -329,6 +347,52 @@ protected:
 	{
 		_handleSignIn(data, result);
 	}
+
+	void handle_file_access(CWF::Request &req, CWF::Response &response) const
+	{
+		QByteArray __url_ = req.getHttpParser().getUrl();
+		QString url = QString::fromUtf8(QByteArray::fromPercentEncoding(__url_));
+
+		// TODO-3 check permission
+
+		static QString appRootPath = "";
+
+		if (appRootPath == "")
+		{
+			ConfigMgr *cfgMgr = ConfigMgr::GetInstance();
+			appRootPath = cfgMgr->getAppRootDir();
+		}
+
+		QString fullFilePath = appRootPath + "/data" + url;
+
+		QStringList list = url.split("/");
+		int n = list.size();
+
+		QString upload = list.at(n-2);
+		if (upload != "upload")
+			return;
+
+		QString name = list.at(n - 1);
+
+		QFile file(fullFilePath);
+		if (file.exists())
+		{
+			QString contentType;
+			QString disposition;
+			buildContentType(name, contentType, disposition);
+
+			response.write_file(req, fullFilePath, contentType, disposition);
+
+			//response.write(file.readAll());
+		}
+		else
+		{
+			response.sendError(0, "Unable to read file");
+		}
+
+		return;
+
+	}
 };
 
 
@@ -337,6 +401,7 @@ void InitUrlHandlers(ServerApp &server)
 	server.addController<TslController>("/");
 	server.addController<TslController>("/spaces");
 	server.addController<TslController>("/spaces/*");
+	server.addController<TslController>("/file/*");
 	server.addController<TslController>(URL_SIGNIN);
 	server.addController<TslController>(URL_SIGNUP);
 	server.addController<TslController>("/auth");
