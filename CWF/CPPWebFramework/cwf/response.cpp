@@ -190,6 +190,7 @@ void Response::flushBuffer()
 	waitForSend(socket);
 
 	socket.disconnectFromHost();
+	socket.close();
 	content.clear();
 }
 

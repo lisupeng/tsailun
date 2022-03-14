@@ -75,7 +75,7 @@ function readfilewrapper (file) {
 
 async function upload(file, successCallback, failureCallback, progressCallback) {
     
-    const chunk_size = 10 * 1024 * 1024;
+    const chunk_size = 1 * 1024 * 1024;
     
     //const chunk_size = 30 * 1024;
     

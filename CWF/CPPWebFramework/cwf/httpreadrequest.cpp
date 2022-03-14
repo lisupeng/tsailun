@@ -59,8 +59,8 @@ void HttpReadRequest::buildSocket()
 void HttpReadRequest::run()
 {
     buildSocket();
-    //maxUploadFile = configuration.getMaxUploadFile();
-    //socket->setReadBufferSize(maxUploadFile);
+    maxUploadFile = configuration.getMaxUploadFile();
+    socket->setReadBufferSize(10*1024*1024);
     if(socket->ConnectedState > 0)
     {
         if(socket->waitForReadyRead())
@@ -142,7 +142,7 @@ bool HttpReadRequest::readBody(HttpParser &parser, Request &request, Response &r
 
     while(true)
     {
-        if(socket->waitForReadyRead(2000))
+        if(socket->waitForReadyRead(200))
         {
             if (content.size() > maxUploadFile) {
                 socket->readAll();// what if the  internal buffer throws a
