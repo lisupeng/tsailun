@@ -317,11 +317,11 @@ export default function Editorwrap() {
 
                   plugins: [
                     "advlist autolink lists link image charmap print preview anchor",
-                    "searchreplace visualblocks code fullscreen",
-                    "insertdatetime media table powerpaste code help wordcount attachment", // DON'T use paste plugin, otherwise unable paste images.
+                    "searchreplace visualblocks fullscreen",
+                    "insertdatetime media table powerpaste code help wordcount attachment toc codesample", // DON'T use paste plugin, otherwise unable paste images.
                   ],
                   toolbar: [
-                    "undo redo | bold italic underline strikethrough forecolor backcolor | fontselect | fontsizeselect | formatselect| bullist numlist | lineheight outdent indent alignleft aligncenter alignright alignjustify | table image link anchor | removeformat attachment",
+                    "undo redo | bold italic underline strikethrough forecolor backcolor | fontselect | fontsizeselect | formatselect | toc | bullist numlist | lineheight outdent indent alignleft aligncenter alignright alignjustify | table image link anchor | removeformat codesample attachment",
                   ],
                   content_style: content_style,
                   relative_urls: false,

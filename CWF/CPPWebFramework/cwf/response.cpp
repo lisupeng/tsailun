@@ -58,7 +58,7 @@ static bool waitForSend(QTcpSocket &socket)
 		return false;
 }
 
-static void sendBytes(QTcpSocket &socket, const QByteArray &bytes, int timeOutms)
+static void sendBytes(QTcpSocket &socket, const QByteArray &bytes, int timeOutms = 0, bool wait = false)
 {
 	qint64 total = bytes.size();
 	qint64 bytes_left = total;
@@ -80,6 +80,9 @@ static void sendBytes(QTcpSocket &socket, const QByteArray &bytes, int timeOutms
 			QThread::msleep(20);
 			retry++;
 		}
+
+		if (wait)
+			waitForSend(socket);
         //socket.flush();
 
         //if(socket.ConnectingState > 0)
@@ -179,7 +182,7 @@ void Response::flushBuffer()
                 {
                     sendBytes(socket, (QByteArray::number(data.size(), 16) + HTTP::END_LINE), timeOut);
                     sendBytes(socket, data, timeOut);
-                    sendBytes(socket, HTTP::END_LINE, timeOut);
+                    sendBytes(socket, HTTP::END_LINE, timeOut, true);
                 }
             }
             sendBytes(socket, HTTP::END_OF_MESSAGE_WITH_ZERO, timeOut);
@@ -198,7 +201,7 @@ void Response::sendError(int sc, const QByteArray &msg)
 {
 	int timeOut = 3600000;// configuration.getTimeOut();
     sendHeaders(statusCode, timeOut, statusText, headers, cookies, socket);
-    sendBytes(socket, "<html><body><h1>" + QByteArray::number(sc) + " " + msg + "</h1></body></html>", timeOut);
+    sendBytes(socket, "<html><body><h1>" + QByteArray::number(sc) + " " + msg + "</h1></body></html>", timeOut, true);
 }
 
 /*
@@ -401,7 +404,7 @@ void Response::write_file(Request &request, const QString &filepath, QString con
 			{
 				sendBytes(socket, (QByteArray::number(data.size(), 16) + HTTP::END_LINE), timeOut);
 				sendBytes(socket, data, timeOut);
-				sendBytes(socket, HTTP::END_LINE, timeOut);
+				sendBytes(socket, HTTP::END_LINE, timeOut, true);
 			}
 		}
 		sendBytes(socket, HTTP::END_OF_MESSAGE_WITH_ZERO, timeOut);

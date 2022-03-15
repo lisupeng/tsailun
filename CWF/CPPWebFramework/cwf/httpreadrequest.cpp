@@ -60,7 +60,7 @@ void HttpReadRequest::run()
 {
     buildSocket();
     maxUploadFile = configuration.getMaxUploadFile();
-    socket->setReadBufferSize(10*1024*1024);
+    socket->setReadBufferSize(100*1024*1024);
     if(socket->ConnectedState > 0)
     {
         if(socket->waitForReadyRead())
