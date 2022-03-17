@@ -9,7 +9,7 @@
 - Drop files into your doc
 - Portable software, no installation required. By default no configuration required either.
 
-## Release Download
+## Download Release
 [download](https://github.com/lisupeng/tsailunreleases)
 
 ## Livedemo
@@ -67,7 +67,7 @@ Admin account and password: admin/admin
 - Email notification & mention
 - Index based search
 - SSO
-- Replace CWF with nginx
+- Performance improvement & Replace CWF with nginx
 
 ## Contact
 Any question, feel free to contact me: 11954794#qq.com (replace # with @)
