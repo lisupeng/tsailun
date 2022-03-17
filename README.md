@@ -64,10 +64,12 @@ Admin account and password: admin/admin
 
 ## Dev Plan
 - UI Improvement
+- SVG editing inline
 - Email notification & mention
 - Index based search
 - SSO
 - Performance improvement & Replace CWF with nginx
+- Docs & Video tutorial
 
 ## Contact
 Any question, feel free to contact me: 11954794#qq.com (replace # with @)
