@@ -35,6 +35,9 @@ Build Steps: please refer to tsailun/doc/Howtobuild.md
 #### Drop files into Doc
 ![fileattachment-new](https://user-images.githubusercontent.com/97643149/155987297-f0456561-6407-45b0-9b20-520d60bd855c.png)
 
+#### Video files can be played inline
+![video_inline-2](https://user-images.githubusercontent.com/97643149/158757260-a618498b-5d45-4f81-93f7-8aeec52db936.PNG)
+
 #### Automatic Versioning
 ![versioning](https://user-images.githubusercontent.com/97643149/154652101-fbbb0080-2b1e-4d91-b682-b6ca9911d1db.jpg)
 
