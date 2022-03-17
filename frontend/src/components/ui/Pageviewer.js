@@ -352,7 +352,7 @@ class Pageviewer extends React.Component {
         <div
           id="pgviewer"
           dangerouslySetInnerHTML={{
-            __html: "<style>p{ margin:2px 0}</style>" + this.msg,
+            __html: "<style>p{ margin:2px 0}</style>" + '<style type="text/css"> @import "/tinymce/js/tinymce/skins/ui/oxide/content.min.css" </style>' + this.msg,
           }}
         ></div>
       </>

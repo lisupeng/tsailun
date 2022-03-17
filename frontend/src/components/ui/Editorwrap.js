@@ -332,6 +332,7 @@ export default function Editorwrap() {
                   attachment_max_size: 1000 * 1000 * 1024 * 1024,
                   attachment_assets_path: '/misc/assets/icons/',
                   attachment_upload_handler: upload,
+                  toc_depth: '6',
                   
                   /*block_unsupported_drop: false*/
                   

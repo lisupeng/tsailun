@@ -235,6 +235,11 @@ void buildContentType(const QString &name, QString &contentType, QString &dispos
 		contentType = "image/jpeg";
 		disposition = "inline; filename=" + name.toUtf8();
 	}
+	else if (name.endsWith(".jfif", Qt::CaseInsensitive))
+	{
+		contentType = "image/jpeg";
+		disposition = "inline; filename=" + name.toUtf8();
+	}
 	else if (name.endsWith(".png", Qt::CaseInsensitive))
 	{
 		contentType = "image/png";
