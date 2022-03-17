@@ -62,6 +62,13 @@ Build Steps: please refer to tsailun/doc/Howtobuild.md
 ## Note
 Admin account and password: admin/admin
 
+## Dev Plan
+- UI Improvement
+- Email notification & mention
+- Index based search
+- SSO
+- Replace CWF with nginx
+
 ## Contact
 Any question, feel free to contact me: 11954794#qq.com (replace # with @)
 
