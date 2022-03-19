@@ -318,10 +318,10 @@ export default function Editorwrap() {
                   plugins: [
                     "advlist autolink lists link image charmap print preview anchor",
                     "searchreplace visualblocks fullscreen",
-                    "insertdatetime media table powerpaste code help wordcount attachment toc codesample", // DON'T use paste plugin, otherwise unable paste images.
+                    "insertdatetime media table powerpaste code help wordcount attachment toc", // DON'T use paste plugin, otherwise unable paste images.
                   ],
                   toolbar: [
-                    "undo redo | bold italic underline strikethrough forecolor backcolor | fontselect | fontsizeselect | formatselect | toc | bullist numlist | lineheight outdent indent alignleft aligncenter alignright alignjustify | table image link anchor | removeformat codesample attachment",
+                    "undo redo | bold italic underline strikethrough forecolor backcolor | fontselect | fontsizeselect | formatselect | toc | bullist numlist | lineheight outdent indent alignleft aligncenter alignright alignjustify | table image link anchor | removeformat attachment",
                   ],
                   content_style: content_style,
                   relative_urls: false,

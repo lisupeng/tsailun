@@ -146,7 +146,15 @@ function DelPageDlgText(props) {
   return <>{text}</>;
 }
 
-const initialDrawerWidth = 240;
+function getTreeViewWidth()
+{
+    if (Utils.windowIsNarrow())
+        return 240;
+    else
+        return 325;
+}
+
+const initialDrawerWidth = getTreeViewWidth();
 
 function jsonpReq(url, id) {
     var script = window.document.getElementById(id);
@@ -1790,10 +1798,10 @@ function MainViewContent() {
             theme.palette.mode === 'light'
               ? theme.palette.grey[100]
               : theme.palette.grey[900],*/
-          backgroundColor: (theme) =>
+          backgroundColor: "#ffffff",/*(theme) => 
             theme.palette.mode === "light" && !Utils.windowIsNarrow()
               ? theme.palette.grey[100]
-              : "#ffffff",
+              : "#ffffff",*/
           flexGrow: 1,
           height: "100vh",
           overflow: "auto",
@@ -1801,12 +1809,18 @@ function MainViewContent() {
       >
         <Toolbar id="ref_bar" />
         <Container
+          id="tsl_container"
           maxWidth="lg"
           disableGutters={editting === true}
           sx={{
             mt: 0,
             mb: 0,
+            ml: 0,
+            //mr: 0,
             backgroundColor: "#ffffff",
+            //border: 1,
+            borderRight: 1,
+            borderColor: "#f0f0f0",
             minHeight: `calc(100vh - ${Globaldata.appBarHeight}px)`,
           }}
         >
