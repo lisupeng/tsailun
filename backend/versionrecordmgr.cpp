@@ -21,21 +21,25 @@
 #include <QSqlRecord>
 #include <QLockFile>
 #include "versionrecordmgr.h"
+#include <QThread>
 
 #define GET_DATABASE(dbfile) \
            QSqlDatabase database; \
            do { \
-               	QLockFile filelock(dbfile + ".lock"); \
-                if (filelock.lock()) { \
-	                database = QSqlDatabase::addDatabase("QSQLITE"); \
+	                char szName[64]; \
+                    sprintf(szName, "versiondb_conn_%p", QThread::currentThreadId()); \
+                    QString connName = szName; \
+	                database = QSqlDatabase::addDatabase("QSQLITE", connName); \
                     database.setDatabaseName(dbfile); \
                     database.open(); \
-                } \
 		   } while (0);
 
 VersionRecordMgr::VersionRecordMgr(const QString &path)
 {
 	m_dbFile = path + "/versions.db";
+	m_plockFile = new QLockFile(m_dbFile+".lock");
+
+	m_plockFile->lock();
 
 	if (!_initTable())
 	{
@@ -47,7 +51,8 @@ VersionRecordMgr::VersionRecordMgr(const QString &path)
 
 VersionRecordMgr::~VersionRecordMgr()
 {
-
+	m_plockFile->unlock();
+	delete m_plockFile;
 }
 
 bool VersionRecordMgr::_initTable()

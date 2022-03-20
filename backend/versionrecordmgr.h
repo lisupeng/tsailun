@@ -23,6 +23,7 @@
 #include <QSqlDatabase>
 #include <QJsonObject>
 #include <QJsonArray>
+#include <QLockFile>
 
 class VersionRecordMgr
 {
@@ -49,6 +50,7 @@ protected:
 
 protected:
 	QString       m_dbFile;
+	QLockFile    *m_plockFile;
 };
 
 #endif // _VERSIONRECORDMGR_H

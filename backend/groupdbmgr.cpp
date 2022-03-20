@@ -42,11 +42,6 @@ GroupDbMgr::~GroupDbMgr()
 bool GroupDbMgr::init()
 {
 	QMutexLocker autolock(m_mutex);
-	QSqlDatabase  database;
-	if (!__getDbConnections(database))
-	{
-		return false;
-	}
 
 	if (!init_group_table())
 	{
@@ -74,8 +69,11 @@ bool GroupDbMgr::init_group_table()
 
 	if (!sql_query.exec())
 	{
+		database.close();
 		return false;
 	}
+
+	database.close();
 
 	return true;
 }
@@ -98,6 +96,7 @@ bool GroupDbMgr::addGroup(const QString &groupName, const QString &comment)
 	sql_query.prepare(sql);
 	if (!sql_query.exec())
 	{
+		database.close();
 		return false;
 	}
 
@@ -106,8 +105,11 @@ bool GroupDbMgr::addGroup(const QString &groupName, const QString &comment)
 	sql_query.prepare(sql);
 	if (!sql_query.exec())
 	{
+		database.close();
 		return false;
 	}
+
+	database.close();
 
 	return true;
 }
@@ -131,6 +133,7 @@ bool GroupDbMgr::delGroup(const QString &groupName)
 
 	if (!sql_query.exec())
 	{
+		database.close();
 		return false;
 	}
 
@@ -141,8 +144,11 @@ bool GroupDbMgr::delGroup(const QString &groupName)
 
 	if (!sql_query.exec())
 	{
+		database.close();
 		return false;
 	}
+
+	database.close();
 
 	return true;
 }
@@ -165,8 +171,11 @@ bool GroupDbMgr::addUserToGroup(const QString &groupName, const QString &useracc
 	sql_query.prepare(sql);
 	if (!sql_query.exec())
 	{
+		database.close();
 		return false;
 	}
+
+	database.close();
 
 	return true;
 }
@@ -191,6 +200,7 @@ bool GroupDbMgr::getGroupList(QJsonArray &list)
 
 	if (!sql_query.exec())
 	{
+		database.close();
 		return false;
 	}
 
@@ -204,6 +214,8 @@ bool GroupDbMgr::getGroupList(QJsonArray &list)
 		recordToJson(rec, sql_query, jsonobj);
 		list.append(jsonobj);
 	}
+
+	database.close();
 
 	return true;
 }
@@ -222,38 +234,22 @@ bool GroupDbMgr::__getDbConnections(QSqlDatabase &database)
 {
 	Qt::HANDLE threadId = QThread::currentThreadId();
 
-	QSqlDatabase db;
-
-	if (m_dbConnections.contains(threadId))
-	{
-		db = m_dbConnections[threadId];
-	}
-
-	if (db.isValid() && db.isOpen())
-	{
-		database = db;
-		return true;
-	}
-
 	// create one
 	ConfigMgr *cfgMgr = ConfigMgr::GetInstance();
 	QString appRootPath = cfgMgr->getAppRootDir();
-	QString userDbFile = appRootPath + "/data/db/groups.db";
+	QString groupDbFile = appRootPath + "/data/db/groups.db";
 
 	char szName[64];
-	sprintf(szName, "conn_%p", threadId);
+	sprintf(szName, "groupdb_conn_%p", threadId);
 	QString connName = szName;
-	db = QSqlDatabase::addDatabase("QSQLITE", connName);
+	database = QSqlDatabase::addDatabase("QSQLITE", connName);
 
-	db.setDatabaseName(userDbFile);
+	database.setDatabaseName(groupDbFile);
 
-	if (!db.open())
+	if (!database.open() || !database.isValid())
 	{
 		return false;
 	}
-
-	m_dbConnections[threadId] = db;
-	database = db;
 
 	return true;
 }
@@ -278,6 +274,7 @@ bool GroupDbMgr::getGroupInfo(const QString &groupName, QJsonObject &groupinfo)
 
 	if (!sql_query.exec())
 	{
+		database.close();
 		return false;
 	}
 
@@ -287,6 +284,7 @@ bool GroupDbMgr::getGroupInfo(const QString &groupName, QJsonObject &groupinfo)
 	 
 	if (!sql_query.next())
 	{
+		database.close();
 		return false;
 	}
 
@@ -298,6 +296,8 @@ bool GroupDbMgr::getGroupInfo(const QString &groupName, QJsonObject &groupinfo)
 	{
 		groupinfo.insert("userlist", userlist);
 	}
+
+	database.close();
 
 	return true;
 }
@@ -322,6 +322,7 @@ bool GroupDbMgr::updateGroup(const QString &groupName, const QString &comment, c
 	sql_query.prepare(sql);
 	if (!sql_query.exec())
 	{
+		database.close();
 		return false;
 	}
 
@@ -330,6 +331,7 @@ bool GroupDbMgr::updateGroup(const QString &groupName, const QString &comment, c
 	sql_query.prepare(sql);
 	if (!sql_query.exec())
 	{
+		database.close();
 		return false;
 	}
 
@@ -343,9 +345,12 @@ bool GroupDbMgr::updateGroup(const QString &groupName, const QString &comment, c
 		sql_query.prepare(sql);
 		if (!sql_query.exec())
 		{
+			database.close();
 			return false;
 		}
 	}
+
+	database.close();
 
 	return true;
 }
@@ -372,6 +377,7 @@ bool GroupDbMgr::getUserlist(const QString &groupName, QJsonArray &list)
 
 	if (!sql_query.exec())
 	{
+		database.close();
 		return false;
 	}
 
@@ -384,6 +390,8 @@ bool GroupDbMgr::getUserlist(const QString &groupName, QJsonArray &list)
 		int useraccount_col = 0;
 		list.append(sql_query.value(useraccount_col).toString());
 	}
+
+	database.close();
 
 	return true;
 }
@@ -410,6 +418,7 @@ bool GroupDbMgr::isUserInGroup(const QString &groupName, const QString &account)
 
 	if (!sql_query.exec())
 	{
+		database.close();
 		return false;
 	}
 
@@ -418,7 +427,13 @@ bool GroupDbMgr::isUserInGroup(const QString &groupName, const QString &account)
 
 	 
 	if (sql_query.next())
+	{
+		database.close();
 		return true;
+	}
 	else
+	{
+		database.close();
 		return false;
+	}
 }

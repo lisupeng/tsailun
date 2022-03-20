@@ -212,6 +212,7 @@ class Pageviewer extends React.Component {
       Globaldata.invalidatePageCache = false;
 
       var page_full_path = window.location.pathname;
+      this.path_rendering = page_full_path;
       var url_readpage = page_full_path + "?op=read";
       var queryobj = Utils.parse(window.location.href);
 

@@ -32,14 +32,10 @@ public:
 	virtual ~SpaceDbMgr();
 	bool init();
 
-	bool getSpaceCount(int &count);
-
 	bool addSpace(const QString &spaceName, const QString &path);
 	bool deleteSpace(const QString &spaceName);
 	bool addToSpaceRlist(const QString &spaceName, const QString &type, const QString &item); // type should be "user" or "group"
 	bool addToSpaceWlist(const QString &spaceName, const QString &type, const QString &item);
-	bool getSizeOfSpaceRlist(const QString &spaceName, int &size);
-	bool getSizeOfSpaceWlist(const QString &spaceName, int &size);
 
 	bool getSpaceList(QJsonArray &list);
 
@@ -57,6 +53,13 @@ protected:
 	bool init_space_table();
 
 	bool insertDefaultSpace();
+
+	bool _getSpaceCount(int &count, QSqlDatabase  &database);
+	bool _getSizeOfSpaceRlist(const QString &spaceName, int &size, QSqlDatabase  &database);
+	bool _getSizeOfSpaceWlist(const QString &spaceName, int &size, QSqlDatabase  &database);
+
+	bool _getSpaceRlist(const QString &spaceName, QJsonArray &rlist, QSqlDatabase  &database);
+	bool _getSpaceWlist(const QString &spaceName, QJsonArray &wlist, QSqlDatabase  &database);
 
 //	bool __opendb();
 //	void __closedb();

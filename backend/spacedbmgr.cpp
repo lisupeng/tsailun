@@ -62,12 +62,6 @@ bool SpaceDbMgr::init()
 {
 	QMutexLocker autolock(m_mutex);
 
-	QSqlDatabase  database;
-	if (!__getDbConnections(database))
-	{
-		return false;
-	}
-
 	if (!init_space_table())
 	{
 		return false;
@@ -94,19 +88,28 @@ bool SpaceDbMgr::init_space_table()
 
 	if (!sql_query.exec())
 	{
+		database.close();
 		return false;
 	}
 
 	int count;
-	if (!getSpaceCount(count))
+	if (!_getSpaceCount(count, database))
+	{
+		database.close();
 		return false;
+	}
 
 	 
 	if (count == 0)
 	{
 		if (!insertDefaultSpace())
+		{
+			database.close();
 			return false;
+		}
 	}
+
+	database.close();
 
 	return true;
 }
@@ -137,15 +140,8 @@ bool SpaceDbMgr::insertDefaultSpace()
 	return true;
 }
 
-bool SpaceDbMgr::getSpaceCount(int &count)
+bool SpaceDbMgr::_getSpaceCount(int &count, QSqlDatabase &database)
 {
-	QMutexLocker autolock(m_mutex);
-	QSqlDatabase  database;
-	if (!__getDbConnections(database))
-	{
-		return false;
-	}
-
 	// do query
 	QSqlQuery sql_query(database);
 	QString sql = "SELECT count(*) FROM space_table";
@@ -177,10 +173,11 @@ bool SpaceDbMgr::addSpace(const QString &spaceName, const QString &path)
 	QSqlQuery sql_query(database);
 
 	// create rtable
-	QString sql = "CREATE TABLE IF NOT EXISTS "+ rtableName+" (itemtype varchar(16), item varchar(128) primary key)";
+	QString sql = "CREATE TABLE IF NOT EXISTS " + rtableName + " (itemtype varchar(16), item varchar(128) primary key)";
 	sql_query.prepare(sql);
 	if (!sql_query.exec())
 	{
+		database.close();
 		return false;
 	}
 
@@ -189,6 +186,7 @@ bool SpaceDbMgr::addSpace(const QString &spaceName, const QString &path)
 	sql_query.prepare(sql);
 	if (!sql_query.exec())
 	{
+		database.close();
 		return false;
 	}
 
@@ -197,16 +195,22 @@ bool SpaceDbMgr::addSpace(const QString &spaceName, const QString &path)
 	sql_query.prepare(sql);
 	if (!sql_query.exec())
 	{
+		database.close();
 		return false;
 	}
 
 	// create space path
 	ConfigMgr *cfgMgr = ConfigMgr::GetInstance();
 	QString appRootPath = cfgMgr->getAppRootDir();
-	QString spacePath = appRootPath + "/data"+path+"/pages";
+	QString spacePath = appRootPath + "/data" + path + "/pages";
 	QDir dir(spacePath);
 	if (!dir.mkpath(spacePath))
+	{
+		database.close();
 		return false;
+	}
+
+	database.close();
 
 	return true;
 }
@@ -231,6 +235,7 @@ bool SpaceDbMgr::deleteSpace(const QString &spaceName)
 
 	if (!sql_query.exec())
 	{
+		database.close();
 		return false;
 	}
 
@@ -239,6 +244,7 @@ bool SpaceDbMgr::deleteSpace(const QString &spaceName)
 
 	if (!sql_query.exec())
 	{
+		database.close();
 		return false;
 	}
 
@@ -249,8 +255,11 @@ bool SpaceDbMgr::deleteSpace(const QString &spaceName)
 
 	if (!sql_query.exec())
 	{
+		database.close();
 		return false;
 	}
+
+	database.close();
 
 	return true;
 }
@@ -271,20 +280,27 @@ bool SpaceDbMgr::addToSpaceRlist(const QString &spaceName, const QString &type, 
 	sql_query.prepare(sql);
 	if (!sql_query.exec())
 	{
+		database.close();
 		return false;
 	}
 
 	// update count
 	int count = 0;
-	if (!getSizeOfSpaceRlist(spaceName, count))
+	if (!_getSizeOfSpaceRlist(spaceName, count, database))
+	{
+		database.close();
 		return false;
+	}
 	QString rcount = QString("%1").arg(count);
 	sql = "UPDATE space_table SET rcount='" + rcount + "' WHERE spacename='" + spaceName + "'";
 	sql_query.prepare(sql);
 	if (!sql_query.exec())
 	{
+		database.close();
 		return false;
 	}
+
+	database.close();
 
 	return true;
 }
@@ -305,34 +321,34 @@ bool SpaceDbMgr::addToSpaceWlist(const QString &spaceName, const QString &type, 
 	sql_query.prepare(sql);
 	if (!sql_query.exec())
 	{
+		database.close();
 		return false;
 	}
 
 	// update count
 	int count = 0;
-	if (!getSizeOfSpaceWlist(spaceName, count))
+	if (!_getSizeOfSpaceWlist(spaceName, count, database))
+	{
+		database.close();
 		return false;
+	}
 	QString wcount = QString("%1").arg(count);
 	sql = "UPDATE space_table SET wcount='" + wcount + "' WHERE spacename='" + spaceName + "'";
 	sql_query.prepare(sql);
 	if (!sql_query.exec())
 	{
+		database.close();
 		return false;
 	}
+
+	database.close();
 
 	return true;
 }
 
-bool SpaceDbMgr::getSizeOfSpaceRlist(const QString &spaceName, int &size)
+bool SpaceDbMgr::_getSizeOfSpaceRlist(const QString &spaceName, int &size, QSqlDatabase  &database)
 {
-	QMutexLocker autolock(m_mutex);
-
 	QString rtableName = _getRTableName(spaceName);
-	QSqlDatabase  database;
-	if (!__getDbConnections(database))
-	{
-		return false;
-	}
 
 	QSqlQuery sql_query(database);
 	QString sql = "SELECT count(*) FROM " + rtableName;
@@ -349,16 +365,11 @@ bool SpaceDbMgr::getSizeOfSpaceRlist(const QString &spaceName, int &size)
 	return true;
 }
 
-bool SpaceDbMgr::getSizeOfSpaceWlist(const QString &spaceName, int &size)
+bool SpaceDbMgr::_getSizeOfSpaceWlist(const QString &spaceName, int &size, QSqlDatabase  &database)
 {
 	QMutexLocker autolock(m_mutex);
 
 	QString wtableName = _getWTableName(spaceName);
-	QSqlDatabase  database;
-	if (!__getDbConnections(database))
-	{
-		return false;
-	}
 
 	QSqlQuery sql_query(database);
 	QString sql = "SELECT count(*) FROM " + wtableName;
@@ -382,6 +393,7 @@ bool SpaceDbMgr::getSpaceList(QJsonArray &list)
 	QSqlDatabase  database;
 	if (!__getDbConnections(database))
 	{
+		database.close();
 		return false;
 	}
 
@@ -395,6 +407,7 @@ bool SpaceDbMgr::getSpaceList(QJsonArray &list)
 
 	if (!sql_query.exec())
 	{
+		database.close();
 		return false;
 	}
 
@@ -408,6 +421,8 @@ bool SpaceDbMgr::getSpaceList(QJsonArray &list)
 		recordToJson(rec, sql_query, jsonobj);
 		list.append(jsonobj);
 	}
+
+	database.close();
 
 	return true;
 }
@@ -426,38 +441,22 @@ bool SpaceDbMgr::__getDbConnections(QSqlDatabase &database)
 {
 	Qt::HANDLE threadId = QThread::currentThreadId();
 
-	QSqlDatabase db;
-
-	if (m_dbConnections.contains(threadId))
-	{
-		db = m_dbConnections[threadId];
-	}
-
-	if (db.isValid() && db.isOpen())
-	{
-		database = db;
-		return true;
-	}
-
 	// create one
 	ConfigMgr *cfgMgr = ConfigMgr::GetInstance();
 	QString appRootPath = cfgMgr->getAppRootDir();
-	QString userDbFile = appRootPath + "/data/db/spaces.db";
+	QString spaceDbFile = appRootPath + "/data/db/spaces.db";
 
 	char szName[64];
-	sprintf(szName, "conn_%p", threadId);
+	sprintf(szName, "spacedb_conn_%p", threadId);
 	QString connName = szName;
-	db = QSqlDatabase::addDatabase("QSQLITE", connName);
+	database = QSqlDatabase::addDatabase("QSQLITE", connName);
 
-	db.setDatabaseName(userDbFile);
+	database.setDatabaseName(spaceDbFile);
 
-	if (!db.open())
+	if (!database.open() || !database.isValid())
 	{
 		return false;
 	}
-
-	m_dbConnections[threadId] = db;
-	database = db;
 
 	return true;
 }
@@ -482,6 +481,7 @@ bool SpaceDbMgr::getSpaceDetail(const QString &spaceName, QJsonObject &spaceDeta
 
 	if (!sql_query.exec())
 	{
+		database.close();
 		return false;
 	}
 
@@ -491,6 +491,7 @@ bool SpaceDbMgr::getSpaceDetail(const QString &spaceName, QJsonObject &spaceDeta
 	 
 	if (!sql_query.next())
 	{
+		database.close();
 		return false;
 	}
 
@@ -498,16 +499,86 @@ bool SpaceDbMgr::getSpaceDetail(const QString &spaceName, QJsonObject &spaceDeta
 
 	// rtable list
 	QJsonArray rlist;
-	if (getSpaceRlist(spaceName, rlist))
+	if (_getSpaceRlist(spaceName, rlist, database))
 	{
 		spaceDetail.insert("rlist", rlist);
 	}
 
 	// get wtable list
 	QJsonArray wlist;
-	if (getSpaceWlist(spaceName, wlist))
+	if (_getSpaceWlist(spaceName, wlist, database))
 	{
 		spaceDetail.insert("wlist", wlist);
+	}
+
+	database.close();
+
+	return true;
+}
+
+bool SpaceDbMgr::_getSpaceRlist(const QString &spaceName, QJsonArray &rlist, QSqlDatabase  &database)
+{
+	QJsonObject jsonobj;
+	QMutexLocker autolock(m_mutex);
+
+	// create table if not exists
+	QSqlQuery sql_query(database);
+	QString sql;
+
+	QString rtableName = _getRTableName(spaceName);
+
+	sql = "SELECT item,itemtype FROM " + rtableName;
+
+	sql_query.prepare(sql);
+
+	if (!sql_query.exec())
+	{
+		return false;
+	}
+
+
+	QSqlRecord rec = sql_query.record();
+
+
+	while (sql_query.next())
+	{
+		QJsonObject jsonobj;
+		recordToJson(rec, sql_query, jsonobj);
+		rlist.append(jsonobj);
+	}
+
+	return true;
+}
+
+bool SpaceDbMgr::_getSpaceWlist(const QString &spaceName, QJsonArray &wlist, QSqlDatabase  &database)
+{
+	QJsonObject jsonobj;
+	QMutexLocker autolock(m_mutex);
+
+	// create table if not exists
+	QSqlQuery sql_query(database);
+	QString sql;
+
+	QString wtableName = _getWTableName(spaceName);
+
+	sql = "SELECT item,itemtype FROM " + wtableName;
+
+	sql_query.prepare(sql);
+
+	if (!sql_query.exec())
+	{
+		return false;
+	}
+
+
+	QSqlRecord rec = sql_query.record();
+
+
+	while (sql_query.next())
+	{
+		QJsonObject jsonobj;
+		recordToJson(rec, sql_query, jsonobj);
+		wlist.append(jsonobj);
 	}
 
 	return true;
@@ -535,6 +606,7 @@ bool SpaceDbMgr::getSpaceRlist(const QString &spaceName, QJsonArray &rlist)
 
 	if (!sql_query.exec())
 	{
+		database.close();
 		return false;
 	}
 
@@ -548,6 +620,8 @@ bool SpaceDbMgr::getSpaceRlist(const QString &spaceName, QJsonArray &rlist)
 		recordToJson(rec, sql_query, jsonobj);
 		rlist.append(jsonobj);
 	}
+
+	database.close();
 
 	return true;
 }
@@ -574,6 +648,7 @@ bool SpaceDbMgr::getSpaceWlist(const QString &spaceName, QJsonArray &wlist)
 
 	if (!sql_query.exec())
 	{
+		database.close();
 		return false;
 	}
 
@@ -587,6 +662,8 @@ bool SpaceDbMgr::getSpaceWlist(const QString &spaceName, QJsonArray &wlist)
 		recordToJson(rec, sql_query, jsonobj);
 		wlist.append(jsonobj);
 	}
+
+	database.close();
 
 	return true;
 }
@@ -613,6 +690,7 @@ bool SpaceDbMgr::updateSpace(const QString &spaceName, const QJsonArray &rlist, 
 	sql_query.prepare(sql);
 	if (!sql_query.exec())
 	{
+		database.close();
 		return false;
 	}
 
@@ -621,6 +699,7 @@ bool SpaceDbMgr::updateSpace(const QString &spaceName, const QJsonArray &rlist, 
 	sql_query.prepare(sql);
 	if (!sql_query.exec())
 	{
+		database.close();
 		return false;
 	}
 
@@ -635,6 +714,7 @@ bool SpaceDbMgr::updateSpace(const QString &spaceName, const QJsonArray &rlist, 
 		sql_query.prepare(sql);
 		if (!sql_query.exec())
 		{
+			database.close();
 			return false;
 		}
 	}
@@ -650,9 +730,12 @@ bool SpaceDbMgr::updateSpace(const QString &spaceName, const QJsonArray &rlist, 
 		sql_query.prepare(sql);
 		if (!sql_query.exec())
 		{
+			database.close();
 			return false;
 		}
 	}
+
+	database.close();
 
 	return true;
 }
@@ -677,6 +760,7 @@ bool SpaceDbMgr::getSpaceNameByPath(const QString &spacePath, QString &spaceName
 
 	if (!sql_query.exec())
 	{
+		database.close();
 		return false;
 	}
 
@@ -686,10 +770,13 @@ bool SpaceDbMgr::getSpaceNameByPath(const QString &spacePath, QString &spaceName
 	 
 	if (!sql_query.next())
 	{
+		database.close();
 		return false;
 	}
 
 	spaceName = sql_query.value(0).toString();
+
+	database.close();
 
 	return true;
 }
@@ -714,6 +801,7 @@ bool SpaceDbMgr::isSpaceExists(const QString &spaceName)
 
 	if (!sql_query.exec())
 	{
+		database.close();
 		return false;
 	}
 
@@ -723,8 +811,11 @@ bool SpaceDbMgr::isSpaceExists(const QString &spaceName)
 	 
 	if (!sql_query.next())
 	{
+		database.close();
 		return false;
 	}
+
+	database.close();
 
 	return true;
 }

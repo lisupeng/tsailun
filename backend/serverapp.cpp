@@ -35,7 +35,7 @@ int ServerApp::start()
 {
 	if (!configuration.isValid() || !valid)
 	{
-		g_syslog.logMessage(SYSLOG_LEVEL_ERROR, "", "Invalid configuration. Server offline.");
+		g_syslog.logMessage(SYSLOG_LEVEL_ERROR, "", "E1001 Invalid configuration. Server offline.");
 		QThread::msleep(3000);
 		return -1;
 	}
@@ -45,7 +45,7 @@ int ServerApp::start()
 
 	if (!server->listen(configuration.getHost(), configuration.getPort()))
 	{
-		QString msg = QString("Failed to listen on port %1. Server offline.").arg(configuration.getPort());
+		QString msg = QString("E1000 Failed to listen on port %1. Server offline.").arg(configuration.getPort());
 		g_syslog.logMessage(SYSLOG_LEVEL_ERROR, "", msg);
 		QThread::msleep(3000);
 		return -1;

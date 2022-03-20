@@ -390,7 +390,10 @@ bool UserDbMgr::__getDbConnections(QSqlDatabase &database)
 	QString appRootPath = cfgMgr->getAppRootDir();
 	QString userDbFile = appRootPath + "/data/db/users.db";
 
-	database = QSqlDatabase::addDatabase("QSQLITE");
+	char szName[64];
+	sprintf(szName, "spacedb_conn_%p", QThread::currentThreadId());
+	QString connName = szName;
+	database = QSqlDatabase::addDatabase("QSQLITE", connName);
 
 	database.setDatabaseName(userDbFile);
 
