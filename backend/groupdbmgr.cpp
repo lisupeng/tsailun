@@ -63,7 +63,7 @@ bool GroupDbMgr::init_group_table()
 	QSqlQuery sql_query(database);
 
 	QString sql = "CREATE TABLE IF NOT EXISTS group_table (groupname varchar(64) primary key, "
-		"usercount varchar(8), comment varchar(1024))";
+		"usercount varchar(8), comment varchar(1024), extrainfo varchar(2048))";
 
 	sql_query.prepare(sql);
 

@@ -42,6 +42,9 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import Snackbar from "@material-ui/core/Snackbar";
 import Alert from "@material-ui/core/Alert";
 
+import IconButton from "@material-ui/core/IconButton";
+import DeleteIcon from "@material-ui/icons/Delete";
+
 const columns = [
   { id: "file", label: Lang.str_fileview_file, minWidth: 110 },
   { id: "size", label: Lang.str_fileview_size, minWidth: 70 },
@@ -173,6 +176,31 @@ class AttachementView extends React.Component {
 
     reader.readAsDataURL(this.state.selectedFile); // increase 33.3% size
   };
+  
+  handleClickDel = (event, item) => {
+      
+    //setDelUserDlgOpen(false);
+
+    var url_delfile = window.location.pathname+"?op=delfile&file=" + item;
+    
+    console.log("url:"+url_delfile);
+
+    fetch(url_delfile, {
+      method: "post",
+      body: JSON.stringify({ sid: Utils.getSessionId() }),
+    })
+      .then((response) => response.text())
+      .then((data) => {
+        var res = JSON.parse(data);
+        if (res.status === "ok") {
+          this.getFileList();
+        } else {
+          console.log("Unexpected error");
+        }
+      })
+      .catch((error) => console.log("error is", error));
+
+  };
 
   render() {
     return (
@@ -213,7 +241,11 @@ class AttachementView extends React.Component {
                               key={column.id + "_op"}
                               align={column.align}
                             >
-                              {""}
+                              <IconButton onClick={(event) =>
+                                this.handleClickDel(event, row["file"])}
+                              >
+                                <DeleteIcon />
+                              </IconButton>
                             </TableCell>
                           );
                         } else if (column.id === "file") {

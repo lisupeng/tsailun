@@ -79,6 +79,7 @@ OpcodeHandler::OpcodeHandler()
 	m_handlerMap["dirinfo"] = &OpcodeHandler::handle_dirinfo;
 	m_handlerMap["viewfile"] = &OpcodeHandler::handle_viewfile;
 	m_handlerMap["listfile"] = &OpcodeHandler::handle_listfile;
+	m_handlerMap["delfile"] = &OpcodeHandler::handle_delfile;
 	m_handlerMap["upload"] = &OpcodeHandler::handle_upload;
 	m_handlerMap["uploadchunk"] = &OpcodeHandler::handle_uploadchunk;
 	m_handlerMap["register"] = &OpcodeHandler::handle_register;
@@ -2181,6 +2182,37 @@ void OpcodeHandler::handle_listfile(CWF::Request &req, CWF::Response &response, 
 	QString out = QString(QJsonDocument(result).toJson(QJsonDocument::Compact));
 	response.write(out.toUtf8());
 	return;
+}
+
+void OpcodeHandler::handle_delfile(CWF::Request &req, CWF::Response &response, REQ_CONTEXT &ctx)
+{
+	QByteArray __url_ = req.getHttpParser().getUrl();
+	QString url = QString::fromUtf8(QByteArray::fromPercentEncoding(__url_));
+
+	// Make sure role is admin
+
+	// filename
+	QByteArray _filename = req.getHttpParser().getParameter("file", true, false);
+	QString filename = QString::fromUtf8(QByteArray::fromPercentEncoding(_filename));
+
+	QString pagepath = getSpaceAndPagePathByUrl(url);
+
+	// if "upload" dir doesn't exist, create it
+	QString uploadDir = pagepath + "/upload";
+
+	QJsonObject result;
+
+	if (QDir(uploadDir).remove(filename))
+	{
+		result.insert("status", "ok");
+	}
+	else
+	{
+		result.insert("status", "fail");
+	}
+
+	QString out = QString(QJsonDocument(result).toJson(QJsonDocument::Compact));
+	response.write(out.toUtf8());
 }
 
 void OpcodeHandler::handle_upload(CWF::Request &req, CWF::Response &response, REQ_CONTEXT &ctx)

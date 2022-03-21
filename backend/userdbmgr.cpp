@@ -117,7 +117,7 @@ bool UserDbMgr::init_user_table()
 
 	QString sql = "CREATE TABLE IF NOT EXISTS user_table (account varchar(64) primary key, fullname varchar(64), "
 		"email varchar(255), role varchar(16), space varchar(64), uid varchar(64), createdate varchar(64), "
-		"signindate varchar(64), credential varchar(64))";
+		"signindate varchar(64), credential varchar(64), extrainfo varchar(2048))";
 
 	sql_query.prepare(sql);
 

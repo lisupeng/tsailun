@@ -699,7 +699,7 @@ function MainViewContent() {
             this.props.history.push("/signin");
           } else if (res.errcode === "access_denied") {
             // setMsg
-            setErrMsg(Lang.str_err_sigin_as_admin);
+            setErrMsg("E1002 "+Lang.str_err_sigin_as_admin);
             setSev("error");
             // setOpen
             setMsgBarOpen(true);
@@ -1419,6 +1419,19 @@ function MainViewContent() {
                   onChange={handlePageTitleInputChange}
                   fullWidth
                 />
+                
+                {/*
+                <Select
+                  displayEmpty
+                  inputProps={{ "aria-label": "Without label" }}
+                >
+                  <MenuItem value={'Default Width'}>
+                    {'Default Width'}
+                  </MenuItem>
+                  <MenuItem value={'PC Screen Width'}>
+                    {'PC Screen Width'}
+                  </MenuItem>
+                </Select>*/}
 
                 {typeof Globaldata.selectedTreeNode === "string" &&
                   Globaldata.selectedTreeNode.length > 0 && (

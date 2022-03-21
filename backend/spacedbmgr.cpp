@@ -82,7 +82,7 @@ bool SpaceDbMgr::init_space_table()
 	QSqlQuery sql_query(database);
 
 	QString sql = "CREATE TABLE IF NOT EXISTS space_table (spacename varchar(64) primary key, "
-		"path varchar(1024), rcount varchar(8), wcount varchar(8))";
+		"path varchar(2048), rcount varchar(8), wcount varchar(8), extrainfo varchar(2048))";
 
 	sql_query.prepare(sql);
 
