@@ -64,11 +64,13 @@ Admin account and password: admin/admin
 
 ## Dev Plan
 - UI Improvement
-- SVG editing inline
+- SVG drawing
 - Email notification & mention
 - Index based search
 - SSO
 - Performance improvement & Replace CWF with nginx
+- DB access optimization
+- Use Redis for cache layer
 - Docs & Video tutorial
 
 ## Contact
