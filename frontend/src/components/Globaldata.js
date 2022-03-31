@@ -37,6 +37,9 @@ let Globaldata = {
 
   invalidatePageCache: false,
   readingPage: false,
+  
+  fnEnableDrawing: null,
+  fnDrawingDone: null,
 };
 
 export default Globaldata;

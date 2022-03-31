@@ -40,14 +40,14 @@ const GlobalVarMgr = {
   },
   
   getLastCheckupdateDay() {
-    if (!window.sessionStorage.LastCheckupdateDay)
-      window.sessionStorage.LastCheckupdateDay = -1;
+    if (!window.localStorage.LastCheckupdateDay)
+      window.localStorage.LastCheckupdateDay = -1;
 
-    return window.sessionStorage.LastCheckupdateDay;
+    return window.localStorage.LastCheckupdateDay;
   },
 
   setLastCheckupdateDay(val) {
-    window.sessionStorage.LastCheckupdateDay = val;
+    window.localStorage.LastCheckupdateDay = val;
   },
 };
 

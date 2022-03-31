@@ -132,6 +132,12 @@ async function upload(file, successCallback, failureCallback, progressCallback) 
     successCallback(fileurl);
 }
 
+function enable_drawing_editor(doneCallback, svg) {
+    window.tsailunsvg = svg;
+    Globaldata.fnEnableDrawing(true);    
+    Globaldata.fnDrawingDone = doneCallback;
+}
+
 function example_image_upload_handler(blobInfo, success, failure, progress) {
   console.log("example_image_upload_handler()");
   console.dir(blobInfo);
@@ -318,10 +324,10 @@ export default function Editorwrap() {
                   plugins: [
                     "advlist autolink lists link image charmap print preview anchor",
                     "searchreplace visualblocks fullscreen",
-                    "insertdatetime media table powerpaste code help wordcount attachment toc", // DON'T use paste plugin, otherwise unable paste images.
+                    "insertdatetime media table powerpaste code help wordcount toc attachment draw", // DON'T use paste plugin, otherwise unable paste images.
                   ],
                   toolbar: [
-                    "undo redo | bold italic underline strikethrough forecolor backcolor | fontselect | fontsizeselect | formatselect | toc | bullist numlist | lineheight outdent indent alignleft aligncenter alignright alignjustify | table image link anchor | removeformat attachment",
+                    "undo redo | bold italic underline strikethrough forecolor backcolor | fontselect | fontsizeselect | formatselect | toc | bullist numlist | lineheight outdent indent alignleft aligncenter alignright alignjustify | table draw link anchor | removeformat attachment",
                   ],
                   content_style: content_style,
                   relative_urls: false,
@@ -332,6 +338,7 @@ export default function Editorwrap() {
                   attachment_max_size: 1000 * 1000 * 1024 * 1024,
                   attachment_assets_path: '/misc/assets/icons/',
                   attachment_upload_handler: upload,
+                  enable_drawing_editor: enable_drawing_editor,
                   toc_depth: '6',
                   
                   /*block_unsupported_drop: false*/

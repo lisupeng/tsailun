@@ -36,6 +36,8 @@ import Container from "@material-ui/core/Container";
 import MenuIcon from "@material-ui/icons/Menu";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import AddIcon from '@material-ui/icons/Add';
+import CloseIcon from '@material-ui/icons/Close';
+
 //import NotificationsIcon from '@material-ui/icons/Notifications';
 import MoreIcon from "@material-ui/icons/MoreVert";
 //import { mainListItems, secondaryListItems } from './listItems';
@@ -76,6 +78,12 @@ import FormLabel from "@material-ui/core/FormLabel";
 import Radio from "@material-ui/core/Radio";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import FormControl from "@material-ui/core/FormControl";
+
+import Slide from '@material-ui/core/Slide';
+
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
 
 var searchInput = "";
 
@@ -1183,6 +1191,44 @@ function MainViewContent() {
 
     setLangDlgOpen(true);
   };
+  
+  //drawing
+  const [drawingContainerOpen, setDrawingContainerOpen] = React.useState(false);
+  
+  const handleCancelDrawingContainer = () => {
+      setDrawingContainerOpen(false);
+  }
+
+  const handleCloseDrawingContainer = () => {
+    
+    var wnd=document.getElementsByTagName("iframe");
+    
+    var found = false;
+    var __wnd;
+    
+    for (var i in wnd) {
+        
+        var _wnd = wnd[i];
+        
+        if (_wnd.contentWindow && _wnd.contentWindow.svgEditor)
+        {
+            __wnd = _wnd;
+            found = true;
+            break;
+        }
+    }
+    
+    if (!found)
+        return;
+                
+    var svg=__wnd.contentWindow.svgEditor.svgCanvas.svgCanvasToString();
+    
+    Globaldata.fnDrawingDone(svg);
+    
+    setDrawingContainerOpen(false);
+  };
+  
+  Globaldata.fnEnableDrawing = setDrawingContainerOpen;
 
   function RenderSearchBox() {
     //if (!Utils.windowIsNarrow())
@@ -1213,6 +1259,13 @@ function MainViewContent() {
     } else {
       return <></>;
     }
+  }
+  
+  function DrawingContainer(props) {
+
+      return (
+        <iframe src="/tinymce/js/tinymce/plugins/draw/editor/index.html" height={props.height}> </iframe>
+      );
   }
 
   // check if op=edit
@@ -1324,10 +1377,9 @@ function MainViewContent() {
             <MenuItem onClick={handleAttachmentMenuItemClicked}>
               {Lang.str_menu_attachment}
             </MenuItem>
-            {/*
             <MenuItem onClick={handleExportPageMenuItemClicked}>
               {Lang.str_menu_export}
-            </MenuItem>*/}
+            </MenuItem>
             <MenuItem onClick={handleChangeSpaceMenuItemClicked}>
               {Lang.str_menu_space}
             </MenuItem>
@@ -1526,6 +1578,12 @@ function MainViewContent() {
                 >
                   <MenuItem value={"HTML"}>HTML</MenuItem>
                 </Select>
+                
+                <p> </p>
+                <Typography variant="caption" style={{ color: "#ff0000" }}>
+                 {"This is a preview feature. Development isn't completed yet."}
+                </Typography>
+
               </Paper>
             </DialogContent>
             <DialogActions>
@@ -1744,6 +1802,41 @@ function MainViewContent() {
               </Button>
             </DialogActions>
           </Dialog>
+          
+          <Dialog
+            fullScreen
+            open={drawingContainerOpen}
+            TransitionComponent={Transition}
+          >
+          
+            <AppBar sx={{ position: 'relative' }}>
+              <Toolbar>
+                <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
+                    {" "}
+                </Typography>
+                
+                <Button color="inherit" onClick={handleCancelDrawingContainer}>
+                  Cancel
+                </Button>
+                
+                <Button color="inherit" onClick={handleCloseDrawingContainer}>
+                  Done
+                </Button>
+                
+                {/*<IconButton
+                  edge="start"
+                  color="inherit"
+                  aria-label="close"
+                  onClick={handleCloseDrawingContainer}
+                >
+                <CloseIcon />
+                </IconButton>*/}
+              </Toolbar>
+            </AppBar>
+            
+            <DrawingContainer height={window.innerHeight - Globaldata.appBarHeight} />
+
+          </Dialog>
         </Toolbar>
       </AppBar>
       <Drawer
@@ -1761,9 +1854,7 @@ function MainViewContent() {
             px: [1],
           }}
         >
-          <IconButton onClick={toggleDrawer}>
-            <ChevronLeftIcon />
-          </IconButton>
+
         </Toolbar>
 
         <Paper

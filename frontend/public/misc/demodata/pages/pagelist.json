@@ -5,6 +5,14 @@
             "title": "Testpage1"
         },
         {
+            "dir": "Test-Drawing",
+            "title": "Test-Drawing"
+        },
+        {
+            "dir": "Test-TOC-Autogen",
+            "title": "Test-TOC-Autogen"
+        },
+        {
             "dir": "What_does_Tsailun_mean",
             "title": "What does Tsailun mean"
         }

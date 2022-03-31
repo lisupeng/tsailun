@@ -92,6 +92,11 @@ bool SpaceDbMgr::init_space_table()
 		return false;
 	}
 
+	// create index
+	sql = "create index spacename_index on space_table(spacename)";
+	sql_query.prepare(sql);
+	sql_query.exec();
+
 	int count;
 	if (!_getSpaceCount(count, database))
 	{

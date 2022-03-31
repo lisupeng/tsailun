@@ -127,6 +127,11 @@ bool UserDbMgr::init_user_table()
 		return false;
 	}
 
+	// create index
+	sql = "create index account_index on user_table(account)";
+	sql_query.prepare(sql);
+	sql_query.exec();
+
 	sql = "SELECT email,account,credential FROM user_table where account='admin'";
 	sql_query.prepare(sql);
 	if (!sql_query.exec())
