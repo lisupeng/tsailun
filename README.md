@@ -32,6 +32,11 @@ Build Steps: please refer to tsailun/doc/Howtobuild.md
 #### Editing
 ![edit](https://user-images.githubusercontent.com/97643149/154651941-ca750eb4-8e6e-4763-a888-53f1eea15ac9.jpg)
 
+#### Drawing
+![drawing1](https://user-images.githubusercontent.com/97643149/160960952-ca376d4f-298c-4b67-a670-7906acfa1c5b.png)
+
+![drawing2](https://user-images.githubusercontent.com/97643149/160960962-0d78d401-bde7-41fd-a113-1ba324967124.png)
+
 #### Drop files into Doc
 ![fileattachment-new](https://user-images.githubusercontent.com/97643149/155987297-f0456561-6407-45b0-9b20-520d60bd855c.png)
 
@@ -64,7 +69,6 @@ Admin account and password: admin/admin
 
 ## Dev Plan
 - UI Improvement
-- SVG drawing
 - Email notification & mention
 - Index based search
 - SSO
