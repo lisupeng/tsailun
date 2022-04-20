@@ -37,6 +37,11 @@ Build Steps: please refer to tsailun/doc/Howtobuild.md
 
 ![drawing2](https://user-images.githubusercontent.com/97643149/160960962-0d78d401-bde7-41fd-a113-1ba324967124.png)
 
+![drawing3](https://user-images.githubusercontent.com/97643149/164221464-1a4c9af6-4e31-45cc-9aea-0e68b628ecfa.png)
+
+![drawing4](https://user-images.githubusercontent.com/97643149/164221489-d3844bae-70a3-4e81-98ba-91a8612171c0.png)
+
+
 #### Drop files into Doc
 ![fileattachment-new](https://user-images.githubusercontent.com/97643149/155987297-f0456561-6407-45b0-9b20-520d60bd855c.png)
 
