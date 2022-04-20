@@ -82,6 +82,7 @@ OpcodeHandler::OpcodeHandler()
 	m_handlerMap["delfile"] = &OpcodeHandler::handle_delfile;
 	m_handlerMap["upload"] = &OpcodeHandler::handle_upload;
 	m_handlerMap["uploadchunk"] = &OpcodeHandler::handle_uploadchunk;
+	m_handlerMap["uploadblob"] = &OpcodeHandler::handle_uploadblob;
 	m_handlerMap["register"] = &OpcodeHandler::handle_register;
 	m_handlerMap["listversion"] = &OpcodeHandler::handle_listversion;
 	m_handlerMap["restore"] = &OpcodeHandler::handle_restore;
@@ -2462,6 +2463,114 @@ void OpcodeHandler::handle_uploadchunk(CWF::Request &req, CWF::Response &respons
 	}
 
 	fd.write(chunkbytes);
+	fd.close();
+
+	result.insert("url", fileurl);
+	result.insert("status", "ok");
+
+	QString out = QString(QJsonDocument(result).toJson(QJsonDocument::Compact));
+	response.write(out.toUtf8());
+	return;
+}
+
+void OpcodeHandler::handle_uploadblob(CWF::Request &req, CWF::Response &response, REQ_CONTEXT &ctx)
+{
+	QByteArray __url_ = req.getHttpParser().getUrl();
+	QString url = QString::fromUtf8(QByteArray::fromPercentEncoding(__url_));
+
+	QJsonObject result;
+
+	// check permission
+	int authres = AuthMgr::SpaceWritePermissionCheck(*(ctx.sid), url);
+
+	if (authres == AUTH_RET_INVALID_SESSION)
+	{
+		result.insert("status", "fail");
+		result.insert("errcode", "invalid_session");
+
+		QString out = QString(QJsonDocument(result).toJson(QJsonDocument::Compact));
+		response.write(out.toUtf8());
+		return;
+	}
+
+	if (authres != AUTH_RET_SUCCESS)
+	{
+		result.insert("status", "fail");
+		result.insert("errcode", "access_denied");
+
+		QString out = QString(QJsonDocument(result).toJson(QJsonDocument::Compact));
+		response.write(out.toUtf8());
+	}
+
+	if (!(*(ctx.postobj)).contains("filedata"))
+	{
+		result.insert("status", "fail");
+
+		QString out = QString(QJsonDocument(result).toJson(QJsonDocument::Compact));
+		response.write(out.toUtf8());
+		return;
+	}
+
+	QByteArray _filename = req.getHttpParser().getParameter("filename", true, false);
+	QString filename = QString::fromUtf8(QByteArray::fromPercentEncoding(_filename));
+
+	QString filedata = (*(ctx.postobj)).value("filedata").toString();
+
+	QByteArray filebytes = QByteArray::fromBase64(filedata.toLatin1());
+
+	QString fileurl = url + "/upload/blob/" + QUrl::toPercentEncoding(filename);
+
+	QString pagepath = getSpaceAndPagePathByUrl(url);
+
+	// if "upload" dir doesn't exist, create it
+	QString uploadDir = pagepath + "/upload";
+	if (!QDir(uploadDir).exists())
+	{
+		QDir pageDir(pagepath);
+		if (!(pageDir.mkdir("upload")))
+		{
+			g_syslog.logMessage(SYSLOG_LEVEL_ERROR, "", "Unable create 'upload' dir.");
+			result.insert("status", "fail");
+			return;
+		}
+	}
+
+	// if "upload/blob" dir doesn't exist, create it
+	uploadDir += "/blob";
+	if (!QDir(uploadDir).exists())
+	{
+		QDir pageDir(pagepath + "/upload");
+		if (!(pageDir.mkdir("blob")))
+		{
+			g_syslog.logMessage(SYSLOG_LEVEL_ERROR, "", "Unable create 'blob' dir.");
+			result.insert("status", "fail");
+			return;
+		}
+	}
+
+	// if file already exists, just return ok
+	QString fullfileName = uploadDir + "/" + filename;
+
+	if (QFile(fullfileName).exists())
+	{
+		result.insert("status", "ok");
+
+		QString out = QString(QJsonDocument(result).toJson(QJsonDocument::Compact));
+		response.write(out.toUtf8());
+		return;
+	}
+
+	// write
+	QFile fd(fullfileName);
+
+	if (!fd.open(QFile::WriteOnly))
+	{
+		g_syslog.logMessage(SYSLOG_LEVEL_ERROR, "", "Failed to open file.");
+		result.insert("status", "fail");
+		return;
+	}
+
+	fd.write(filebytes);
 	fd.close();
 
 	result.insert("url", fileurl);

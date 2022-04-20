@@ -152,11 +152,10 @@ static bool access_upload_file(const QString &url)
 	QStringList list = url.split("/");
 	int n = list.size();
 
-	QString upload = list.at(n - 2);
-	if (upload != "upload")
-		return false;
+	if ((list.at(n - 2) == "upload") || ((list.at(n - 3) == "upload") && (list.at(n - 2) == "blob")))
+	    return true;
 	else
-		return true;
+		return false;
 }
 
 
@@ -369,8 +368,10 @@ protected:
 		int n = list.size();
 
 		QString upload = list.at(n-2);
+		/*
 		if (upload != "upload")
 			return;
+			*/
 
 		QString name = list.at(n - 1);
 

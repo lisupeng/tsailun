@@ -138,6 +138,60 @@ function enable_drawing_editor(doneCallback, svg) {
     Globaldata.fnDrawingDone = doneCallback;
 }
 
+function blob_upload_handler(guid, data, type, doneCallback)
+{
+      var filedata = data;
+      
+      var ext = "";
+      var _type = type.toLowerCase();
+      
+      if (_type == "image/png")
+      {
+          ext = ".png";
+      }
+      else if (_type == "image/jpg" || _type == "image/jpeg")
+      {
+          ext = ".jpg";
+      }
+      else if (_type == "image/bmp")
+      {
+          ext = ".bmp";
+      }
+      else if (_type == "image/gif")
+      {
+          ext = ".gif";
+      }
+      else
+      {
+          return;
+      }
+
+      var url = window.location.pathname + "?op=uploadblob&filename=" + guid + ext;
+
+      fetch(url, {
+        method: "post",
+        body: JSON.stringify({ sid: Utils.getSessionId(), filedata }),
+      })
+        .then((response) => response.text())
+        .then((data) => {
+          var res = JSON.parse(data);
+
+          if (res.status === "ok") {
+              
+              if (res.url)
+              {
+                  doneCallback(guid, res.url);
+              }
+            
+          } else if (res.status === "fail") {
+              
+              // do not handle error here
+
+          }
+        })
+        .catch((error) => console.log("error is", error));
+}
+
 function example_image_upload_handler(blobInfo, success, failure, progress) {
   console.log("example_image_upload_handler()");
   console.dir(blobInfo);
@@ -324,10 +378,10 @@ export default function Editorwrap() {
                   plugins: [
                     "advlist autolink lists link image charmap print preview anchor",
                     "searchreplace visualblocks fullscreen",
-                    "insertdatetime media table powerpaste code help wordcount toc attachment draw", // DON'T use paste plugin, otherwise unable paste images.
+                    "insertdatetime media table powerpaste code help wordcount toc attachment draw code", // DON'T use paste plugin, otherwise unable paste images.
                   ],
                   toolbar: [
-                    "undo redo | bold italic underline strikethrough forecolor backcolor | fontselect | fontsizeselect | formatselect | toc | bullist numlist | lineheight outdent indent alignleft aligncenter alignright alignjustify | table draw link anchor | removeformat attachment",
+                    "undo redo | bold italic underline strikethrough forecolor backcolor | fontselect | fontsizeselect | formatselect | toc | bullist numlist | lineheight outdent indent alignleft aligncenter alignright alignjustify | table draw link anchor | removeformat attachment code",
                   ],
                   content_style: content_style,
                   relative_urls: false,
@@ -339,6 +393,7 @@ export default function Editorwrap() {
                   attachment_assets_path: '/misc/assets/icons/',
                   attachment_upload_handler: upload,
                   enable_drawing_editor: enable_drawing_editor,
+                  blob_upload_handler: blob_upload_handler,
                   toc_depth: '6',
                   
                   /*block_unsupported_drop: false*/
