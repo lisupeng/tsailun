@@ -33,6 +33,8 @@
 #include "stats.h"
 #include "sysdefs.h"
 #include "uploadmgr.h"
+#include "pagecache.h"
+#include "authcache.h"
 #include <QDir>
 #include <QLockFile>
 #include <QTemporaryFile>
@@ -47,6 +49,8 @@ SearchMgr        g_searchMgr;
 DemoMgr          g_demoMgr;
 StatsMgr         g_statsMgr;
 UploadMgr        g_uploadMgr;
+PageCache        g_pageCache;
+AuthCache        g_authCache;
 
 
 OpcodeHandler::OpcodeHandler()
@@ -90,12 +94,13 @@ OpcodeHandler::OpcodeHandler()
 	m_handlerMap["sysver"] = &OpcodeHandler::handle_sysver;
 	m_handlerMap["watchdog"] = &OpcodeHandler::handle_watchdog;
 	m_handlerMap["getstats"] = &OpcodeHandler::handle_getstats;
-	m_handlerMap["getlog"] = &OpcodeHandler::handle_getlog;
+	//m_handlerMap["getlog"] = &OpcodeHandler::handle_getlog;
 	m_handlerMap["moveup"] = &OpcodeHandler::handle_moveup;
 	m_handlerMap["movedown"] = &OpcodeHandler::handle_movedown;
 	m_handlerMap["rename"] = &OpcodeHandler::handle_renamepage;
 	m_handlerMap["checkupdate"] = &OpcodeHandler::handle_checkupdate;
 	m_handlerMap["test"] = &OpcodeHandler::handle_test;
+	m_handlerMap["loglevel"] = &OpcodeHandler::handle_loglevel;
 }
 
 static QString getSpaceFullPathByUrl(QString url)
@@ -1108,6 +1113,8 @@ void OpcodeHandler::handle_delpage(CWF::Request &req, CWF::Response &response, R
 		response.write(out.toUtf8());
 	}
 
+	g_pageCache.removePageFromCache(url);
+
 	handle_page_del(path, result);
 	QString out = QString(QJsonDocument(result).toJson(QJsonDocument::Compact));
 
@@ -1147,6 +1154,8 @@ void OpcodeHandler::handle_savepage(CWF::Request &req, CWF::Response &response, 
 	//QByteArray content = req.getHttpParser().getBody();
 	QString scontent = (*(ctx.postobj)).value("content").toString();//QString::fromUtf8(content);
 	QString path = getSpaceAndPagePathByUrl(url);
+
+	g_pageCache.removePageFromCache(url);
 	handle_page_save(path, scontent, *(ctx.sid), result);
 
 	QString out = QString(QJsonDocument(result).toJson(QJsonDocument::Compact));
@@ -1189,9 +1198,24 @@ void OpcodeHandler::handle_readpage(CWF::Request &req, CWF::Response &response, 
 	QByteArray ver = req.getHttpParser().getParameter("ver");
 	QString path = getSpaceAndPagePathByUrl(url);
 
+	if (ver.size() != 0)
+		g_pageCache.removePageFromCache(url);
+
+	PageCacheData pageCache;
+	if (ver.size() == 0 && g_pageCache.getPageFromCache(url, pageCache))
+	{
+		response.write(pageCache.content.toUtf8());
+		return;
+	}
 
 	handle_page_read(path, ver, false, result);
 	QString out = QString(QJsonDocument(result).toJson(QJsonDocument::Compact));
+
+	PageCacheData cachedata;
+	cachedata.content = out;
+
+	if (ver.size() == 0)
+		g_pageCache.addPageToCache(url, cachedata);
 
 	response.write(out.toUtf8());
 }
@@ -1266,6 +1290,8 @@ void OpcodeHandler::handle_createpage(CWF::Request &req, CWF::Response &response
 	QString currentPagedir = QDir(url).dirName();
 
 	QString out = "";
+
+	g_pageCache.removePageFromCache(url);
 	_handle_page_create(sParentPath, stitle, sloc, currentPagedir, out);
 
 	response.write(out.toUtf8());
@@ -1670,6 +1696,7 @@ void OpcodeHandler::handle_delusergroup(CWF::Request &req, CWF::Response &respon
 
 	if (g_groupDbMgr.delGroup(groupname))
 	{
+		g_authCache.clearAll();
 		result.insert("status", "ok");
 	}
 	else
@@ -1693,6 +1720,7 @@ void OpcodeHandler::handle_delspace(CWF::Request &req, CWF::Response &response, 
 
 	if (g_spaceDbMgr.deleteSpace(spacename))
 	{
+		g_authCache.clearAll();
 		result.insert("status", "ok");
 	}
 	else
@@ -1834,7 +1862,10 @@ void OpcodeHandler::handle_updatespace(CWF::Request &req, CWF::Response &respons
 		wlist = (*(ctx.postobj)).value("wlist").toArray();
 
 		if (g_spaceDbMgr.updateSpace(spaceName, rlist, wlist))
+		{
+			g_authCache.clearAll();
 			result.insert("status", "ok");
+		}
 		else
 			result.insert("status", "error");
 	}
@@ -1935,7 +1966,10 @@ void OpcodeHandler::handle_updategroup(CWF::Request &req, CWF::Response &respons
 		comment = (*(ctx.postobj)).value("comment").toString();
 
 		if (g_groupDbMgr.updateGroup(groupname, comment, userList))
+		{
+			g_authCache.clearAll();
 			result.insert("status", "ok");
+		}
 		else
 			result.insert("status", "error");
 	}
@@ -2817,6 +2851,27 @@ void OpcodeHandler::handle_test(CWF::Request &req, CWF::Response &response, REQ_
 	QJsonObject result;
 
 	//sendMail();
+
+	result.insert("status", "ok");
+
+	QString out = QString(QJsonDocument(result).toJson(QJsonDocument::Compact));
+
+	response.write(out.toUtf8());
+	return;
+}
+
+void OpcodeHandler::handle_loglevel(CWF::Request &req, CWF::Response &response, REQ_CONTEXT &ctx)
+{
+	QJsonObject result;
+
+	static bool _dbg = false;
+
+	if (!_dbg)
+		g_syslog.setLogLevel(SYSLOG_LEVEL_DEBUG);
+	else
+		g_syslog.setLogLevel(SYSLOG_LEVEL_INFO);
+
+	_dbg = !_dbg;
 
 	result.insert("status", "ok");
 

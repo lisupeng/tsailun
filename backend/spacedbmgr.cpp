@@ -18,6 +18,7 @@
 
 #include "spacedbmgr.h"
 #include "configmgr.h"
+#include "sqlitedbmgr.h"
 
 #include <QSqlQuery>
 #include <QVariant>
@@ -74,47 +75,42 @@ bool SpaceDbMgr::init_space_table()
 {
 
 	// create table if not exists
-	QSqlDatabase  database;
-	if (!__getDbConnections(database))
+	QSqlDatabase  *database = nullptr;
+	SqliteDbMgr   connMgr("space", &database);
+
 	{
-		return false;
-	}
-	QSqlQuery sql_query(database);
+		QSqlQuery sql_query(*database);
 
-	QString sql = "CREATE TABLE IF NOT EXISTS space_table (spacename varchar(64) primary key, "
-		"path varchar(2048), rcount varchar(8), wcount varchar(8), extrainfo varchar(2048))";
+		QString sql = "CREATE TABLE IF NOT EXISTS space_table (spacename varchar(64) primary key, "
+			"path varchar(2048), rcount varchar(8), wcount varchar(8), extrainfo varchar(2048))";
 
-	sql_query.prepare(sql);
+		sql_query.prepare(sql);
 
-	if (!sql_query.exec())
-	{
-		database.close();
-		return false;
-	}
-
-	// create index
-	sql = "create index spacename_index on space_table(spacename)";
-	sql_query.prepare(sql);
-	sql_query.exec();
-
-	int count;
-	if (!_getSpaceCount(count, database))
-	{
-		database.close();
-		return false;
-	}
-
-	 
-	if (count == 0)
-	{
-		if (!insertDefaultSpace())
+		if (!sql_query.exec())
 		{
-			database.close();
 			return false;
 		}
-	}
 
-	database.close();
+		// create index
+		sql = "create index spacename_index on space_table(spacename)";
+		sql_query.prepare(sql);
+		sql_query.exec();
+
+		int count;
+		if (!_getSpaceCount(count, *database))
+		{
+			return false;
+		}
+
+
+		if (count == 0)
+		{
+			if (!insertDefaultSpace())
+			{
+				return false;
+			}
+		}
+	}
 
 	return true;
 }
@@ -169,53 +165,46 @@ bool SpaceDbMgr::addSpace(const QString &spaceName, const QString &path)
 
 	QString rtableName = _getRTableName(spaceName);
 	QString wtableName = _getWTableName(spaceName);
-	QSqlDatabase  database;
-	if (!__getDbConnections(database))
+	QSqlDatabase  *database = nullptr;
+	SqliteDbMgr   connMgr("space", &database);
+
 	{
-		return false;
+		QSqlQuery sql_query(*database);
+
+		// create rtable
+		QString sql = "CREATE TABLE IF NOT EXISTS " + rtableName + " (itemtype varchar(16), item varchar(128) primary key)";
+		sql_query.prepare(sql);
+		if (!sql_query.exec())
+		{
+			return false;
+		}
+
+		// create wtable
+		sql = "CREATE TABLE IF NOT EXISTS " + wtableName + " (itemtype varchar(16), item varchar(128) primary key)";
+		sql_query.prepare(sql);
+		if (!sql_query.exec())
+		{
+			return false;
+		}
+
+		// add record to space_table
+		sql = "INSERT INTO space_table (spacename, path, rcount, wcount) VALUES('" + spaceName + "', '" + path + "', '0', '0')";
+		sql_query.prepare(sql);
+		if (!sql_query.exec())
+		{
+			return false;
+		}
+
+		// create space path
+		ConfigMgr *cfgMgr = ConfigMgr::GetInstance();
+		QString appRootPath = cfgMgr->getAppRootDir();
+		QString spacePath = appRootPath + "/data" + path + "/pages";
+		QDir dir(spacePath);
+		if (!dir.mkpath(spacePath))
+		{
+			return false;
+		}
 	}
-
-	QSqlQuery sql_query(database);
-
-	// create rtable
-	QString sql = "CREATE TABLE IF NOT EXISTS " + rtableName + " (itemtype varchar(16), item varchar(128) primary key)";
-	sql_query.prepare(sql);
-	if (!sql_query.exec())
-	{
-		database.close();
-		return false;
-	}
-
-	// create wtable
-	sql = "CREATE TABLE IF NOT EXISTS " + wtableName + " (itemtype varchar(16), item varchar(128) primary key)";
-	sql_query.prepare(sql);
-	if (!sql_query.exec())
-	{
-		database.close();
-		return false;
-	}
-
-	// add record to space_table
-	sql = "INSERT INTO space_table (spacename, path, rcount, wcount) VALUES('" + spaceName + "', '" + path + "', '0', '0')";
-	sql_query.prepare(sql);
-	if (!sql_query.exec())
-	{
-		database.close();
-		return false;
-	}
-
-	// create space path
-	ConfigMgr *cfgMgr = ConfigMgr::GetInstance();
-	QString appRootPath = cfgMgr->getAppRootDir();
-	QString spacePath = appRootPath + "/data" + path + "/pages";
-	QDir dir(spacePath);
-	if (!dir.mkpath(spacePath))
-	{
-		database.close();
-		return false;
-	}
-
-	database.close();
 
 	return true;
 }
@@ -226,45 +215,40 @@ bool SpaceDbMgr::deleteSpace(const QString &spaceName)
 
 	QString rtableName = _getRTableName(spaceName);
 	QString wtableName = _getWTableName(spaceName);
-	QSqlDatabase  database;
-	if (!__getDbConnections(database))
+	QSqlDatabase  *database = nullptr;
+	SqliteDbMgr   connMgr("space", &database);
+
 	{
-		return false;
+
+		QSqlQuery sql_query(*database);
+
+		// del rtable/wtable
+		QString sql = "DROP TABLE if exists " + rtableName;
+		sql_query.prepare(sql);
+
+		if (!sql_query.exec())
+		{
+			return false;
+		}
+
+		sql = "DROP TABLE if exists " + wtableName;
+		sql_query.prepare(sql);
+
+		if (!sql_query.exec())
+		{
+			return false;
+		}
+
+		// delete record
+		sql = "DELETE FROM space_table WHERE spacename='" + spaceName + "'";
+
+		sql_query.prepare(sql);
+
+		if (!sql_query.exec())
+		{
+			return false;
+		}
 	}
-
-	QSqlQuery sql_query(database);
-
-	// del rtable/wtable
-	QString sql = "DROP TABLE if exists " + rtableName;
-	sql_query.prepare(sql);
-
-	if (!sql_query.exec())
-	{
-		database.close();
-		return false;
-	}
-
-	sql = "DROP TABLE if exists " + wtableName;
-	sql_query.prepare(sql);
-
-	if (!sql_query.exec())
-	{
-		database.close();
-		return false;
-	}
-
-	// delete record
-	sql = "DELETE FROM space_table WHERE spacename='" + spaceName + "'";
-
-	sql_query.prepare(sql);
-
-	if (!sql_query.exec())
-	{
-		database.close();
-		return false;
-	}
-
-	database.close();
 
 	return true;
 }
@@ -274,38 +258,33 @@ bool SpaceDbMgr::addToSpaceRlist(const QString &spaceName, const QString &type, 
 	QMutexLocker autolock(m_mutex);
 
 	QString rtableName = _getRTableName(spaceName);
-	QSqlDatabase  database;
-	if (!__getDbConnections(database))
-	{
-		return false;
-	}
+	QSqlDatabase  *database = nullptr;
+	SqliteDbMgr   connMgr("space", &database);
 
-	QSqlQuery sql_query(database);
-	QString sql = "INSERT INTO "+ rtableName +" (itemtype, item) VALUES('" + type + "', '" + item + "')";
-	sql_query.prepare(sql);
-	if (!sql_query.exec())
 	{
-		database.close();
-		return false;
-	}
 
-	// update count
-	int count = 0;
-	if (!_getSizeOfSpaceRlist(spaceName, count, database))
-	{
-		database.close();
-		return false;
-	}
-	QString rcount = QString("%1").arg(count);
-	sql = "UPDATE space_table SET rcount='" + rcount + "' WHERE spacename='" + spaceName + "'";
-	sql_query.prepare(sql);
-	if (!sql_query.exec())
-	{
-		database.close();
-		return false;
-	}
+		QSqlQuery sql_query(*database);
+		QString sql = "INSERT INTO " + rtableName + " (itemtype, item) VALUES('" + type + "', '" + item + "')";
+		sql_query.prepare(sql);
+		if (!sql_query.exec())
+		{
+			return false;
+		}
 
-	database.close();
+		// update count
+		int count = 0;
+		if (!_getSizeOfSpaceRlist(spaceName, count, *database))
+		{
+			return false;
+		}
+		QString rcount = QString("%1").arg(count);
+		sql = "UPDATE space_table SET rcount='" + rcount + "' WHERE spacename='" + spaceName + "'";
+		sql_query.prepare(sql);
+		if (!sql_query.exec())
+		{
+			return false;
+		}
+	}
 
 	return true;
 }
@@ -315,38 +294,33 @@ bool SpaceDbMgr::addToSpaceWlist(const QString &spaceName, const QString &type, 
 	QMutexLocker autolock(m_mutex);
 
 	QString wtableName = _getWTableName(spaceName);
-	QSqlDatabase  database;
-	if (!__getDbConnections(database))
-	{
-		return false;
-	}
+	QSqlDatabase  *database = nullptr;
+	SqliteDbMgr   connMgr("space", &database);
 
-	QSqlQuery sql_query(database);
-	QString sql = "INSERT INTO " + wtableName + " (itemtype, item) VALUES('" + type + "', '" + item + "')";
-	sql_query.prepare(sql);
-	if (!sql_query.exec())
 	{
-		database.close();
-		return false;
-	}
 
-	// update count
-	int count = 0;
-	if (!_getSizeOfSpaceWlist(spaceName, count, database))
-	{
-		database.close();
-		return false;
-	}
-	QString wcount = QString("%1").arg(count);
-	sql = "UPDATE space_table SET wcount='" + wcount + "' WHERE spacename='" + spaceName + "'";
-	sql_query.prepare(sql);
-	if (!sql_query.exec())
-	{
-		database.close();
-		return false;
-	}
+		QSqlQuery sql_query(*database);
+		QString sql = "INSERT INTO " + wtableName + " (itemtype, item) VALUES('" + type + "', '" + item + "')";
+		sql_query.prepare(sql);
+		if (!sql_query.exec())
+		{
+			return false;
+		}
 
-	database.close();
+		// update count
+		int count = 0;
+		if (!_getSizeOfSpaceWlist(spaceName, count, *database))
+		{
+			return false;
+		}
+		QString wcount = QString("%1").arg(count);
+		sql = "UPDATE space_table SET wcount='" + wcount + "' WHERE spacename='" + spaceName + "'";
+		sql_query.prepare(sql);
+		if (!sql_query.exec())
+		{
+			return false;
+		}
+	}
 
 	return true;
 }
@@ -395,39 +369,35 @@ bool SpaceDbMgr::getSpaceList(QJsonArray &list)
 {
 	QJsonObject jsonobj;
 	QMutexLocker autolock(m_mutex);
-	QSqlDatabase  database;
-	if (!__getDbConnections(database))
+	QSqlDatabase  *database = nullptr;
+	SqliteDbMgr   connMgr("space", &database);
+
 	{
-		database.close();
-		return false;
+
+		// create table if not exists
+		QSqlQuery sql_query(*database);
+		QString sql;
+
+		sql = "SELECT spacename,path,rcount,wcount FROM space_table";
+
+		sql_query.prepare(sql);
+
+		if (!sql_query.exec())
+		{
+			return false;
+		}
+
+
+		QSqlRecord rec = sql_query.record();
+
+
+		while (sql_query.next())
+		{
+			QJsonObject jsonobj;
+			recordToJson(rec, sql_query, jsonobj);
+			list.append(jsonobj);
+		}
 	}
-
-	// create table if not exists
-	QSqlQuery sql_query(database);
-	QString sql;
-
-	sql = "SELECT spacename,path,rcount,wcount FROM space_table";
-
-	sql_query.prepare(sql);
-
-	if (!sql_query.exec())
-	{
-		database.close();
-		return false;
-	}
-
-	 
-	QSqlRecord rec = sql_query.record();
-
-	 
-	while (sql_query.next())
-	{
-		QJsonObject jsonobj;
-		recordToJson(rec, sql_query, jsonobj);
-		list.append(jsonobj);
-	}
-
-	database.close();
 
 	return true;
 }
@@ -442,6 +412,7 @@ void SpaceDbMgr::recordToJson(QSqlRecord &rec, QSqlQuery &sql_query, QJsonObject
 	}
 }
 
+/*
 bool SpaceDbMgr::__getDbConnections(QSqlDatabase &database)
 {
 	Qt::HANDLE threadId = QThread::currentThreadId();
@@ -465,58 +436,55 @@ bool SpaceDbMgr::__getDbConnections(QSqlDatabase &database)
 
 	return true;
 }
+*/
 
 bool SpaceDbMgr::getSpaceDetail(const QString &spaceName, QJsonObject &spaceDetail)
 {
 	QJsonObject jsonobj;
 	QMutexLocker autolock(m_mutex);
-	QSqlDatabase  database;
-	if (!__getDbConnections(database))
+	QSqlDatabase  *database = nullptr;
+	SqliteDbMgr   connMgr("space", &database);
+
 	{
-		return false;
+
+		// create table if not exists
+		QSqlQuery sql_query(*database);
+		QString sql;
+
+		sql = "SELECT spacename,path,rcount,wcount FROM space_table WHERE spacename='" + spaceName + "'";
+
+		sql_query.prepare(sql);
+
+		if (!sql_query.exec())
+		{
+			return false;
+		}
+
+
+		QSqlRecord rec = sql_query.record();
+
+
+		if (!sql_query.next())
+		{
+			return false;
+		}
+
+		recordToJson(rec, sql_query, spaceDetail);
+
+		// rtable list
+		QJsonArray rlist;
+		if (_getSpaceRlist(spaceName, rlist, *database))
+		{
+			spaceDetail.insert("rlist", rlist);
+		}
+
+		// get wtable list
+		QJsonArray wlist;
+		if (_getSpaceWlist(spaceName, wlist, *database))
+		{
+			spaceDetail.insert("wlist", wlist);
+		}
 	}
-
-	// create table if not exists
-	QSqlQuery sql_query(database);
-	QString sql;
-
-	sql = "SELECT spacename,path,rcount,wcount FROM space_table WHERE spacename='" + spaceName + "'";
-
-	sql_query.prepare(sql);
-
-	if (!sql_query.exec())
-	{
-		database.close();
-		return false;
-	}
-
-	 
-	QSqlRecord rec = sql_query.record();
-
-	 
-	if (!sql_query.next())
-	{
-		database.close();
-		return false;
-	}
-
-	recordToJson(rec, sql_query, spaceDetail);
-
-	// rtable list
-	QJsonArray rlist;
-	if (_getSpaceRlist(spaceName, rlist, database))
-	{
-		spaceDetail.insert("rlist", rlist);
-	}
-
-	// get wtable list
-	QJsonArray wlist;
-	if (_getSpaceWlist(spaceName, wlist, database))
-	{
-		spaceDetail.insert("wlist", wlist);
-	}
-
-	database.close();
 
 	return true;
 }
@@ -593,40 +561,38 @@ bool SpaceDbMgr::getSpaceRlist(const QString &spaceName, QJsonArray &rlist)
 {
 	QJsonObject jsonobj;
 	QMutexLocker autolock(m_mutex);
-	QSqlDatabase  database;
-	if (!__getDbConnections(database))
+	QSqlDatabase  *database = nullptr;
+	SqliteDbMgr   connMgr("space", &database);
+
 	{
-		return false;
+
+
+		// create table if not exists
+		QSqlQuery sql_query(*database);
+		QString sql;
+
+		QString rtableName = _getRTableName(spaceName);
+
+		sql = "SELECT item,itemtype FROM " + rtableName;
+
+		sql_query.prepare(sql);
+
+		if (!sql_query.exec())
+		{
+			return false;
+		}
+
+
+		QSqlRecord rec = sql_query.record();
+
+
+		while (sql_query.next())
+		{
+			QJsonObject jsonobj;
+			recordToJson(rec, sql_query, jsonobj);
+			rlist.append(jsonobj);
+		}
 	}
-
-	// create table if not exists
-	QSqlQuery sql_query(database);
-	QString sql;
-
-	QString rtableName = _getRTableName(spaceName);
-
-	sql = "SELECT item,itemtype FROM " + rtableName;
-
-	sql_query.prepare(sql);
-
-	if (!sql_query.exec())
-	{
-		database.close();
-		return false;
-	}
-
-	 
-	QSqlRecord rec = sql_query.record();
-
-	 
-	while (sql_query.next())
-	{
-		QJsonObject jsonobj;
-		recordToJson(rec, sql_query, jsonobj);
-		rlist.append(jsonobj);
-	}
-
-	database.close();
 
 	return true;
 }
@@ -635,40 +601,37 @@ bool SpaceDbMgr::getSpaceWlist(const QString &spaceName, QJsonArray &wlist)
 {
 	QJsonObject jsonobj;
 	QMutexLocker autolock(m_mutex);
-	QSqlDatabase  database;
-	if (!__getDbConnections(database))
+	QSqlDatabase  *database = nullptr;
+	SqliteDbMgr   connMgr("space", &database);
+
 	{
-		return false;
+
+		// create table if not exists
+		QSqlQuery sql_query(*database);
+		QString sql;
+
+		QString wtableName = _getWTableName(spaceName);
+
+		sql = "SELECT item,itemtype FROM " + wtableName;
+
+		sql_query.prepare(sql);
+
+		if (!sql_query.exec())
+		{
+			return false;
+		}
+
+
+		QSqlRecord rec = sql_query.record();
+
+
+		while (sql_query.next())
+		{
+			QJsonObject jsonobj;
+			recordToJson(rec, sql_query, jsonobj);
+			wlist.append(jsonobj);
+		}
 	}
-
-	// create table if not exists
-	QSqlQuery sql_query(database);
-	QString sql;
-
-	QString wtableName = _getWTableName(spaceName);
-
-	sql = "SELECT item,itemtype FROM " + wtableName;
-
-	sql_query.prepare(sql);
-
-	if (!sql_query.exec())
-	{
-		database.close();
-		return false;
-	}
-
-	 
-	QSqlRecord rec = sql_query.record();
-
-	 
-	while (sql_query.next())
-	{
-		QJsonObject jsonobj;
-		recordToJson(rec, sql_query, jsonobj);
-		wlist.append(jsonobj);
-	}
-
-	database.close();
 
 	return true;
 }
@@ -677,70 +640,64 @@ bool SpaceDbMgr::updateSpace(const QString &spaceName, const QJsonArray &rlist, 
 {
 	QJsonObject jsonobj;
 	QMutexLocker autolock(m_mutex);
-	QSqlDatabase  database;
-	if (!__getDbConnections(database))
+	QSqlDatabase  *database = nullptr;
+	SqliteDbMgr   connMgr("space", &database);
+
 	{
-		return false;
-	}
 
-	// create table if not exists
-	QSqlQuery sql_query(database);
-	QString sql;
+		// create table if not exists
+		QSqlQuery sql_query(*database);
+		QString sql;
 
-	QString rtableName = _getRTableName(spaceName);
-	QString wtableName = _getWTableName(spaceName);
+		QString rtableName = _getRTableName(spaceName);
+		QString wtableName = _getWTableName(spaceName);
 
-	// clear rtable
-	sql = "DELETE FROM " + rtableName;
-	sql_query.prepare(sql);
-	if (!sql_query.exec())
-	{
-		database.close();
-		return false;
-	}
-
-	// clear wtable
-	sql = "DELETE FROM " + wtableName;
-	sql_query.prepare(sql);
-	if (!sql_query.exec())
-	{
-		database.close();
-		return false;
-	}
-
-	// add to rtable
-	for (int i = 0; i < rlist.size(); i++)
-	{
-		QString item = rlist.at(i).toObject().value("item").toString();
-		QString itemtype = rlist.at(i).toObject().value("itemtype").toString();
-
-		// insert to DB
-		QString sql = "INSERT INTO " + rtableName + " (itemtype, item) VALUES('" + itemtype + "', '" + item + "')";
+		// clear rtable
+		sql = "DELETE FROM " + rtableName;
 		sql_query.prepare(sql);
 		if (!sql_query.exec())
 		{
-			database.close();
 			return false;
 		}
-	}
 
-	// add to wtable
-	for (int i = 0; i < wlist.size(); i++)
-	{
-		QString item = wlist.at(i).toObject().value("item").toString();
-		QString itemtype = wlist.at(i).toObject().value("itemtype").toString();
-
-		// insert to DB
-		QString sql = "INSERT INTO " + wtableName + " (itemtype, item) VALUES('" + itemtype + "', '" + item + "')";
+		// clear wtable
+		sql = "DELETE FROM " + wtableName;
 		sql_query.prepare(sql);
 		if (!sql_query.exec())
 		{
-			database.close();
 			return false;
 		}
-	}
 
-	database.close();
+		// add to rtable
+		for (int i = 0; i < rlist.size(); i++)
+		{
+			QString item = rlist.at(i).toObject().value("item").toString();
+			QString itemtype = rlist.at(i).toObject().value("itemtype").toString();
+
+			// insert to DB
+			QString sql = "INSERT INTO " + rtableName + " (itemtype, item) VALUES('" + itemtype + "', '" + item + "')";
+			sql_query.prepare(sql);
+			if (!sql_query.exec())
+			{
+				return false;
+			}
+		}
+
+		// add to wtable
+		for (int i = 0; i < wlist.size(); i++)
+		{
+			QString item = wlist.at(i).toObject().value("item").toString();
+			QString itemtype = wlist.at(i).toObject().value("itemtype").toString();
+
+			// insert to DB
+			QString sql = "INSERT INTO " + wtableName + " (itemtype, item) VALUES('" + itemtype + "', '" + item + "')";
+			sql_query.prepare(sql);
+			if (!sql_query.exec())
+			{
+				return false;
+			}
+		}
+	}
 
 	return true;
 }
@@ -749,39 +706,34 @@ bool SpaceDbMgr::getSpaceNameByPath(const QString &spacePath, QString &spaceName
 {
 	QJsonObject jsonobj;
 	QMutexLocker autolock(m_mutex);
-	QSqlDatabase  database;
-	if (!__getDbConnections(database))
+	QSqlDatabase  *database = nullptr;
+	SqliteDbMgr   connMgr("space", &database);
+
 	{
-		return false;
+		// create table if not exists
+		QSqlQuery sql_query(*database);
+		QString sql;
+
+		sql = "SELECT spacename FROM space_table WHERE path='" + spacePath + "'";
+
+		sql_query.prepare(sql);
+
+		if (!sql_query.exec())
+		{
+			return false;
+		}
+
+
+		QSqlRecord rec = sql_query.record();
+
+
+		if (!sql_query.next())
+		{
+			return false;
+		}
+
+		spaceName = sql_query.value(0).toString();
 	}
-
-	// create table if not exists
-	QSqlQuery sql_query(database);
-	QString sql;
-
-	sql = "SELECT spacename FROM space_table WHERE path='" + spacePath + "'";
-
-	sql_query.prepare(sql);
-
-	if (!sql_query.exec())
-	{
-		database.close();
-		return false;
-	}
-
-	 
-	QSqlRecord rec = sql_query.record();
-
-	 
-	if (!sql_query.next())
-	{
-		database.close();
-		return false;
-	}
-
-	spaceName = sql_query.value(0).toString();
-
-	database.close();
 
 	return true;
 }
@@ -790,37 +742,33 @@ bool SpaceDbMgr::isSpaceExists(const QString &spaceName)
 {
 	QJsonObject jsonobj;
 	QMutexLocker autolock(m_mutex);
-	QSqlDatabase  database;
-	if (!__getDbConnections(database))
+	QSqlDatabase  *database = nullptr;
+	SqliteDbMgr   connMgr("space", &database);
+
 	{
-		return false;
+
+		// create table if not exists
+		QSqlQuery sql_query(*database);
+		QString sql;
+
+		sql = "SELECT spacename,path,rcount,wcount FROM space_table WHERE spacename='" + spaceName + "'";
+
+		sql_query.prepare(sql);
+
+		if (!sql_query.exec())
+		{
+			return false;
+		}
+
+
+		QSqlRecord rec = sql_query.record();
+
+
+		if (!sql_query.next())
+		{
+			return false;
+		}
 	}
-
-	// create table if not exists
-	QSqlQuery sql_query(database);
-	QString sql;
-
-	sql = "SELECT spacename,path,rcount,wcount FROM space_table WHERE spacename='" + spaceName + "'";
-
-	sql_query.prepare(sql);
-
-	if (!sql_query.exec())
-	{
-		database.close();
-		return false;
-	}
-
-	 
-	QSqlRecord rec = sql_query.record();
-
-	 
-	if (!sql_query.next())
-	{
-		database.close();
-		return false;
-	}
-
-	database.close();
 
 	return true;
 }

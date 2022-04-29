@@ -44,8 +44,33 @@ extern Syslog        g_syslog;
 void static exitApp()
 {}
 
+void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
+{
+	switch (type) {
+
+	case QtDebugMsg:
+		g_syslog.logMessage(SYSLOG_LEVEL_DEBUG, "", msg);
+		break;
+	case QtInfoMsg:
+		g_syslog.logMessage(SYSLOG_LEVEL_INFO, "", msg);
+		break;
+
+	case QtWarningMsg:
+		g_syslog.logMessage(SYSLOG_LEVEL_WARN, "", msg);
+		break;
+
+	case QtCriticalMsg:
+	case QtFatalMsg:
+		g_syslog.logMessage(SYSLOG_LEVEL_ERROR, "", msg);
+		break;
+
+	}
+}
+
 int main(int argc, char *argv[])
 {
+	qInstallMessageHandler(myMessageOutput);
+
 	ServerApp server(argc, argv, "");
 
 	int ret = serverDirCheck(server.getServerDataDir());

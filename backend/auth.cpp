@@ -22,11 +22,13 @@
 #include "userdbmgr.h"
 #include "spacedbmgr.h"
 #include "groupdbmgr.h"
+#include "authcache.h"
 
 extern SessionMgr    g_sessionMgr;
 extern UserDbMgr     g_userDbMgr;
 extern SpaceDbMgr    g_spaceDbMgr;
 extern GroupDbMgr    g_groupDbMgr;
+extern AuthCache     g_authCache;
 
 int AuthMgr::SpaceReadPermissionCheck(const QString &sid, const QString &url)
 {
@@ -52,9 +54,19 @@ int AuthMgr::SpaceReadPermissionCheck(const QString &sid, const QString &url)
 		account = sessionobj.value("account").toString();
 	}
 
+	QString authCacheKey = account + "@" + spacePath + "@" + "read";
+	AuthCacheData authdata;
+
+	if (g_authCache.get(authCacheKey, authdata))
+		return authdata.permission;
+
+
 	QString spaceName;
 	if (!g_spaceDbMgr.getSpaceNameByPath(spacePath, spaceName))
 	{
+		authdata.permission = AUTH_RET_ACCESS_DENIED;
+		g_authCache.add(authCacheKey, authdata);
+
 		return AUTH_RET_ACCESS_DENIED;
 	}
 
@@ -62,6 +74,9 @@ int AuthMgr::SpaceReadPermissionCheck(const QString &sid, const QString &url)
 	QJsonArray rlist;
 	if (!g_spaceDbMgr.getSpaceRlist(spaceName, rlist))
 	{
+		authdata.permission = AUTH_RET_ACCESS_DENIED;
+		g_authCache.add(authCacheKey, authdata);
+
 		return AUTH_RET_ACCESS_DENIED;
 	}
 
@@ -74,20 +89,32 @@ int AuthMgr::SpaceReadPermissionCheck(const QString &sid, const QString &url)
 
 		if (item == "*")
 		{
+			authdata.permission = AUTH_RET_SUCCESS;
+			g_authCache.add(authCacheKey, authdata);
+
 			return AUTH_RET_SUCCESS;
 		}
 
 		if (itemtype == "user" && item == account)
 		{
+			authdata.permission = AUTH_RET_SUCCESS;
+			g_authCache.add(authCacheKey, authdata);
+
 			return AUTH_RET_SUCCESS;
 		}
 
 		if (itemtype == "group" && g_groupDbMgr.isUserInGroup(item, account))
 		{
+			authdata.permission = AUTH_RET_SUCCESS;
+			g_authCache.add(authCacheKey, authdata);
+
 			return AUTH_RET_SUCCESS;
 		}
 
 	}
+
+	authdata.permission = AUTH_RET_ACCESS_DENIED;
+	g_authCache.add(authCacheKey, authdata);
 
 	return AUTH_RET_ACCESS_DENIED;
 }
@@ -116,15 +143,27 @@ int AuthMgr::SpaceWritePermissionCheck(const QString &sid, const QString &url)
 		account = sessionobj.value("account").toString();
 	}
 
+	QString authCacheKey = account + "@" + spacePath + "@" + "read";
+	AuthCacheData authdata;
+
+	if (g_authCache.get(authCacheKey, authdata))
+		return authdata.permission;
+
 	QString spaceName;
 	if (!g_spaceDbMgr.getSpaceNameByPath(spacePath, spaceName))
 	{
+		authdata.permission = AUTH_RET_ACCESS_DENIED;
+		g_authCache.add(authCacheKey, authdata);
+
 		return AUTH_RET_ACCESS_DENIED;
 	}
 
 	QJsonArray wlist;
 	if (!g_spaceDbMgr.getSpaceWlist(spaceName, wlist))
 	{
+		authdata.permission = AUTH_RET_ACCESS_DENIED;
+		g_authCache.add(authCacheKey, authdata);
+
 		return AUTH_RET_ACCESS_DENIED;
 	}
 
@@ -137,20 +176,32 @@ int AuthMgr::SpaceWritePermissionCheck(const QString &sid, const QString &url)
 
 		if (item == "*")
 		{
+			authdata.permission = AUTH_RET_SUCCESS;
+			g_authCache.add(authCacheKey, authdata);
+
 			return AUTH_RET_SUCCESS;
 		}
 
 		if (itemtype == "user" && item == account)
 		{
+			authdata.permission = AUTH_RET_SUCCESS;
+			g_authCache.add(authCacheKey, authdata);
+
 			return AUTH_RET_SUCCESS;
 		}
 
 		if (itemtype == "group" && g_groupDbMgr.isUserInGroup(item, account))
 		{
+			authdata.permission = AUTH_RET_SUCCESS;
+			g_authCache.add(authCacheKey, authdata);
+
 			return AUTH_RET_SUCCESS;
 		}
 
 	}
+
+	authdata.permission = AUTH_RET_ACCESS_DENIED;
+	g_authCache.add(authCacheKey, authdata);
 
 	return AUTH_RET_ACCESS_DENIED;
 }

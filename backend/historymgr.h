@@ -22,6 +22,7 @@
 #include <QString>
 #include <QMutex>
 #include <QJsonArray>
+#include "versionrecordmgr.h"
 
 class HistoryMgr
 {
@@ -42,6 +43,8 @@ protected:
 
 	QString getDirForUid(const QString &uid);
 	QString createDirForUid(const QString &uid);
+
+	bool _getVersion(VersionRecordMgr &versionRecord, const QString &uid, int ver, const QString &outputfile);
 
 protected:
 	QMutex        m_mutex;

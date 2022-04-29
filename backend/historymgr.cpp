@@ -120,7 +120,7 @@ bool HistoryMgr::addVersion(const QString &uid, const QString &oldfile, const QS
 	if (oldFileSha != previousSHA)
 	{
 		// get previousVersion, and use it to compute diff
-		if (!getVersion(uid, previous, tmp.fileName()))
+		if (!_getVersion(versionRecord, uid, previous, tmp.fileName()))
 			return false;
 
 		orgfile = tmp.fileName();
@@ -337,6 +337,83 @@ bool HistoryMgr::getVersion(const QString &uid, int ver, const QString &outputfi
 	if (filesha != sha)
 		return false;
 	
+	//copy previousfile content to outputfile
+	return ForceCopy(previousfile, outputfile);
+}
+
+// Merge _getVersion and getVersion, after recursively lock implemented
+bool HistoryMgr::_getVersion(VersionRecordMgr &versionRecord, const QString &uid, int ver, const QString &outputfile)
+{
+	QString dirForUid = getDirForUid(uid);
+
+	if (dirForUid == "")
+		return false;
+
+	QList<QJsonObject> versionList;
+	bool foundFullFile = false;
+
+	for (int i = ver; i >= 1; i--)
+	{
+		QString sver = QString("%1").arg(i);
+		QJsonObject jsonobj;
+
+		if (!versionRecord.getRecordByVersion(sver, jsonobj))
+			return false;
+
+		versionList.push_front(jsonobj);
+
+		if (jsonobj.value("type").toString() == "full")
+		{
+			foundFullFile = true;
+			break;
+		}
+	}
+
+	if (!foundFullFile)
+		return false;
+
+	// build file and check SHA
+	QString previousfile;
+	QString patchfile;
+	QString newfile;
+	QTemporaryFile tmp1;
+	QTemporaryFile tmp2;
+	QTemporaryFile rej;
+	tmp1.open();
+	tmp2.open();
+	rej.open();
+
+	for (int i = 0; i < versionList.size(); i++)
+	{
+		QJsonObject jsonobj = versionList[i];
+		if (i == 0)
+		{
+			previousfile = dirForUid + "/" + jsonobj.value("version").toString();
+			newfile = tmp1.fileName();
+		}
+		else
+		{
+			patchfile = dirForUid + "/" + jsonobj.value("version").toString();
+
+			if (!patch(previousfile, patchfile, newfile, rej.fileName()))
+				return false;
+
+			previousfile = newfile;
+
+			if (newfile == tmp1.fileName())
+				newfile = tmp2.fileName();
+			else
+				newfile = tmp1.fileName();
+		}
+	}
+
+	// check SHA
+	QString sha = versionList[versionList.size() - 1].value("sha").toString();
+	QString filesha = Crypto::genFileSHA(previousfile);
+
+	if (filesha != sha)
+		return false;
+
 	//copy previousfile content to outputfile
 	return ForceCopy(previousfile, outputfile);
 }

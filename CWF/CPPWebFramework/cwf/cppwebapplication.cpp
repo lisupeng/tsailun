@@ -92,7 +92,7 @@ CppWebApplication::CppWebApplication(int argc, char *argv[],
         else if(configuration.isValid())
         {
             valid = true;
-            qInstallMessageHandler(writeLog);
+            //qInstallMessageHandler(writeLog);
             server = new CppWebServer(configuration, filter);
 
             //if(configuration.getAccessServerPages())

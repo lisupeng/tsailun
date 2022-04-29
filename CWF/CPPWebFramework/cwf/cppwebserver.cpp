@@ -40,16 +40,23 @@ CppWebServer::~CppWebServer()
 
 void CppWebServer::incomingConnection(qintptr socketfd)
 {
-    while(block)
+	/*
+    while(m_block)
     {
         this->thread()->msleep(static_cast<unsigned long>(sleepTime));
     }
+	*/
+
+	qDebug() << QString("Enter CppWebServer::incomingConnection(), threadpool max thread count: %1, active: %2").arg(pool.maxThreadCount()).arg(pool.activeThreadCount());
+
     pool.start(new HttpReadRequest(socketfd, urlController, sessions, configuration, ssl, filter), QThread::LowPriority);
+
+	qDebug() << QString("Leave CppWebServer::incomingConnection()");
 }
 
 void CppWebServer::doClean()
 {    
-    block = 1;
+    m_block = 1;
     while(!pool.waitForDone(sleepTime));
 
     Session *session = nullptr;
@@ -68,7 +75,7 @@ void CppWebServer::doClean()
         sessions.remove(idSessionsToDelete[i]);
     }
 
-    block = 0;
+    m_block = 0;
 }
 
 

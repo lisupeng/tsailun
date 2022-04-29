@@ -32,6 +32,7 @@
 
 enum SYSLOG_LEVEL
 {
+	SYSLOG_LEVEL_DEBUG       = 1,
 	SYSLOG_LEVEL_INFO        = 5,
 	SYSLOG_LEVEL_WARN        = 10,
 	SYSLOG_LEVEL_ERROR       = 15
@@ -49,6 +50,8 @@ public:
 
 	bool getAllMessages(QString &log);
 
+	void setLogLevel(int level);
+
 protected:
 
 protected:
@@ -57,6 +60,7 @@ protected:
 protected:
 	QMap<Qt::HANDLE, QSqlDatabase> m_dbConnections;
 
+	int            m_curLogLevel;
 };
 
 

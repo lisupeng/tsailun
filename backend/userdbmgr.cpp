@@ -27,6 +27,8 @@
 #include "userdbmgr.h"
 #include "configmgr.h"
 #include "crypto.h"
+//#include "sqliteconnmgr.h"
+#include "sqlitedbmgr.h"
 
 UserDbMgr::UserDbMgr()
 {
@@ -59,115 +61,106 @@ bool UserDbMgr::init()
 bool UserDbMgr::init_user_autocreate_table()
 {
 	// create table if not exists
-	QSqlDatabase  database;
-	if (!__getDbConnections(database))
+	QSqlDatabase  *database = nullptr;
+	SqliteDbMgr   connMgr("user", &database);
+
 	{
-		return false;
-	}
-	QSqlQuery sql_query(database);
+		QSqlQuery sql_query(*database);
 
-	QString sql = "CREATE TABLE IF NOT EXISTS userautocreate_table (nextaccount varchar(20))";
+		QString sql = "CREATE TABLE IF NOT EXISTS userautocreate_table (nextaccount varchar(20))";
 
-	sql_query.prepare(sql);
+		sql_query.prepare(sql);
 
-	if (!sql_query.exec())
-	{
-		__releaseDbConnections(database);
-		return false;
-	}
-
-	sql = "SELECT nextaccount FROM userautocreate_table where nextaccount='11000'";
-	sql_query.prepare(sql);
-	if (!sql_query.exec())
-	{
-		__releaseDbConnections(database);
-		return false;
-	}
-
-	 
-	QSqlRecord rec = sql_query.record();
-
-	 
-	if (!sql_query.next())
-	{
-		// insert admin/admin
-		QString credential = Crypto::genCredentialByPassword("admin");
-		sql = "INSERT INTO userautocreate_table (nextaccount) VALUES('11000')";
-
-		if (!sql_query.exec(sql))
+		if (!sql_query.exec())
 		{
-			__releaseDbConnections(database);
 			return false;
+		}
+
+		sql = "SELECT nextaccount FROM userautocreate_table where nextaccount='11000'";
+		sql_query.prepare(sql);
+		if (!sql_query.exec())
+		{
+			return false;
+		}
+
+
+		QSqlRecord rec = sql_query.record();
+
+
+		if (!sql_query.next())
+		{
+			// insert admin/admin
+			QString credential = Crypto::genCredentialByPassword("admin");
+			sql = "INSERT INTO userautocreate_table (nextaccount) VALUES('11000')";
+
+			if (!sql_query.exec(sql))
+			{
+				return false;
+			}
 		}
 	}
 
-	__releaseDbConnections(database);
 	return true;
 }
 
 bool UserDbMgr::init_user_table()
 {
 	// create table if not exists
-	QSqlDatabase  database;
-	if (!__getDbConnections(database))
+	QSqlDatabase  *database = nullptr;
+	SqliteDbMgr   connMgr("user", &database);
+
 	{
-		return false;
-	}
-	QSqlQuery sql_query(database);
+		QSqlQuery sql_query(*database);
 
-	QString sql = "CREATE TABLE IF NOT EXISTS user_table (account varchar(64) primary key, fullname varchar(64), "
-		"email varchar(255), role varchar(16), space varchar(64), uid varchar(64), createdate varchar(64), "
-		"signindate varchar(64), credential varchar(64), extrainfo varchar(2048))";
+		QString sql = "CREATE TABLE IF NOT EXISTS user_table (account varchar(64) primary key, fullname varchar(64), "
+			"email varchar(255), role varchar(16), space varchar(64), uid varchar(64), createdate varchar(64), "
+			"signindate varchar(64), credential varchar(64), extrainfo varchar(2048))";
 
-	sql_query.prepare(sql);
+		sql_query.prepare(sql);
 
-	if (!sql_query.exec())
-	{
-		__releaseDbConnections(database);
-		return false;
-	}
-
-	// create index
-	sql = "create index account_index on user_table(account)";
-	sql_query.prepare(sql);
-	sql_query.exec();
-
-	sql = "SELECT email,account,credential FROM user_table where account='admin'";
-	sql_query.prepare(sql);
-	if (!sql_query.exec())
-	{
-		__releaseDbConnections(database);
-		return false;
-	}
-
-	 
-	QSqlRecord rec = sql_query.record();
-
-	 
-	if (!sql_query.next())
-	{
-		// insert admin/admin
-		QString credential = Crypto::genCredentialByPassword("admin");
-		sql = "INSERT INTO user_table (email, account, role, space, credential) VALUES(NULL, 'admin', 'admin', 'space_default', '" + credential + "')";
-
-		if (!sql_query.exec(sql))
+		if (!sql_query.exec())
 		{
-			__releaseDbConnections(database);
 			return false;
 		}
 
-		// insert guest/guest
-		credential = Crypto::genCredentialByPassword("guest");
-		sql = "INSERT INTO user_table (email, account, role, space, credential) VALUES(NULL, 'guest', 'guest', 'space_default', '" + credential + "')";
+		// create index
+		sql = "create index account_index on user_table(account)";
+		sql_query.prepare(sql);
+		sql_query.exec();
 
-		if (!sql_query.exec(sql))
+		sql = "SELECT email,account,credential FROM user_table where account='admin'";
+		sql_query.prepare(sql);
+		if (!sql_query.exec())
 		{
-			__releaseDbConnections(database);
 			return false;
+		}
+
+
+		QSqlRecord rec = sql_query.record();
+
+
+		if (!sql_query.next())
+		{
+			// insert admin/admin
+			QString credential = Crypto::genCredentialByPassword("admin");
+			sql = "INSERT INTO user_table (email, account, role, space, credential) VALUES(NULL, 'admin', 'admin', 'space_default', '" + credential + "')";
+
+			if (!sql_query.exec(sql))
+			{
+				return false;
+			}
+
+			// insert guest/guest
+			credential = Crypto::genCredentialByPassword("guest");
+			sql = "INSERT INTO user_table (email, account, role, space, credential) VALUES(NULL, 'guest', 'guest', 'space_default', '" + credential + "')";
+
+			if (!sql_query.exec(sql))
+			{
+				return false;
+			}
 		}
 	}
 
-	__releaseDbConnections(database);
 	return true;
 }
 
@@ -176,47 +169,41 @@ QJsonObject UserDbMgr::getUserInfo(QString keytype, QString value)
 	QJsonObject jsonobj;
 	QMutexLocker autolock(m_mutex);
 
-	QSqlDatabase  database;
-	if (!__getDbConnections(database))
+	QSqlDatabase  *database = nullptr;
+	SqliteDbMgr   connMgr("user", &database);
+
 	{
-		return jsonobj;
+		// create table if not exists
+		QSqlQuery sql_query(*database);
+		QString sql;
+
+		if (keytype == "account")
+			sql = "SELECT * FROM user_table where account='" + value + "'";
+		else if (keytype == "email")
+			sql = "SELECT * FROM user_table where email='" + value + "'";
+		else
+		{
+			return jsonobj;
+		}
+
+		sql_query.prepare(sql);
+
+		if (!sql_query.exec())
+		{
+			return jsonobj;
+		}
+
+
+		QSqlRecord rec = sql_query.record();
+
+
+		if (!sql_query.next())
+		{
+			return jsonobj;
+		}
+
+		recordToJson(rec, sql_query, jsonobj);
 	}
-
-	// create table if not exists
-	QSqlQuery sql_query(database);
-	QString sql;
-
-	if (keytype == "account")
-		sql = "SELECT * FROM user_table where account='" + value + "'";
-	else if (keytype == "email")
-		sql = "SELECT * FROM user_table where email='" + value + "'";
-	else
-	{
-		__releaseDbConnections(database);
-		return jsonobj;
-	}
-
-	sql_query.prepare(sql);
-
-	if (!sql_query.exec())
-	{
-		__releaseDbConnections(database);
-		return jsonobj;
-	}
-
-	 
-	QSqlRecord rec = sql_query.record();
-
-	 
-	if (!sql_query.next())
-	{
-		__releaseDbConnections(database);
-		return jsonobj;
-	}
-
-	recordToJson(rec, sql_query, jsonobj);
-
-	__releaseDbConnections(database);
 
 	return jsonobj;
 }
@@ -246,38 +233,35 @@ bool UserDbMgr::getUserList(QJsonArray &list)
 	QJsonObject jsonobj;
 	QMutexLocker autolock(m_mutex);
 
-	QSqlDatabase  database;
-	if (!__getDbConnections(database))
+	QSqlDatabase  *database = nullptr;
+	SqliteDbMgr   connMgr("user", &database);
+
 	{
-		return false;
+
+		// create table if not exists
+		QSqlQuery sql_query(*database);
+		QString sql;
+
+		sql = "SELECT account,fullname,email,role,space FROM user_table";
+
+		sql_query.prepare(sql);
+
+		if (!sql_query.exec())
+		{
+			return false;
+		}
+
+
+		QSqlRecord rec = sql_query.record();
+
+
+		while (sql_query.next())
+		{
+			QJsonObject jsonobj;
+			recordToJson(rec, sql_query, jsonobj);
+			list.append(jsonobj);
+		}
 	}
-
-	// create table if not exists
-	QSqlQuery sql_query(database);
-	QString sql;
-
-	sql = "SELECT account,fullname,email,role,space FROM user_table";
-
-	sql_query.prepare(sql);
-
-	if (!sql_query.exec())
-	{
-		__releaseDbConnections(database);
-		return false;
-	}
-
-	 
-	QSqlRecord rec = sql_query.record();
-
-	 
-	while (sql_query.next())
-	{
-		QJsonObject jsonobj;
-		recordToJson(rec, sql_query, jsonobj);
-		list.append(jsonobj);
-	}
-
-	__releaseDbConnections(database);
 
 	return true;
 }
@@ -294,26 +278,22 @@ bool UserDbMgr::createNewUser(const QString &email, const QString &fullname, con
 		return false;
 	}
 
-	QSqlDatabase  database;
-	if (!__getDbConnections(database))
+	QSqlDatabase  *database = nullptr;
+	SqliteDbMgr   connMgr("user", &database);
+
 	{
-		return false;
+		QSqlQuery sql_query(*database);
+		QString sql;
+
+		sql = "INSERT INTO user_table (account, email, fullname, role, space, credential) VALUES('" + email + "', '" + email + "', '" + fullname + "', 'regular', 'space_default', '" + credential + "')";
+
+		sql_query.prepare(sql);
+
+		if (!sql_query.exec())
+		{
+			return false;
+		}
 	}
-
-	QSqlQuery sql_query(database);
-	QString sql;
-
-	sql = "INSERT INTO user_table (account, email, fullname, role, space, credential) VALUES('"+email+ "', '" +email+"', '"+fullname+"', 'regular', 'space_default', '" + credential + "')";
-
-	sql_query.prepare(sql);
-
-	if (!sql_query.exec())
-	{
-		__releaseDbConnections(database);
-		return false;
-	}
-
-	__releaseDbConnections(database);
 
 	return true;
 }
@@ -329,26 +309,22 @@ bool UserDbMgr::createNewUserEx(const QString &account, const QString &email, co
 		return false;
 	}
 
-	QSqlDatabase  database;
-	if (!__getDbConnections(database))
+	QSqlDatabase  *database = nullptr;
+	SqliteDbMgr   connMgr("user", &database);
+
 	{
-		return false;
+		QSqlQuery sql_query(*database);
+		QString sql;
+
+		sql = "INSERT INTO user_table (account, email, fullname, role, space, credential) VALUES('" + account + "', '" + email + "', '" + fullname + "', '" + role + "', '" + space + "', '" + credential + "')";
+
+		sql_query.prepare(sql);
+
+		if (!sql_query.exec())
+		{
+			return false;
+		}
 	}
-
-	QSqlQuery sql_query(database);
-	QString sql;
-
-	sql = "INSERT INTO user_table (account, email, fullname, role, space, credential) VALUES('" + account + "', '" + email + "', '" + fullname + "', '" + role + "', '" + space + "', '" + credential + "')";
-
-	sql_query.prepare(sql);
-
-	if (!sql_query.exec())
-	{
-		__releaseDbConnections(database);
-		return false;
-	}
-
-	__releaseDbConnections(database);
 
 	return true;
 }
@@ -364,30 +340,27 @@ bool UserDbMgr::deleteUser(const QString &account)
 {
 	QMutexLocker autolock(m_mutex);
 
-	QSqlDatabase  database;
-	if (!__getDbConnections(database))
+	QSqlDatabase  *database = nullptr;
+	SqliteDbMgr   connMgr("user", &database);
+
 	{
-		return false;
+		QSqlQuery sql_query(*database);
+		QString sql;
+
+		sql = "DELETE FROM user_table WHERE account='" + account + "'";
+
+		sql_query.prepare(sql);
+
+		if (!sql_query.exec())
+		{
+			return false;
+		}
 	}
-
-	QSqlQuery sql_query(database);
-	QString sql;
-
-	sql = "DELETE FROM user_table WHERE account='" + account + "'";
-
-	sql_query.prepare(sql);
-
-	if (!sql_query.exec())
-	{
-		__releaseDbConnections(database);
-		return false;
-	}
-
-	__releaseDbConnections(database);
 
 	return true;
 }
 
+/*
 bool UserDbMgr::__getDbConnections(QSqlDatabase &database)
 {
 	// create one
@@ -396,7 +369,7 @@ bool UserDbMgr::__getDbConnections(QSqlDatabase &database)
 	QString userDbFile = appRootPath + "/data/db/users.db";
 
 	char szName[64];
-	sprintf(szName, "spacedb_conn_%p", QThread::currentThreadId());
+	sprintf(szName, "userdb_conn_%p", QThread::currentThreadId());
 	QString connName = szName;
 	database = QSqlDatabase::addDatabase("QSQLITE", connName);
 
@@ -414,6 +387,7 @@ void UserDbMgr::__releaseDbConnections(QSqlDatabase &database)
 {
 	database.close();
 }
+*/
 
 bool UserDbMgr::getUserInfoByAccount(const QString &account, QJsonObject &userInfo)
 {
@@ -427,26 +401,22 @@ bool UserDbMgr::updateUser(const QString &account, const QString &fullname, cons
 {
 	QMutexLocker autolock(m_mutex);
 
-	QSqlDatabase  database;
-	if (!__getDbConnections(database))
+	QSqlDatabase  *database = nullptr;
+	SqliteDbMgr   connMgr("user", &database);
+
 	{
-		return false;
+		// create table if not exists
+		QSqlQuery sql_query(*database);
+		QString sql;
+
+		sql = "UPDATE user_table SET fullname='" + fullname + "',email='" + email + "', role='" + role + "',space='" + space + "' WHERE account='" + account + "'";
+		sql_query.prepare(sql);
+
+		if (!sql_query.exec())
+		{
+			return false;
+		}
 	}
-
-	// create table if not exists
-	QSqlQuery sql_query(database);
-	QString sql;
-
-	sql = "UPDATE user_table SET fullname='" + fullname +"',email='"+email+"', role='"+role+"',space='"+space+ "' WHERE account='" + account + "'";
-	sql_query.prepare(sql);
-
-	if (!sql_query.exec())
-	{
-		__releaseDbConnections(database);
-		return false;
-	}
-
-	__releaseDbConnections(database);
 
 	return true;
 }
@@ -466,26 +436,22 @@ bool UserDbMgr::updateCredential(const QString &account, const QString &oldcrede
 
 	QMutexLocker autolock(m_mutex);
 
-	QSqlDatabase  database;
-	if (!__getDbConnections(database))
+	QSqlDatabase  *database = nullptr;
+	SqliteDbMgr   connMgr("user", &database);
+
 	{
-		return false;
+		// create table if not exists
+		QSqlQuery sql_query(*database);
+		QString sql;
+
+		sql = "UPDATE user_table SET credential='" + credential + "' WHERE account='" + account + "'";
+		sql_query.prepare(sql);
+
+		if (!sql_query.exec())
+		{
+			return false;
+		}
 	}
-
-	// create table if not exists
-	QSqlQuery sql_query(database);
-	QString sql;
-
-	sql = "UPDATE user_table SET credential='" + credential + "' WHERE account='" + account + "'";
-	sql_query.prepare(sql);
-
-	if (!sql_query.exec())
-	{
-		__releaseDbConnections(database);
-		return false;
-	}
-
-	__releaseDbConnections(database);
 
 	return true;
 }
@@ -495,38 +461,33 @@ bool UserDbMgr::isUserAccountExists(const QString &account)
 	QJsonObject jsonobj;
 	QMutexLocker autolock(m_mutex);
 
-	QSqlDatabase  database;
-	if (!__getDbConnections(database))
+	QSqlDatabase  *database = nullptr;
+	SqliteDbMgr   connMgr("user", &database);
+
 	{
-		return false;
+		// create table if not exists
+		QSqlQuery sql_query(*database);
+		QString sql;
+
+		sql = "SELECT * FROM user_table where account='" + account + "'";
+
+
+		sql_query.prepare(sql);
+
+		if (!sql_query.exec())
+		{
+			return false;
+		}
+
+
+		QSqlRecord rec = sql_query.record();
+
+
+		if (!sql_query.next())
+		{
+			return false;
+		}
 	}
-
-	// create table if not exists
-	QSqlQuery sql_query(database);
-	QString sql;
-
-	sql = "SELECT * FROM user_table where account='" + account + "'";
-
-
-	sql_query.prepare(sql);
-
-	if (!sql_query.exec())
-	{
-		__releaseDbConnections(database);
-		return false;
-	}
-
-	 
-	QSqlRecord rec = sql_query.record();
-
-	 
-	if (!sql_query.next())
-	{
-		__releaseDbConnections(database);
-		return false;
-	}
-
-	__releaseDbConnections(database);
 
 	return true;
 }
@@ -535,26 +496,23 @@ bool UserDbMgr::getUserCount(int &count)
 {
 	QMutexLocker autolock(m_mutex);
 
-	QSqlDatabase  database;
-	if (!__getDbConnections(database))
+	QSqlDatabase  *database = nullptr;
+	SqliteDbMgr   connMgr("user", &database);
+
 	{
-		return false;
+
+		QSqlQuery sql_query(*database);
+		QString sql = "SELECT count(*) FROM user_table";
+		sql_query.prepare(sql);
+		if (!sql_query.exec())
+		{
+			return false;
+		}
+
+		sql_query.next();
+
+		count = sql_query.value(0).toInt();
 	}
-
-	QSqlQuery sql_query(database);
-	QString sql = "SELECT count(*) FROM user_table";
-	sql_query.prepare(sql);
-	if (!sql_query.exec())
-	{
-		__releaseDbConnections(database);
-		return false;
-	}
-
-	sql_query.next();
-
-	count = sql_query.value(0).toInt();
-
-	__releaseDbConnections(database);
 
 	return true;
 }
@@ -562,47 +520,43 @@ bool UserDbMgr::getUserCount(int &count)
 QString UserDbMgr::autoGenUserAccount()
 {
 	// create table if not exists
-	QSqlDatabase  database;
-	if (!__getDbConnections(database))
+	QSqlDatabase  *database = nullptr;
+	SqliteDbMgr   connMgr("user", &database);
+
 	{
-		return "";
+		QSqlQuery sql_query(*database);
+
+		QString sql = "SELECT * FROM userautocreate_table";
+		sql_query.prepare(sql);
+		if (!sql_query.exec())
+		{
+			return "";
+		}
+
+
+		QSqlRecord rec = sql_query.record();
+
+
+		if (!sql_query.next())
+		{
+			return "";
+		}
+
+		//
+		QString account = sql_query.value(0).toString();
+
+		int _nextaccount = account.toInt() + 1;
+		QString nextaccount = QString("%1").arg(_nextaccount);
+
+		sql = "UPDATE userautocreate_table SET nextaccount='" + nextaccount + "' WHERE nextaccount='" + account + "'";
+		sql_query.prepare(sql);
+
+		if (!sql_query.exec())
+		{
+			return "";
+		}
+
+		return account;
+
 	}
-	QSqlQuery sql_query(database);
-
-	QString sql = "SELECT * FROM userautocreate_table";
-	sql_query.prepare(sql);
-	if (!sql_query.exec())
-	{
-		__releaseDbConnections(database);
-		return "";
-	}
-
-	 
-	QSqlRecord rec = sql_query.record();
-
-	 
-	if (!sql_query.next())
-	{
-		__releaseDbConnections(database);
-		return "";
-	}
-
-	//
-	QString account = sql_query.value(0).toString();
-
-	int _nextaccount = account.toInt() + 1;
-	QString nextaccount = QString("%1").arg(_nextaccount);
-
-	sql = "UPDATE userautocreate_table SET nextaccount='" + nextaccount + "' WHERE nextaccount='" + account + "'";
-	sql_query.prepare(sql);
-
-	if (!sql_query.exec())
-	{
-		__releaseDbConnections(database);
-		return "";
-	}
-
-	__releaseDbConnections(database);
-
-	return account;
 }

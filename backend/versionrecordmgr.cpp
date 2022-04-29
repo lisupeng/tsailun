@@ -22,7 +22,9 @@
 #include <QLockFile>
 #include "versionrecordmgr.h"
 #include <QThread>
+#include <QUuid>
 
+/*
 #define GET_DATABASE(dbfile) \
            QSqlDatabase database; \
            do { \
@@ -33,6 +35,7 @@
                     database.setDatabaseName(dbfile); \
                     database.open(); \
 		   } while (0);
+*/
 
 VersionRecordMgr::VersionRecordMgr(const QString &path)
 {
@@ -41,26 +44,39 @@ VersionRecordMgr::VersionRecordMgr(const QString &path)
 
 	m_plockFile->lock();
 
-	if (!_initTable())
-	{
-		return;
-	}
+	initialize();
 
-	return;
+	_initTable();
+}
+
+void VersionRecordMgr::initialize()
+{
+	m_connName = "versiondb_conn_"+QUuid::createUuid().toString();
+
+	m_database = new QSqlDatabase(QSqlDatabase::addDatabase("QSQLITE", m_connName));
+
+	m_database->setDatabaseName(m_dbFile);
+	m_database->open();
 }
 
 VersionRecordMgr::~VersionRecordMgr()
 {
+	m_database->close();
+	delete m_database;
+	m_database = nullptr;
+
 	m_plockFile->unlock();
 	delete m_plockFile;
+
+	QSqlDatabase::removeDatabase(m_connName);
 }
 
 bool VersionRecordMgr::_initTable()
 {
-	GET_DATABASE(m_dbFile);
+	//GET_DATABASE(m_dbFile);
 
 	// create table if not exists
-	QSqlQuery sql_query(database);
+	QSqlQuery sql_query(*m_database);
 	QString sql = "CREATE TABLE IF NOT EXISTS version_table (version varchar(8) primary key, "
 		"author varchar(64), date varchar(64), sha varchar(70), type varchar(10))";
 	sql_query.prepare(sql);
@@ -75,9 +91,9 @@ bool VersionRecordMgr::_initTable()
 
 int VersionRecordMgr::count()
 {
-	GET_DATABASE(m_dbFile);
+	//GET_DATABASE(m_dbFile);
 
-	QSqlQuery sql_query(database);
+	QSqlQuery sql_query(*m_database);
 	QString sql = "SELECT count(*) FROM version_table";
 	sql_query.prepare(sql);
 	if (!sql_query.exec())
@@ -92,9 +108,9 @@ int VersionRecordMgr::count()
 bool VersionRecordMgr::append(const QString &version, const QString &author, const QString &date,
 	const QString &sha, const QString &type)
 {
-	GET_DATABASE(m_dbFile);
+	//GET_DATABASE(m_dbFile);
 
-	QSqlQuery sql_query(database);
+	QSqlQuery sql_query(*m_database);
 	QString sql = "INSERT INTO version_table (version, author, date, sha, type) VALUES('"+version+"','"+author+"','"+date+"','"+sha+"','"+type + "')";
 
 	sql_query.prepare(sql);
@@ -109,9 +125,9 @@ bool VersionRecordMgr::append(const QString &version, const QString &author, con
 
 bool VersionRecordMgr::getRecordByVersion(const QString &version, QJsonObject &jsonobj)
 {
-	GET_DATABASE(m_dbFile);
+	//GET_DATABASE(m_dbFile);
 
-	QSqlQuery sql_query(database);
+	QSqlQuery sql_query(*m_database);
 	QString sql = "SELECT * FROM version_table where version='" + version + "'";
 
 	sql_query.prepare(sql);
@@ -137,9 +153,9 @@ bool VersionRecordMgr::getRecordByVersion(const QString &version, QJsonObject &j
 
 bool VersionRecordMgr::getRecordBySHA(const QString &sha, QJsonObject &jsonobj)
 {
-	GET_DATABASE(m_dbFile);
+	//GET_DATABASE(m_dbFile);
 
-	QSqlQuery sql_query(database);
+	QSqlQuery sql_query(*m_database);
 	QString sql = "SELECT * FROM version_table where sha='" + sha + "'";
 
 	sql_query.prepare(sql);
@@ -186,9 +202,9 @@ QString VersionRecordMgr::getVersionHash(const QString &version)
 
 bool VersionRecordMgr::getVersionList(QJsonArray &list)
 {
-	GET_DATABASE(m_dbFile);
+	//GET_DATABASE(m_dbFile);
 
-	QSqlQuery sql_query(database);
+	QSqlQuery sql_query(*m_database);
 	QString sql = "SELECT version,author,date FROM version_table";
 
 	sql_query.prepare(sql);

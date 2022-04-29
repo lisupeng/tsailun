@@ -71,8 +71,8 @@ protected:
 
 	void recordToJson(QSqlRecord &rec, QSqlQuery &sql_query, QJsonObject &jsonobj);
 
-	bool __getDbConnections(QSqlDatabase &database);
-	void __releaseDbConnections(QSqlDatabase &database);
+	//bool __getDbConnections(QSqlDatabase &database);
+	//void __releaseDbConnections(QSqlDatabase &database);
 
 protected:
 	QMutex        *m_mutex; // inited to recursive mode

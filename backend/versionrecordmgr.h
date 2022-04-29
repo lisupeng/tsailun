@@ -45,12 +45,18 @@ public:
 	QString getVersionHash(const QString &version);
 
 protected:
+	void initialize();
 	bool _initTable();
 	void recordToJson(QSqlRecord &rec, QSqlQuery &sql_query, QJsonObject &jsonobj);
 
 protected:
 	QString       m_dbFile;
 	QLockFile    *m_plockFile;
+
+
+	QSqlDatabase *m_database;
+
+	QString       m_connName;
 };
 
 #endif // _VERSIONRECORDMGR_H

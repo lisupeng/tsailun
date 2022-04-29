@@ -25,10 +25,13 @@
 #include <QTextStream>
 #include <stdio.h>
 #include <QTimeZone>
+#include <QMutexLocker>
 
 Syslog::Syslog()
 {
 	m_mutex = new QMutex(QMutex::Recursive);
+
+	m_curLogLevel = SYSLOG_LEVEL_INFO;
 }
 
 Syslog::~Syslog()
@@ -45,9 +48,15 @@ bool Syslog::init()
 
 bool Syslog::logMessage(int level, const QString &component, const QString &msg)
 {
+
+	if (level < m_curLogLevel)
+		return false;
+
 	QString slevel;
 
-	if (level == SYSLOG_LEVEL_INFO)
+	if (level == SYSLOG_LEVEL_DEBUG)
+		slevel = "Debug";
+	else if (level == SYSLOG_LEVEL_INFO)
 		slevel = "Info";
 	else if (level == SYSLOG_LEVEL_WARN)
 		slevel = "Warning";
@@ -75,6 +84,8 @@ bool Syslog::logMessage(int level, const QString &component, const QString &msg)
 
 	QString localDataTime = local.toString("yyyy-MM-dd HH:mm:ss.zzz");
 	QString consoleMsg = localDataTime + " [" + slevel + "]: " + msg + "\n";
+
+	QMutexLocker autolock(m_mutex);
 
 	printf("%s", consoleMsg.toStdString().c_str());
 
@@ -113,4 +124,9 @@ bool Syslog::getAllMessages(QString &log)
 	log = file.readAll();
 
 	return true;
+}
+
+void Syslog::setLogLevel(int level)
+{
+	m_curLogLevel = level;
 }

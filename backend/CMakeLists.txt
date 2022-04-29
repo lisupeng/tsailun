@@ -42,6 +42,7 @@ add_executable(${PROJECT_NAME} main.cpp utils.h utils.cpp pagemgr.h pagemgr.cpp 
     pagelistmgr.cpp userdbmgr.h userdbmgr.cpp crypto.h crypto.cpp sessionmgr.h sessionmgr.cpp historymgr.h historymgr.cpp 
     versionrecordmgr.h versionrecordmgr.cpp spacedbmgr.h spacedbmgr.cpp basedbmgr.h basedbmgr.cpp groupdbmgr.h groupdbmgr.cpp 
     auth.h auth.cpp syslog.h syslog.cpp search.h search.cpp stats.h stats.cpp serverapp.h serverapp.cpp demomgr.h demomgr.cpp 
-    urlhandlers.h urlhandlers.cpp sysdefs.h opcodehandlers.h opcodehandlers.cpp uploadmgr.h uploadmgr.cpp)
+    urlhandlers.h urlhandlers.cpp sysdefs.h opcodehandlers.h opcodehandlers.cpp uploadmgr.h uploadmgr.cpp sqlitedbmgr.h sqlitedbmgr.cpp
+    pagecache.h pagecache.cpp authcache.h authcache.cpp clist.h clist.cpp)
 
 target_link_libraries(${PROJECT_NAME} Qt5::Core  CPPWebFramework xdiff htmlparser SMTPEmail)

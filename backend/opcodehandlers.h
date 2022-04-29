@@ -92,6 +92,7 @@ protected:
 	void handle_renamepage(CWF::Request &req, CWF::Response &response, REQ_CONTEXT &ctx);
 	void handle_checkupdate(CWF::Request &req, CWF::Response &response, REQ_CONTEXT &ctx);
 	void handle_test(CWF::Request &req, CWF::Response &response, REQ_CONTEXT &ctx);
+	void handle_loglevel(CWF::Request &req, CWF::Response &response, REQ_CONTEXT &ctx);
 
 protected:
 	std::map<std::string, PHANDLER> m_handlerMap;

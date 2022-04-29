@@ -42,7 +42,7 @@ private:
     QMapThreadSafety<QString, Session *> sessions;
     QSslConfiguration *ssl = nullptr;
     const int sleepTime = 10;
-    QAtomicInteger<qint64> block = 0;    
+    QAtomicInteger<qint64> m_block = 0;    
 public:
     /**
      * @brief Load SSL configuration, configure the thread pool and the filter.

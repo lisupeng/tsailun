@@ -20,6 +20,8 @@
 
 #include "configmgr.h"
 
+#include "sqlitedbmgr.h"
+
 #include <QSqlQuery>
 #include <QVariant>
 #include <QJsonObject>
@@ -55,25 +57,23 @@ bool GroupDbMgr::init_group_table()
 {
 
 	// create table if not exists
-	QSqlDatabase  database;
-	if (!__getDbConnections(database))
+	QSqlDatabase  *database = nullptr;
+	SqliteDbMgr   connMgr("group", &database);
+
 	{
-		return false;
+		QSqlQuery sql_query(*database);
+
+		QString sql = "CREATE TABLE IF NOT EXISTS group_table (groupname varchar(64) primary key, "
+			"usercount varchar(8), comment varchar(1024), extrainfo varchar(2048))";
+
+		sql_query.prepare(sql);
+
+		if (!sql_query.exec())
+		{
+			return false;
+		}
+
 	}
-	QSqlQuery sql_query(database);
-
-	QString sql = "CREATE TABLE IF NOT EXISTS group_table (groupname varchar(64) primary key, "
-		"usercount varchar(8), comment varchar(1024), extrainfo varchar(2048))";
-
-	sql_query.prepare(sql);
-
-	if (!sql_query.exec())
-	{
-		database.close();
-		return false;
-	}
-
-	database.close();
 
 	return true;
 }
@@ -83,33 +83,28 @@ bool GroupDbMgr::addGroup(const QString &groupName, const QString &comment)
 	QMutexLocker autolock(m_mutex);
 
 	QString userListTableName = groupName + "_userlisttable";
-	QSqlDatabase  database;
-	if (!__getDbConnections(database))
+	QSqlDatabase  *database = nullptr;
+	SqliteDbMgr   connMgr("group", &database);
+
 	{
-		return false;
+		QSqlQuery sql_query(*database);
+
+		// create userlisttable
+		QString sql = "CREATE TABLE IF NOT EXISTS " + userListTableName + " (useraccount varchar(64) primary key)";
+		sql_query.prepare(sql);
+		if (!sql_query.exec())
+		{
+			return false;
+		}
+
+		// add record to group_table
+		sql = "INSERT INTO group_table (groupname, comment) VALUES('" + groupName + "', '" + comment + "')";
+		sql_query.prepare(sql);
+		if (!sql_query.exec())
+		{
+			return false;
+		}
 	}
-
-	QSqlQuery sql_query(database);
-
-	// create userlisttable
-	QString sql = "CREATE TABLE IF NOT EXISTS " + userListTableName + " (useraccount varchar(64) primary key)";
-	sql_query.prepare(sql);
-	if (!sql_query.exec())
-	{
-		database.close();
-		return false;
-	}
-
-	// add record to group_table
-	sql = "INSERT INTO group_table (groupname, comment) VALUES('" + groupName + "', '" + comment + "')";
-	sql_query.prepare(sql);
-	if (!sql_query.exec())
-	{
-		database.close();
-		return false;
-	}
-
-	database.close();
 
 	return true;
 }
@@ -119,36 +114,32 @@ bool GroupDbMgr::delGroup(const QString &groupName)
 	QMutexLocker autolock(m_mutex);
 
 	QString userListTableName = groupName + "_userlisttable";
-	QSqlDatabase  database;
-	if (!__getDbConnections(database))
+	QSqlDatabase  *database = nullptr;
+	SqliteDbMgr   connMgr("group", &database);
+
 	{
-		return false;
+		QSqlQuery sql_query(*database);
+
+		// delete user list table
+		QString sql = "DROP TABLE if exists " + userListTableName;
+		sql_query.prepare(sql);
+
+		if (!sql_query.exec())
+		{
+			return false;
+		}
+
+		// delete record
+		sql = "DELETE FROM group_table WHERE groupname='" + groupName + "'";
+
+		sql_query.prepare(sql);
+
+		if (!sql_query.exec())
+		{
+			return false;
+		}
+
 	}
-
-	QSqlQuery sql_query(database);
-
-	// delete user list table
-	QString sql = "DROP TABLE if exists " + userListTableName;
-	sql_query.prepare(sql);
-
-	if (!sql_query.exec())
-	{
-		database.close();
-		return false;
-	}
-
-	// delete record
-	sql = "DELETE FROM group_table WHERE groupname='" + groupName + "'";
-
-	sql_query.prepare(sql);
-
-	if (!sql_query.exec())
-	{
-		database.close();
-		return false;
-	}
-
-	database.close();
 
 	return true;
 }
@@ -158,24 +149,21 @@ bool GroupDbMgr::addUserToGroup(const QString &groupName, const QString &useracc
 	QMutexLocker autolock(m_mutex);
 
 	QString userListTableName = groupName + "_userlisttable";
-	QSqlDatabase  database;
-	if (!__getDbConnections(database))
+	QSqlDatabase  *database = nullptr;
+	SqliteDbMgr   connMgr("group", &database);
+
 	{
-		return false;
+		QSqlQuery sql_query(*database);
+
+		// add record to group_table
+		QString sql = "INSERT INTO " + userListTableName + " (useraccount) VALUES('" + useraccount + "')";
+		sql_query.prepare(sql);
+		if (!sql_query.exec())
+		{
+			return false;
+		}
+
 	}
-
-	QSqlQuery sql_query(database);
-
-	// add record to group_table
-	QString sql = "INSERT INTO "+ userListTableName +" (useraccount) VALUES('" + useraccount + "')";
-	sql_query.prepare(sql);
-	if (!sql_query.exec())
-	{
-		database.close();
-		return false;
-	}
-
-	database.close();
 
 	return true;
 }
@@ -184,38 +172,34 @@ bool GroupDbMgr::getGroupList(QJsonArray &list)
 {
 	QJsonObject jsonobj;
 	QMutexLocker autolock(m_mutex);
-	QSqlDatabase  database;
-	if (!__getDbConnections(database))
+	QSqlDatabase  *database = nullptr;
+	SqliteDbMgr   connMgr("group", &database);
+
 	{
-		return false;
+		// create table if not exists
+		QSqlQuery sql_query(*database);
+		QString sql;
+
+		sql = "SELECT groupname, usercount, comment FROM group_table";
+
+		sql_query.prepare(sql);
+
+		if (!sql_query.exec())
+		{
+			return false;
+		}
+
+
+		QSqlRecord rec = sql_query.record();
+
+
+		while (sql_query.next())
+		{
+			QJsonObject jsonobj;
+			recordToJson(rec, sql_query, jsonobj);
+			list.append(jsonobj);
+		}
 	}
-
-	// create table if not exists
-	QSqlQuery sql_query(database);
-	QString sql;
-
-	sql = "SELECT groupname, usercount, comment FROM group_table";
-
-	sql_query.prepare(sql);
-
-	if (!sql_query.exec())
-	{
-		database.close();
-		return false;
-	}
-
-	 
-	QSqlRecord rec = sql_query.record();
-
-	 
-	while (sql_query.next())
-	{
-		QJsonObject jsonobj;
-		recordToJson(rec, sql_query, jsonobj);
-		list.append(jsonobj);
-	}
-
-	database.close();
 
 	return true;
 }
@@ -229,7 +213,7 @@ void GroupDbMgr::recordToJson(QSqlRecord &rec, QSqlQuery &sql_query, QJsonObject
 		jsonobj.insert(rec.fieldName(col), sql_query.value(col).toString());
 	}
 }
-
+/*
 bool GroupDbMgr::__getDbConnections(QSqlDatabase &database)
 {
 	Qt::HANDLE threadId = QThread::currentThreadId();
@@ -253,51 +237,48 @@ bool GroupDbMgr::__getDbConnections(QSqlDatabase &database)
 
 	return true;
 }
+*/
 
 bool GroupDbMgr::getGroupInfo(const QString &groupName, QJsonObject &groupinfo)
 {
 	QJsonObject jsonobj;
 	QMutexLocker autolock(m_mutex);
-	QSqlDatabase  database;
-	if (!__getDbConnections(database))
+	QSqlDatabase  *database = nullptr;
+	SqliteDbMgr   connMgr("group", &database);
+
 	{
-		return false;
+		// create table if not exists
+		QSqlQuery sql_query(*database);
+		QString sql;
+
+		sql = "SELECT groupname, usercount, comment FROM group_table WHERE groupname='" + groupName + "'";
+
+		sql_query.prepare(sql);
+
+		if (!sql_query.exec())
+		{
+			return false;
+		}
+
+
+		QSqlRecord rec = sql_query.record();
+
+
+		if (!sql_query.next())
+		{
+			return false;
+		}
+
+		recordToJson(rec, sql_query, groupinfo);
+
+		// user list
+		QJsonArray userlist;
+		if (getUserlist(groupName, userlist))
+		{
+			groupinfo.insert("userlist", userlist);
+		}
+
 	}
-
-	// create table if not exists
-	QSqlQuery sql_query(database);
-	QString sql;
-
-	sql = "SELECT groupname, usercount, comment FROM group_table WHERE groupname='"+groupName+"'";
-
-	sql_query.prepare(sql);
-
-	if (!sql_query.exec())
-	{
-		database.close();
-		return false;
-	}
-
-	 
-	QSqlRecord rec = sql_query.record();
-
-	 
-	if (!sql_query.next())
-	{
-		database.close();
-		return false;
-	}
-
-	recordToJson(rec, sql_query, groupinfo);
-
-	// user list
-	QJsonArray userlist;
-	if (getUserlist(groupName, userlist))
-	{
-		groupinfo.insert("userlist", userlist);
-	}
-
-	database.close();
 
 	return true;
 }
@@ -308,49 +289,44 @@ bool GroupDbMgr::updateGroup(const QString &groupName, const QString &comment, c
 	QMutexLocker autolock(m_mutex);
 
 	QString userListTableName = groupName + "_userlisttable";
-	QSqlDatabase  database;
-	if (!__getDbConnections(database))
+	QSqlDatabase  *database = nullptr;
+	SqliteDbMgr   connMgr("group", &database);
+
 	{
-		return false;
-	}
-
-	QSqlQuery sql_query(database);
+		QSqlQuery sql_query(*database);
 
 
-	// update comment
-	QString sql = "UPDATE group_table SET comment='" + comment + "' WHERE groupname='" + groupName + "'";
-	sql_query.prepare(sql);
-	if (!sql_query.exec())
-	{
-		database.close();
-		return false;
-	}
-
-	// clear user list table
-	sql = "DELETE FROM " + userListTableName;
-	sql_query.prepare(sql);
-	if (!sql_query.exec())
-	{
-		database.close();
-		return false;
-	}
-
-	// update user list
-	for (int i = 0; i < userlist.size(); i++)
-	{
-		QString account = userlist.at(i).toString();
-
-		// insert to DB
-		QString sql = "INSERT INTO " + userListTableName + " (useraccount) VALUES('" + account + "')";
+		// update comment
+		QString sql = "UPDATE group_table SET comment='" + comment + "' WHERE groupname='" + groupName + "'";
 		sql_query.prepare(sql);
 		if (!sql_query.exec())
 		{
-			database.close();
 			return false;
 		}
-	}
 
-	database.close();
+		// clear user list table
+		sql = "DELETE FROM " + userListTableName;
+		sql_query.prepare(sql);
+		if (!sql_query.exec())
+		{
+			return false;
+		}
+
+		// update user list
+		for (int i = 0; i < userlist.size(); i++)
+		{
+			QString account = userlist.at(i).toString();
+
+			// insert to DB
+			QString sql = "INSERT INTO " + userListTableName + " (useraccount) VALUES('" + account + "')";
+			sql_query.prepare(sql);
+			if (!sql_query.exec())
+			{
+				return false;
+			}
+		}
+
+	}
 
 	return true;
 }
@@ -359,39 +335,36 @@ bool GroupDbMgr::getUserlist(const QString &groupName, QJsonArray &list)
 {
 	QJsonObject jsonobj;
 	QMutexLocker autolock(m_mutex);
-	QSqlDatabase  database;
-	if (!__getDbConnections(database))
+	QSqlDatabase  *database = nullptr;
+	SqliteDbMgr   connMgr("group", &database);
+
 	{
-		return false;
+		// create table if not exists
+		QSqlQuery sql_query(*database);
+		QString sql;
+
+		QString userListTableName = groupName + "_userlisttable";
+
+		sql = "SELECT useraccount FROM " + userListTableName;
+
+		sql_query.prepare(sql);
+
+		if (!sql_query.exec())
+		{
+			return false;
+		}
+
+
+		QSqlRecord rec = sql_query.record();
+
+
+		while (sql_query.next())
+		{
+			int useraccount_col = 0;
+			list.append(sql_query.value(useraccount_col).toString());
+		}
+
 	}
-
-	// create table if not exists
-	QSqlQuery sql_query(database);
-	QString sql;
-
-	QString userListTableName = groupName + "_userlisttable";
-
-	sql = "SELECT useraccount FROM " + userListTableName;
-
-	sql_query.prepare(sql);
-
-	if (!sql_query.exec())
-	{
-		database.close();
-		return false;
-	}
-
-	 
-	QSqlRecord rec = sql_query.record();
-
-	 
-	while (sql_query.next())
-	{
-		int useraccount_col = 0;
-		list.append(sql_query.value(useraccount_col).toString());
-	}
-
-	database.close();
 
 	return true;
 }
@@ -400,40 +373,36 @@ bool GroupDbMgr::isUserInGroup(const QString &groupName, const QString &account)
 {
 	QJsonObject jsonobj;
 	QMutexLocker autolock(m_mutex);
-	QSqlDatabase  database;
-	if (!__getDbConnections(database))
+	QSqlDatabase  *database = nullptr;
+	SqliteDbMgr   connMgr("group", &database);
+
 	{
-		return false;
-	}
+		// create table if not exists
+		QSqlQuery sql_query(*database);
+		QString sql;
 
-	// create table if not exists
-	QSqlQuery sql_query(database);
-	QString sql;
+		QString userListTableName = groupName + "_userlisttable";
 
-	QString userListTableName = groupName + "_userlisttable";
+		sql = "SELECT useraccount FROM " + userListTableName + "WHERE useraccount = '" + account + "'";
 
-	sql = "SELECT useraccount FROM " + userListTableName + "WHERE useraccount = '" + account + "'";
+		sql_query.prepare(sql);
 
-	sql_query.prepare(sql);
+		if (!sql_query.exec())
+		{
+			return false;
+		}
 
-	if (!sql_query.exec())
-	{
-		database.close();
-		return false;
-	}
 
-	 
-	QSqlRecord rec = sql_query.record();
+		QSqlRecord rec = sql_query.record();
 
-	 
-	if (sql_query.next())
-	{
-		database.close();
-		return true;
-	}
-	else
-	{
-		database.close();
-		return false;
+
+		if (sql_query.next())
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 	}
 }
