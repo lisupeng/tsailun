@@ -77,9 +77,6 @@ Admin account and password: admin/admin
 - Email notification & mention
 - Index based search
 - SSO
-- Performance improvement & Replace CWF with nginx
-- DB access optimization
-- Use Redis for cache layer
 - Docs & Video tutorial
 
 ## Contact
