@@ -21,7 +21,9 @@
 #include <QXmlInputSource>
 #include <QXmlSimpleReader>
 #include "pagemgr.h"
+#include "syslog.h"
 
+extern Syslog        g_syslog;
 
 Page::Page()
 {
@@ -207,7 +209,14 @@ bool Page::setContent(const QString &content)
 	QXmlInputSource xmlinput;
 	xmlinput.setData(content);
 	QXmlSimpleReader reader;
-	d.setContent(&xmlinput, &reader);
+	QString errMsg;
+	int errLine, errCol;
+	bool ret = d.setContent(&xmlinput, &reader, &errMsg, &errLine, &errCol);
+	if (!ret)
+	{
+		g_syslog.logMessage(SYSLOG_LEVEL_ERROR, "", "E1006 Failed to parse xml, "+errMsg);
+	}
+
 	//d.setContent(content);
 	QDomNode imported = m_Dom.importNode(d.firstChildElement("body"), true);
 
