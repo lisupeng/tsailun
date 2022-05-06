@@ -134,8 +134,8 @@ function DashboardContent() {
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
-      <AppBar position="absolute" open={open}>
-        <Toolbar
+      <AppBar position="absolute" variant="dense" open={open} elevation={1}>
+        <Toolbar variant="dense"
           sx={{
             pr: "24px", // keep right padding when drawer closed
           }}
@@ -195,7 +195,7 @@ function DashboardContent() {
         </Menu>
       </AppBar>
       <Drawer variant="permanent" open={open}>
-        <Toolbar
+        <Toolbar variant="dense"
           sx={{
             display: "flex",
             alignItems: "center",
@@ -223,7 +223,7 @@ function DashboardContent() {
           overflow: "auto",
         }}
       >
-        <Toolbar />
+        <Toolbar variant="dense" />
         <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
           <AdminContentView />
         </Container>

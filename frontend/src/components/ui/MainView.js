@@ -1235,7 +1235,12 @@ function MainViewContent() {
     if (1) {
       return (
         <>
-          <OutlinedInput
+          <OutlinedInput id="hello"
+            sx={{
+               "& .MuiInputBase-input": {
+                 pt: "4px", pb: "4px"
+               },
+            }}
             placeholder=""
             size="small"
             style={searchBoxStyle}
@@ -1276,15 +1281,16 @@ function MainViewContent() {
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
-      <AppBar
+      <AppBar variant="dense"
         position="absolute"
+        elevation={1}
         open={open}
         ref={(node) => {
           if (node && node.clientHeight)
             Globaldata.appBarHeight = node.clientHeight;
         }}
       >
-        <Toolbar
+        <Toolbar id="ref_bar" variant="dense"
           sx={{
             pr: "24px", // keep right padding when drawer closed
           }}
@@ -1809,8 +1815,8 @@ function MainViewContent() {
             TransitionComponent={Transition}
           >
           
-            <AppBar sx={{ position: 'relative' }}>
-              <Toolbar>
+            <AppBar sx={{ position: 'relative' }} elevation={1} variant="dense">
+              <Toolbar variant="dense">
                 <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
                     {" "}
                 </Typography>
@@ -1845,7 +1851,7 @@ function MainViewContent() {
         open={open}
         onMouseDown={onTreeviewMouseDown}
       >
-        <Toolbar
+        <Toolbar variant="dense"
           style={{ backgroundColor: "#f5f5f5" }}
           sx={{
             display: "flex",
@@ -1907,11 +1913,12 @@ function MainViewContent() {
               ? theme.palette.grey[100]
               : "#ffffff",*/
           flexGrow: 1,
-          height: "100vh",
+          height: `calc(100vh - ${Globaldata.appBarHeight}px)`,
+          mt: `calc(${Globaldata.appBarHeight}px)`,
           overflow: "auto",
         }}
       >
-        <Toolbar id="ref_bar" />
+
         <Container
           id="tsl_container"
           maxWidth="lg"

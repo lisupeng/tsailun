@@ -212,8 +212,8 @@ export default function SearchView() {
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
-      <AppBar position="absolute">
-        <Toolbar
+      <AppBar position="absolute" elevation={1} variant="dense">
+        <Toolbar variant="dense"
           sx={{
             pr: "24px", // keep right padding when drawer closed
           }}
@@ -289,7 +289,7 @@ export default function SearchView() {
           overflow: "auto",
         }}
       >
-        <Toolbar />
+        <Toolbar variant="dense"/>
         <Container maxWidth="lg" sx={{ mt: 4, mb: 4, ml: 9 }}>
           <RenderSearchState />
 
