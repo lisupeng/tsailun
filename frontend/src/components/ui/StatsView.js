@@ -43,5 +43,5 @@ function Copyright(props) {
 export default function StatsView() {
   //let history = useHistory();
 
-  return <></>;
+  return <>No Stats Data</>;
 }

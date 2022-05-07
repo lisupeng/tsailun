@@ -87,24 +87,27 @@ bool Syslog::logMessage(int level, const QString &component, const QString &msg)
 
 	QMutexLocker autolock(m_mutex);
 
-	printf("%s", consoleMsg.toStdString().c_str());
+#ifdef _WINDOWS
+	_cwprintf(L"%s", consoleMsg.toStdWString().c_str());
+#else
+	printf("%s", consoleMsg.toStdString().c_str()); // for linux
+#endif
 
 	// open file and seek to file end
 	QFile file(logFile);
 
 	if (file.exists())
 	{
-		if (!file.open(QIODevice::Append | QIODevice::Text))
+		if (!file.open(QIODevice::Append))
 			return false;
 	}
 	else
 	{
-		if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+		if (!file.open(QIODevice::WriteOnly))
 			return false;
 	}
 
-	QTextStream out(&file);
-	out << msgline;
+	file.write(msgline.toUtf8());
 
 	return true;
 }
@@ -118,10 +121,11 @@ bool Syslog::getAllMessages(QString &log)
 
 	QFile file(logFile);
 
-	if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+	if (!file.open(QIODevice::ReadOnly))
 		return false;
 
-	log = file.readAll();
+	QByteArray bytes = file.readAll();
+	log = QString::fromUtf8(bytes);
 
 	return true;
 }

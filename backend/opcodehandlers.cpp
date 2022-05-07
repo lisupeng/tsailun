@@ -94,7 +94,7 @@ OpcodeHandler::OpcodeHandler()
 	m_handlerMap["sysver"] = &OpcodeHandler::handle_sysver;
 	m_handlerMap["watchdog"] = &OpcodeHandler::handle_watchdog;
 	m_handlerMap["getstats"] = &OpcodeHandler::handle_getstats;
-	//m_handlerMap["getlog"] = &OpcodeHandler::handle_getlog;
+	m_handlerMap["getlog"] = &OpcodeHandler::handle_getlog;
 	m_handlerMap["moveup"] = &OpcodeHandler::handle_moveup;
 	m_handlerMap["movedown"] = &OpcodeHandler::handle_movedown;
 	m_handlerMap["rename"] = &OpcodeHandler::handle_renamepage;

@@ -6,9 +6,17 @@ legend {
 
 .ant-tree {
 
-    font-size: 18px;
+    font-size: 20px;
     background: #f5f5f5;
 
+}
+
+.ant-tree .ant-tree-treenode {
+    padding-bottom: 10px;
+}
+
+.ant-tree-indent {
+    line-height: 1.0;
 }
 
 #pg_treeview {
@@ -22,4 +30,15 @@ legend {
 #pgviewer h1,h2,h3,h4,h5,h6{
     font-weight: bold;
     color: unset;
+}
+
+#pgviewer td {
+    padding-top: 0.4rem;
+    padding-bottom: 0.4rem;
+    padding-left: 0.4rem;
+    padding-right: 0.4rem;
+}
+
+#pgviewer table {
+    border-color: #ccc;
 }

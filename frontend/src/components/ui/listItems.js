@@ -116,10 +116,10 @@ export default function AdminListItems() {
   return (
     <>
       <List>{mainListItems}</List>
-      {/*
+
         <Divider />
         <List>{secondaryListItems}</List>
-            */}
+
       <Divider />
       <List>
         <div>
