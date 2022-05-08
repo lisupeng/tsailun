@@ -36,7 +36,7 @@ import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import AdminListItems from "./listItems";
 import AdminContentView from "./AdminContentView";
 
-//import Globaldata from '../Globaldata';
+import Globaldata from '../Globaldata';
 import Utils from "../Utils";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
@@ -134,7 +134,12 @@ function DashboardContent() {
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
-      <AppBar position="absolute" variant="dense" open={open} elevation={1}>
+      <AppBar position="absolute" variant="dense" open={open} elevation={1}
+        ref={(node) => {
+          if (node && node.clientHeight)
+            Globaldata.appBarHeight = node.clientHeight;
+        }}
+      >
         <Toolbar variant="dense"
           sx={{
             pr: "24px", // keep right padding when drawer closed
@@ -219,11 +224,12 @@ function DashboardContent() {
               ? theme.palette.grey[100]
               : theme.palette.grey[900],
           flexGrow: 1,
-          height: "100vh",
           overflow: "auto",
+          height: `calc(100vh - ${Globaldata.appBarHeight}px)`,
+          mt: `calc(${Globaldata.appBarHeight}px)`,
         }}
       >
-        <Toolbar variant="dense" />
+
         <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
           <AdminContentView />
         </Container>

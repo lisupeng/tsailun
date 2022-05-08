@@ -92,6 +92,7 @@ const searchBoxStyle = {
     color: 'white',
     */
   backgroundColor: "white",
+  width: "200px"
 };
 
 function UserInfo(props) {
@@ -1235,7 +1236,7 @@ function MainViewContent() {
     if (1) {
       return (
         <>
-          <OutlinedInput id="hello"
+          <OutlinedInput
             sx={{
                "& .MuiInputBase-input": {
                  pt: "4px", pb: "4px"
@@ -1851,30 +1852,22 @@ function MainViewContent() {
         open={open}
         onMouseDown={onTreeviewMouseDown}
       >
-        <Toolbar variant="dense"
-          style={{ backgroundColor: "#f5f5f5" }}
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "flex-end",
-            px: [1],
-          }}
-        >
-
-        </Toolbar>
 
         <Paper
           id="pg_treeview_paper"
           elevation={0}
           sx={{
             p: 0,
-            mt: 3,
+            mt: `calc(${Globaldata.appBarHeight}px)`,
             display: "flex",
             flexDirection: "column",
-            height: "10px",
+            height: `calc(100vh - ${Globaldata.appBarHeight}px)`,
+            overflow: "auto",
           }}
         >
-          <CAntdtree />
+          <Box sx={{ p: 0, mt: "35px", }}>
+            <CAntdtree />
+          </Box>
         </Paper>
       </Drawer>
       {open && editting === false && (
@@ -1926,12 +1919,12 @@ function MainViewContent() {
           sx={{
             mt: 0,
             mb: 0,
-            ml: 0,
+            ml: (!Utils.windowIsNarrow() && !editting)? 3:0,
             //mr: 0,
             backgroundColor: "#ffffff",
             //border: 1,
-            borderRight: 1,
-            borderColor: "#f0f0f0",
+            //borderRight: 1,
+            //borderColor: "#f0f0f0",
             minHeight: `calc(100vh - ${Globaldata.appBarHeight}px)`,
           }}
         >

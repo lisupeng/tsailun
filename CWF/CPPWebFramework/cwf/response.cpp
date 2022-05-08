@@ -29,9 +29,14 @@ static bool waitForSend(QTcpSocket &socket)
 	{
 		socket.flush();
 
-		if (socket.ConnectingState > 0)
+		QAbstractSocket::SocketState state = socket.state();
+		if (state == QAbstractSocket::ConnectedState)
 		{
 			socket.waitForBytesWritten(60 * 1000);
+		}
+		else if (state == QAbstractSocket::ConnectingState)
+		{
+			QThread::msleep(200);
 		}
 		else
 		{
@@ -64,11 +69,19 @@ static void sendBytes(QTcpSocket &socket, const QByteArray &bytes, int timeOutms
 	qint64 bytes_left = total;
 
 	int retry = 0;
-    if(socket.ConnectingState > 0 && bytes.size() > 0)
+    if(bytes.size() > 0)
     {
 		while (bytes_left > 0 && retry <= 20)
 		{
-			qint64 ret = socket.write((bytes.data()) + (total - bytes_left), bytes_left);
+			qint64 ret = 0;
+			
+			QAbstractSocket::SocketState state = socket.state();
+			if (state == QAbstractSocket::ConnectedState)
+				ret = socket.write((bytes.data()) + (total - bytes_left), bytes_left);
+
+			else if (state != QAbstractSocket::ConnectingState)
+				return;
+
 			if (ret >= 0)
 				bytes_left -= ret;
 			else
@@ -81,14 +94,9 @@ static void sendBytes(QTcpSocket &socket, const QByteArray &bytes, int timeOutms
 			retry++;
 		}
 
-		if (wait)
+		if (wait && socket.state() == QAbstractSocket::ConnectedState)
 			waitForSend(socket);
-        //socket.flush();
 
-        //if(socket.ConnectingState > 0)
-        //{
-        //    socket.waitForBytesWritten(timeOut);
-        //}
     }
 }
 
