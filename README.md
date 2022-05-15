@@ -12,6 +12,9 @@
 ## Download Release
 [download](https://github.com/lisupeng/tsailunreleases)
 
+## Video Tutorial
+[video tutorial](https://github.com/lisupeng/tsailunreleases/tree/main/doc)
+
 ## Livedemo
 [link](http://tsailun.com.cn/demo)
 
@@ -75,9 +78,8 @@ Admin account and password: admin/admin
 ## Dev Plan
 - UI Improvement
 - Email notification & mention
-- Index based search
 - SSO
-- Docs & Video tutorial
+- Documentation
 
 ## Contact
 Any question, feel free to contact me: 11954794#qq.com (replace # with @)
