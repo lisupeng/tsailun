@@ -13,7 +13,11 @@
 [download](https://github.com/lisupeng/tsailunreleases)
 
 ## Video Tutorial
-[video tutorial](https://github.com/lisupeng/tsailunreleases/tree/main/doc)
+[English](https://youtu.be/OXV7UYoa650)
+
+[Chinese](https://v.douyin.com/F9Vb4bV/)
+
+[Download](https://github.com/lisupeng/tsailunreleases/tree/main/doc)
 
 ## Livedemo
 [link](http://tsailun.com.cn/demo)
