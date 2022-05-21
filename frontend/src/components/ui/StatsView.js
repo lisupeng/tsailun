@@ -21,6 +21,7 @@ import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import Link from "@material-ui/core/Link";
+import Utils from "../Utils";
 
 function Copyright(props) {
   return (
@@ -42,6 +43,51 @@ function Copyright(props) {
 
 export default function StatsView() {
   //let history = useHistory();
+  
+  const [reqcount, setReqcount] = React.useState("0");
+  const [createpg, setCreatepg] = React.useState("0");
+  const [readpg, setReadpg] = React.useState("0");
+  const [modifypg, setModifypg] = React.useState("0");
+  const [uploadfile, setUploadfile] = React.useState("0");
+  const [delfile, setDelfile] = React.useState("0");
+  
+  const updateStatsData = () => {
+    var url_listusr = "/admin?op=getstats";
 
-  return <>No Stats Data</>;
+    fetch(url_listusr, {
+      method: "post",
+      body: JSON.stringify({ sid: Utils.getSessionId() }),
+    })
+      .then((response) => response.text())
+      .then((data) => {
+        var res = JSON.parse(data);
+        if (res.status === "ok") {
+          if (res.stats) {
+            setReqcount(res.stats.ReqCounter);
+            setCreatepg(res.stats.createPage);
+            setReadpg(res.stats.readPage);
+            setModifypg(res.stats.writePage);
+            setUploadfile(res.stats.uploadFile);
+            setDelfile(res.stats.delFile);
+          }
+
+        }
+      })
+      .catch((error) => console.log("error is", error));
+  };
+  
+  React.useEffect(() => {
+    updateStatsData();
+  }, []);
+  
+  return (
+    <>
+      {"Request Count: "+reqcount} <p> </p>
+      {"Page Creation: "+createpg} <p> </p>
+      {"Page Read: "+readpg} <p> </p>
+      {"Page Modification: "+modifypg} <p> </p>
+      {"File Upload: "+uploadfile} <p> </p>
+      {"File Deletion: "+delfile} <p> </p>
+    </>
+  );
 }

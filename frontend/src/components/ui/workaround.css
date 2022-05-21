@@ -6,13 +6,13 @@ legend {
 
 .ant-tree {
 
-    font-size: 20px;
-    background: #f5f5f5;
+    font-size: 18px;
+    background: #ffffff;
 
 }
 
 .ant-tree .ant-tree-treenode {
-    padding-bottom: 10px;
+    padding-bottom: 8px;
 }
 
 .ant-tree-indent {
@@ -20,11 +20,11 @@ legend {
 }
 
 #pg_treeview {
-    background: #f5f5f5;
+    background: #ffffff;
 }
 
 #pg_treeview_paper {
-    background: #f5f5f5;
+    background: #ffffff;
 }
 
 #pgviewer h1,h2,h3,h4,h5,h6{

@@ -316,6 +316,8 @@ void _handle_page_create(QString path, QString title, QString loc, QString curPa
 	page.setUid(uid);
 	page.savePage(indexFilepath);
 
+	g_statsMgr.m_create_page++;
+
 	QString listFilepath = PathNameConcat(path, QString("pagelist.json"));
 
 	// lock list.lock file
@@ -597,6 +599,8 @@ void handle_page_save(const QString &path, QString content, const QString &sid, 
 	{
 		g_syslog.logMessage(SYSLOG_LEVEL_ERROR, "", "addVersion failed.");
 	}
+
+	g_statsMgr.m_write_page++;
 
 	// set status:ok
 	result.insert("status", "ok");
@@ -1113,6 +1117,10 @@ void OpcodeHandler::handle_delpage(CWF::Request &req, CWF::Response &response, R
 		response.write(out.toUtf8());
 	}
 
+	QString account = getUserAccountBySessionId(*(ctx.sid));
+	QString logmsg = QString("User '%1' deleting page '%2'.").arg(account).arg(url);
+	g_syslog.logMessage(SYSLOG_LEVEL_INFO, "", logmsg);
+
 	g_pageCache.removePageFromCache(url);
 
 	handle_page_del(path, result);
@@ -1200,6 +1208,8 @@ void OpcodeHandler::handle_readpage(CWF::Request &req, CWF::Response &response, 
 
 	if (ver.size() != 0)
 		g_pageCache.removePageFromCache(url);
+
+	g_statsMgr.m_read_page++;
 
 	PageCacheData pageCache;
 	if (ver.size() == 0 && g_pageCache.getPageFromCache(url, pageCache))
@@ -2235,6 +2245,13 @@ void OpcodeHandler::handle_delfile(CWF::Request &req, CWF::Response &response, R
 	// if "upload" dir doesn't exist, create it
 	QString uploadDir = pagepath + "/upload";
 
+	QString account = getUserAccountBySessionId(*(ctx.sid));
+	QString logmsg = QString("User '%1' deleting file '%2'.").arg(account).arg(url +"/upload/"+filename);
+
+	g_syslog.logMessage(SYSLOG_LEVEL_INFO, "", logmsg);
+
+	g_statsMgr.m_del_file++;
+
 	QJsonObject result;
 
 	if (QDir(uploadDir).remove(filename))
@@ -2397,6 +2414,9 @@ void OpcodeHandler::handle_uploadchunk(CWF::Request &req, CWF::Response &respons
 	QString tid = QString::fromUtf8(QByteArray::fromPercentEncoding(_tid));
 
 	int seq = sSeq.toInt();
+
+	if (seq == 0)
+		g_statsMgr.m_upload_file++;
 
 	QString chunkdata = (*(ctx.postobj)).value("chunkdata").toString();
 	//int seq = (*(ctx.postobj)).value("seq").toInt();
@@ -2740,8 +2760,18 @@ void OpcodeHandler::handle_getstats(CWF::Request &req, CWF::Response &response, 
 {
 	QJsonObject result;
 
-	result.insert("ReqCounter", QString("%1").arg(g_statsMgr.getRequestStatsCounter()));
-	result.insert("SiteReqCounter", QString("%1").arg(g_statsMgr.getSiteRequestStatsCounter()));
+	QJsonObject stats;
+
+	stats.insert("ReqCounter", QString("%1").arg(g_statsMgr.m_requestCounter));
+	stats.insert("SiteReqCounter", QString("%1").arg(g_statsMgr.m_siteRequestCounter));
+
+	stats.insert("createPage", QString("%1").arg(g_statsMgr.m_create_page));
+	stats.insert("readPage", QString("%1").arg(g_statsMgr.m_read_page));
+	stats.insert("writePage", QString("%1").arg(g_statsMgr.m_write_page));
+	stats.insert("uploadFile", QString("%1").arg(g_statsMgr.m_upload_file));
+	stats.insert("delFile", QString("%1").arg(g_statsMgr.m_del_file));
+
+	result.insert("stats", stats);
 
 	result.insert("status", "ok");
 

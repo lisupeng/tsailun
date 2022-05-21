@@ -45,5 +45,7 @@ bool    sendMail();
 
 void    buildContentType(const QString &name, QString &contentType, QString &disposition);
 
+QString getUserAccountBySessionId(const QString &sid);
+
 
 #endif // _UTILS_H

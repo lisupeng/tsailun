@@ -37,15 +37,6 @@ var initContent = "";
 
 var editorHeight = 700;
 
-const buttonStyle = {
-  margin: 0,
-  top: "auto",
-  right: 30,
-  bottom: 40,
-  left: "auto",
-  position: "fixed",
-};
-
 function axiowrapper (url, data) {
 
     return new Promise((resolve, reject) => {
@@ -410,7 +401,14 @@ export default function Editorwrap() {
                 size="small"
                 aria-label="save"
                 onClick={onSave}
-                style={buttonStyle}
+                style={{
+                  margin: 0,
+                  top: "auto",
+                  right: Utils.windowIsNarrow()? 30 : 60,
+                  bottom: Utils.windowIsNarrow()? 40 : 50,
+                  left: "auto",
+                  position: "fixed",
+                }}
               >
                 <DoneIcon />
               </Fab>

@@ -20,9 +20,13 @@
 #include <QRegExp>
 #include <QFile>
 #include <QDir>
+#include <QJsonObject>
 #include "utils.h"
 #include "configmgr.h"
 #include "SMTPEmail/src/SmtpMime"
+#include "sessionmgr.h"
+
+extern SessionMgr    g_sessionMgr;
 
 QString PathNameConcat(const QString &path, const QString &filename)
 {
@@ -295,4 +299,22 @@ void buildContentType(const QString &name, QString &contentType, QString &dispos
 		contentType = "application/octet-stream";
 		disposition = "attachment; filename=" + name.toUtf8();
 	}
+}
+
+QString getUserAccountBySessionId(const QString &sid)
+{
+	QString account = "";
+	if (sid == "")
+		account = "guest";
+	else
+	{
+		QJsonObject sessionobj;
+		if (g_sessionMgr.getSession(sid, sessionobj))
+		{
+			if (sessionobj.contains("account"))
+				account = sessionobj.value("account").toString();
+		}
+	}
+
+	return account;
 }

@@ -19,6 +19,8 @@
 #ifndef _STATS_H
 #define _STATS_H
 
+#include <stdint.h>
+
 class StatsMgr
 {
 public:
@@ -29,15 +31,21 @@ public:
 
 	// increaseUserRequestStatsCounter(const QString &account);
 
-	void increaseRequestStatsCounter();
-	unsigned int getRequestStatsCounter();
+public:
+	uint64_t     m_requestCounter;
+	uint64_t     m_siteRequestCounter;
 
-	void increaseSiteRequestStatsCounter();
-	unsigned int getSiteRequestStatsCounter();
+	uint64_t     m_create_page;
+	uint64_t     m_read_page;
+	uint64_t     m_write_page;
+	uint64_t     m_upload_file;
+	uint64_t     m_del_file;
 
-protected:
-	unsigned int m_requestCounter;
-	unsigned int m_siteRequestCounter;
+	uint64_t     m_stats_chrome;
+	uint64_t     m_stats_edge;
+	uint64_t     m_stats_safari;
+	uint64_t     m_stats_firefox;
+	uint64_t     m_stats_other;
 };
 
 #endif // _STATS_H

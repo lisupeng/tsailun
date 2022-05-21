@@ -144,7 +144,7 @@ var lang_en = {
     str_pageviewer_no_page: 'No page in space.',
     str_pageviewer_create_first_page: "Click '+' button to create your first page.",
     
-    str_editor_leave_confirm: "Leave current page and don't save?",
+    str_editor_leave_confirm: "Leave current page without saving changes?",
     
     str_fileview_file: 'File',
     str_fileview_size: 'Size',

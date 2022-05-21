@@ -22,24 +22,16 @@ StatsMgr::StatsMgr()
 {
 	m_requestCounter = 0;
 	m_siteRequestCounter = 0;
-}
 
-void StatsMgr::increaseRequestStatsCounter()
-{
-	m_requestCounter += 1;
-}
+	m_create_page = 0;
+	m_read_page   = 0;
+	m_write_page  = 0;
+	m_upload_file = 0;
+	m_del_file    = 0;
 
-unsigned int StatsMgr::getRequestStatsCounter()
-{
-	return m_requestCounter;
-}
-
-void StatsMgr::increaseSiteRequestStatsCounter()
-{
-	m_siteRequestCounter++;
-}
-
-unsigned int StatsMgr::getSiteRequestStatsCounter()
-{
-	return m_siteRequestCounter;
+	m_stats_chrome = 0;
+	m_stats_edge = 0;
+	m_stats_safari = 0;
+	m_stats_firefox = 0;
+	m_stats_other = 0;
 }

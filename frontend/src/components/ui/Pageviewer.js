@@ -58,15 +58,6 @@ var thisptr;
 var _space_last_check = "";
 var _space_empty_check_status = ""; // 'inprogress', 'non-empty', 'empty'
 
-const editBtnStyle = {
-  margin: 0,
-  top: "auto",
-  right: 30,
-  bottom: 40,
-  left: "auto",
-  position: "fixed",
-};
-
 class Pageviewer extends React.Component {
   state = {
     alertOpen: false,
@@ -335,7 +326,14 @@ class Pageviewer extends React.Component {
             color="primary"
             size="small"
             aria-label="edit"
-            style={editBtnStyle}
+            style={{
+              margin: 0,
+              top: "auto",
+              right: Utils.windowIsNarrow()? 30 : 60,
+              bottom: Utils.windowIsNarrow()? 40 : 50,
+              left: "auto",
+              position: "fixed",
+            }}
             onClick={thisptr.onEditButtonClicked}
           >
             <EditIcon />

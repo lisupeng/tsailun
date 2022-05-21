@@ -113,6 +113,9 @@ void _handleSignIn(QString data, QJsonObject &result)
 
 	sessionObj.insert("sid", sid);
 
+	QString logmsg = QString("User '%1' sign in.").arg(account);
+	g_syslog.logMessage(SYSLOG_LEVEL_INFO, "", logmsg);
+
 	// get user space and also save to sessionObj
 	QString spaceName = userRecord.value("space").toString();
 
@@ -184,6 +187,12 @@ protected:
 
 		QString peerAddr = req.getSocket().peerAddress().toString();
 
+		/*
+		QByteArray agent = req.getHttpParser().getHeaderField("sec-ch-ua");
+		if (agent.indexOf("Chrome") != -1)
+			g_statsMgr.increaseChromeStatsCounter();
+			*/
+
 #ifdef DEV_EDITION
 		QString logmsg = QString("Request from IP: %1, url: %2").arg(peerAddr).arg(url);
 
@@ -208,7 +217,7 @@ protected:
 #endif
 
 		if (op != "watchdog")
-			g_statsMgr.increaseRequestStatsCounter();
+			g_statsMgr.m_requestCounter++;
 
 		QString sid = ""; // default is guest
 		QJsonObject postobj;
@@ -249,7 +258,7 @@ protected:
 
 			if (QFile(siteIndex).exists())
 			{
-				g_statsMgr.increaseSiteRequestStatsCounter();
+				g_statsMgr.m_siteRequestCounter++;
 				response.sendRedirect("/site.html");
 			}
 			else
