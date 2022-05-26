@@ -19,10 +19,11 @@
 import React from "react";
 import Typography from "@material-ui/core/Typography";
 import Utils from "../Utils";
+import { useHistory } from "react-router-dom";
 //import Globaldata from '../Globaldata';
 
 export default function LogsView() {
-  //let history = useHistory();
+  let history = useHistory();
   const [logmsg, setLogMsg] = React.useState("");
 
   const fetchLog = () => {
@@ -37,6 +38,12 @@ export default function LogsView() {
         var res = JSON.parse(data);
         if (res.status === "ok") {
           if (res.log) setLogMsg(res.log);
+        }
+        else if (res.errcode === "invalid_session") {
+            var backurl = window.location.pathname + window.location.search;
+            Utils.clearSession();
+            var encodedBackurl = encodeURIComponent(backurl);
+            history.push("/signin?back=" + encodedBackurl);
         }
       })
       .catch((error) => console.log("error is", error));

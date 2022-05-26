@@ -660,7 +660,22 @@ const Utils = {
         }
         return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
     });
-    }
+  },
+
+  writeClipboard(s) {
+    var e = document.createElement('input');
+    e.value = s;
+    document.body.appendChild(e);
+    e.select();
+    document.execCommand("Copy");
+    e.style.display='none';
+    
+    setTimeout(() => {
+       document.body.removeChild(e);
+    }, 5000);
+    
+  },
+
 };
 
 export default Utils;

@@ -106,6 +106,13 @@ export default function UsersView() {
         if (res.status === "ok") {
           if (res.list) setRows(res.list);
         }
+        else if (res.errcode === "invalid_session" || res.errcode === "access_denied")
+        {
+            var backurl = window.location.pathname + window.location.search;
+            Utils.clearSession();
+            var encodedBackurl = encodeURIComponent(backurl);
+            history.push("/signin?back=" + encodedBackurl);
+        }
       })
       .catch((error) => console.log("error is", error));
   };

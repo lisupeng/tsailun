@@ -36,6 +36,7 @@ public:
 	bool getSession(const QString &sid, QJsonObject &sessionObj);
 
 	bool getAccountBySid(const QString &sid, QString &account);
+	int  getCount();
 
 protected:
 

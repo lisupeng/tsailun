@@ -98,7 +98,10 @@ var lang_zhch = {
     str_dlg_lang_refresh: "注意：修改语言将在刷新后生效",
     
     str_pageview_author_modify_date: "由{author}创建，最后由{lastModifiedBy}修改于{localDate}。",
-    str_pageview_edit: "编辑",   
+    str_pageview_edit: "编辑",
+    str_pageview_share: "分享",
+    str_pageview_rev: "修订记录",
+    str_pageview_subscribe: "关注",
 
     str_admin_userview_account: '账号',
     str_admin_userview_name: '姓名',
@@ -151,7 +154,10 @@ var lang_zhch = {
     str_fileview_size: '大小',
     str_fileview_date: '日期',
     str_fileview_upload: '上传',
-
+    
+    str_msg_link_copied: '链接已复制.',
+    str_msg_access_denied: 'E1003 没有权限访问文档空间,请与系统管理员确认.',
+    str_msg_write_denied: 'E1003 没有文档空间的写权限,请与系统管理员确认.',
 }
 
 export default lang_zhch;

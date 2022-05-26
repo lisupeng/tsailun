@@ -20,6 +20,7 @@
 #define _STATS_H
 
 #include <stdint.h>
+#include <QDateTime>
 
 class StatsMgr
 {
@@ -32,6 +33,8 @@ public:
 	// increaseUserRequestStatsCounter(const QString &account);
 
 public:
+	QDateTime    m_startup_ts;
+
 	uint64_t     m_requestCounter;
 	uint64_t     m_siteRequestCounter;
 

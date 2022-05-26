@@ -82,3 +82,8 @@ bool SessionMgr::getAccountBySid(const QString &sid, QString &account)
 		return false;
 	}
 }
+
+int SessionMgr::getCount()
+{
+	return m_sessionMap.size();
+}

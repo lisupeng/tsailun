@@ -160,7 +160,7 @@ function getTreeViewWidth()
     if (Utils.windowIsNarrow())
         return 240;
     else
-        return 325;
+        return 280;
 }
 
 const initialDrawerWidth = getTreeViewWidth();
@@ -347,7 +347,7 @@ function MainViewContent() {
             this.props.history.push("/signin");
           } else if (res.errcode === "access_denied") {
             // setMsg
-            setErrMsg("Access denied.");
+            setErrMsg(Lang.str_msg_write_denied);
             setSev("error");
             // setOpen
             setMsgBarOpen(true);
@@ -700,7 +700,7 @@ function MainViewContent() {
       .then((data) => {
         var res = JSON.parse(data);
         if (res.status === "ok") {
-          history.push("/admin");
+          history.push("/admin/users");
         } else {
           if (res.errcode === "invalid_session") {
             // redirect to signin
@@ -1384,9 +1384,10 @@ function MainViewContent() {
             <MenuItem onClick={handleAttachmentMenuItemClicked}>
               {Lang.str_menu_attachment}
             </MenuItem>
+            {/*
             <MenuItem onClick={handleExportPageMenuItemClicked}>
               {Lang.str_menu_export}
-            </MenuItem>
+            </MenuItem>*/}
             <MenuItem onClick={handleChangeSpaceMenuItemClicked}>
               {Lang.str_menu_space}
             </MenuItem>
@@ -1914,12 +1915,13 @@ function MainViewContent() {
 
         <Container
           id="tsl_container"
-          maxWidth="lg"
+          maxWidth="xxl"
           disableGutters={editting === true}
           sx={{
             mt: 0,
             mb: 0,
-            ml: (!Utils.windowIsNarrow() && !editting)? 3:0,
+            paddingLeft: (!Utils.windowIsNarrow() && !editting)? "10px":0,
+            paddingRight: (!Utils.windowIsNarrow() && !editting)? "10px":0,
             //mr: 0,
             backgroundColor: "#ffffff",
             //border: 1,

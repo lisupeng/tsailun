@@ -24,6 +24,12 @@ import Typography from "@material-ui/core/Typography";
 
 import IconButton from "@material-ui/core/IconButton";
 import EditIcon from "@material-ui/icons/Edit";
+import ReplyIcon from "@material-ui/icons/Reply";
+import ForwardIcon from "@material-ui/icons/Forward";
+import ShareIcon from "@material-ui/icons/Share";
+import StarIcon from "@material-ui/icons/Star";
+import UpdateIcon from "@material-ui/icons/Update";
+import VisibilityIcon from "@material-ui/icons/Visibility";
 
 //import { useHistory } from 'react-router-dom';
 //import {withRouter} from 'react-router-dom';
@@ -62,6 +68,7 @@ class Pageviewer extends React.Component {
   state = {
     alertOpen: false,
     errmsg: "",
+    sev: "error",
     showProgress: false,
   };
 
@@ -116,13 +123,33 @@ class Pageviewer extends React.Component {
           } else if (res.errcode === "access_denied") {
             this.setState({
               alertOpen: true,
-              errmsg: "Access denied.",
+              sev: "error",
+              errmsg: Lang.str_msg_write_denied,
             });
           }
         }
       })
       .catch((error) => console.log("error is", error));
   };
+  
+  onShareButtonClicked = () => {
+      
+    //navigator.clipboard.writeText(window.location.href)
+    Utils.writeClipboard(window.location.href);
+    this.setState({
+        alertOpen: true,
+        sev: "info",
+        errmsg: Lang.str_msg_link_copied,
+    });
+  }
+
+  onRevisionsButtonClicked = () => {
+    var url = window.location.pathname + "?op=history";
+    this.props.history.push(url);
+  }
+  
+  onSubscribeButtonClicked = () => {
+  }
 
   renderEditButton() {
     //var queryobj = Utils.parse(window.location.href);
@@ -131,16 +158,52 @@ class Pageviewer extends React.Component {
 
     if (thisptr && thisptr.msg && thisptr.msg.length !== 0) {
       return (
-        <div style={{ display: "flex" }}>
+        <div style={{ display: "flex", paddingTop: "6px"  }}>
           <IconButton
-            style={{ marginLeft: "auto" }}
+            style={{ marginLeft: "auto"}}
             size="small"
             onClick={thisptr.onEditButtonClicked}
           >
             <EditIcon />
-            {Lang.str_pageview_edit}
+            <Typography variant="subtitle2">
+              {Lang.str_pageview_edit}
+            </Typography>
           </IconButton>
           {/*<a href={window.location.pathname+'?op=edit'} style={{ marginLeft: "auto" }}>Edit</a>*/}
+          
+          <IconButton
+            size="small"
+            onClick={thisptr.onShareButtonClicked}
+          >
+            <ShareIcon />
+            <Typography variant="subtitle2">
+              {Lang.str_pageview_share}
+            </Typography>
+          </IconButton>
+          
+          <IconButton
+            size="small"
+            onClick={thisptr.onRevisionsButtonClicked}
+          >
+            <UpdateIcon />
+            <Typography variant="subtitle2">
+              {Lang.str_pageview_rev}
+            </Typography>
+            
+          </IconButton>
+
+          {/*
+          <IconButton
+            size="small"
+            onClick={thisptr.onSubscribeButtonClicked}
+          >
+            <StarIcon />
+            <Typography variant="subtitle2">
+              {Lang.str_pageview_subscribe}
+            </Typography>
+            
+          </IconButton>*/}
+          
         </div>
       );
     } else {
@@ -280,7 +343,8 @@ class Pageviewer extends React.Component {
             } else if (res.errcode === "access_denied") {
               this.setState({
                 alertOpen: true,
-                errmsg: "Access denied.",
+                sev: "error",
+                errmsg: Lang.str_msg_access_denied,
               });
             } else {
               console.log("Unexpected error");
@@ -302,9 +366,10 @@ class Pageviewer extends React.Component {
         <Snackbar
           open={this.state.alertOpen}
           anchorOrigin={{ vertical: "top", horizontal: "center" }}
+          autoHideDuration={2000}
           onClose={this.handleAlertClose}
         >
-          <Alert onClose={this.handleAlertClose} severity="error">
+          <Alert onClose={this.handleAlertClose} severity={this.state.sev}>
             {" "}
             {this.state.errmsg}{" "}
           </Alert>
@@ -321,7 +386,7 @@ class Pageviewer extends React.Component {
 
         {/*TODO: make progress indicator looks better <CircularProgress color="primary" sx={{position: 'fixed', top: window.innerWidth/2, left: window.innerHeight/2, zIndex: 1500}}/>*/}
 
-        {thisptr && thisptr.msg && thisptr.msg.length !== 0 && (
+        {/*thisptr && thisptr.msg && thisptr.msg.length !== 0 && (
           <Fab
             color="primary"
             size="small"
@@ -338,13 +403,13 @@ class Pageviewer extends React.Component {
           >
             <EditIcon />
           </Fab>
+        )*/}
+        
+        {thisptr && thisptr.msg && thisptr.msg.length !== 0 && (
+        
+            <this.renderEditButton />
+
         )}
-
-        {/*<this.renderEditButton />*/}
-
-        <Typography variant="body2" style={{ whiteSpace: "pre-line" }}>
-          {"\n"}
-        </Typography>
 
         <this.renderPageHead />
 

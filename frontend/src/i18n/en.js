@@ -99,6 +99,9 @@ var lang_en = {
     
     str_pageview_author_modify_date: "Created by {author}, last modified by {lastModifiedBy} on {localDate}.",
     str_pageview_edit: "Edit",
+    str_pageview_share: "Share",
+    str_pageview_rev: "Revisions",
+    str_pageview_subscribe: "Subscribe",
     
     str_admin_userview_account: 'Account',
     str_admin_userview_name: 'Name',
@@ -150,6 +153,10 @@ var lang_en = {
     str_fileview_size: 'Size',
     str_fileview_date: 'Date',
     str_fileview_upload: 'Upload',
+    
+    str_msg_link_copied: 'Link copied to clipboard.',
+    str_msg_access_denied: 'E1003 Access denied. No access permission to this doc space. Please confirm with your system administrator.',
+    str_msg_write_denied: 'E1003 Access denied. No write permission to this doc space. Please confirm with your system administrator.',
 }
 
 export default lang_en;

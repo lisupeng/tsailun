@@ -17,6 +17,7 @@
  */
 
 import * as React from "react";
+import { useHistory } from "react-router-dom";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
@@ -42,9 +43,11 @@ function Copyright(props) {
 }
 
 export default function StatsView() {
-  //let history = useHistory();
-  
+  let history = useHistory();
+
+  const [uptime, setUptime] = React.useState("0 days, 0 hours, 0 minutes");  
   const [reqcount, setReqcount] = React.useState("0");
+  const [sessioncount, setSessioncount] = React.useState("0");
   const [createpg, setCreatepg] = React.useState("0");
   const [readpg, setReadpg] = React.useState("0");
   const [modifypg, setModifypg] = React.useState("0");
@@ -63,7 +66,9 @@ export default function StatsView() {
         var res = JSON.parse(data);
         if (res.status === "ok") {
           if (res.stats) {
+            setUptime(res.stats.up_days+" days, "+res.stats.up_hours+" hours, "+res.stats.up_mins+" minutes");
             setReqcount(res.stats.ReqCounter);
+            setSessioncount(res.stats.sessionCounter);
             setCreatepg(res.stats.createPage);
             setReadpg(res.stats.readPage);
             setModifypg(res.stats.writePage);
@@ -71,6 +76,13 @@ export default function StatsView() {
             setDelfile(res.stats.delFile);
           }
 
+        }
+        else if (res.errcode === "invalid_session" || res.errcode === "access_denied")
+        {
+            var backurl = window.location.pathname + window.location.search;
+            Utils.clearSession();
+            var encodedBackurl = encodeURIComponent(backurl);
+            history.push("/signin?back=" + encodedBackurl);
         }
       })
       .catch((error) => console.log("error is", error));
@@ -82,7 +94,9 @@ export default function StatsView() {
   
   return (
     <>
+      {"Server uptime: "+uptime} <p> </p>
       {"Request Count: "+reqcount} <p> </p>
+      {"Session Count: "+sessioncount} <p> </p>
       {"Page Creation: "+createpg} <p> </p>
       {"Page Read: "+readpg} <p> </p>
       {"Page Modification: "+modifypg} <p> </p>

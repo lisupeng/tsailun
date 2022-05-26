@@ -1074,6 +1074,7 @@ void OpcodeHandler::handle_listpage(CWF::Request &req, CWF::Response &response, 
 		QString out = QString(QJsonDocument(result).toJson(QJsonDocument::Compact));
 
 		response.write(out.toUtf8());
+		return;
 	}
 
 	QString path = getSpaceAndPagePathByUrl(url);
@@ -1115,6 +1116,7 @@ void OpcodeHandler::handle_delpage(CWF::Request &req, CWF::Response &response, R
 		QString out = QString(QJsonDocument(result).toJson(QJsonDocument::Compact));
 
 		response.write(out.toUtf8());
+		return;
 	}
 
 	QString account = getUserAccountBySessionId(*(ctx.sid));
@@ -1157,6 +1159,7 @@ void OpcodeHandler::handle_savepage(CWF::Request &req, CWF::Response &response, 
 		QString out = QString(QJsonDocument(result).toJson(QJsonDocument::Compact));
 
 		response.write(out.toUtf8());
+		return;
 	}
 
 	//QByteArray content = req.getHttpParser().getBody();
@@ -1201,6 +1204,7 @@ void OpcodeHandler::handle_readpage(CWF::Request &req, CWF::Response &response, 
 		QString out = QString(QJsonDocument(result).toJson(QJsonDocument::Compact));
 
 		response.write(out.toUtf8());
+		return;
 	}
 
 	QByteArray ver = req.getHttpParser().getParameter("ver");
@@ -1258,6 +1262,7 @@ void OpcodeHandler::handle_createpage(CWF::Request &req, CWF::Response &response
 		QString out = QString(QJsonDocument(result).toJson(QJsonDocument::Compact));
 
 		response.write(out.toUtf8());
+		return;
 	}
 
 	QByteArray title = req.getHttpParser().getParameter("title", true, false);
@@ -1355,6 +1360,7 @@ void OpcodeHandler::handle_exportpage(CWF::Request &req, CWF::Response &response
 		QString out = QString(QJsonDocument(result).toJson(QJsonDocument::Compact));
 
 		response.write(out.toUtf8());
+		return;
 	}
 
 	handle_page_export(path, result);
@@ -1413,6 +1419,7 @@ void OpcodeHandler::handle_listuser(CWF::Request &req, CWF::Response &response, 
 		QString out = QString(QJsonDocument(result).toJson(QJsonDocument::Compact));
 
 		response.write(out.toUtf8());
+		return;
 	}
 
 	//handleListPages(path, result);
@@ -1458,6 +1465,7 @@ void OpcodeHandler::handle_updateuser(CWF::Request &req, CWF::Response &response
 		QString out = QString(QJsonDocument(result).toJson(QJsonDocument::Compact));
 
 		response.write(out.toUtf8());
+		return;
 	}
 
 	if ((*(ctx.postobj)).contains("account"))
@@ -1570,6 +1578,7 @@ void OpcodeHandler::handle_getuserinfo(CWF::Request &req, CWF::Response &respons
 		QString out = QString(QJsonDocument(result).toJson(QJsonDocument::Compact));
 
 		response.write(out.toUtf8());
+		return;
 	}
 
 	// TODO-6 input param check
@@ -1622,6 +1631,7 @@ void OpcodeHandler::handle_getspaceinfo(CWF::Request &req, CWF::Response &respon
 		QString out = QString(QJsonDocument(result).toJson(QJsonDocument::Compact));
 
 		response.write(out.toUtf8());
+		return;
 	}
 
 	// TODO-6 input param check
@@ -1672,6 +1682,7 @@ void OpcodeHandler::handle_getgroupinfo(CWF::Request &req, CWF::Response &respon
 		QString out = QString(QJsonDocument(result).toJson(QJsonDocument::Compact));
 
 		response.write(out.toUtf8());
+		return;
 	}
 
 	// TODO-6 input param check
@@ -1770,6 +1781,7 @@ void OpcodeHandler::handle_listspace(CWF::Request &req, CWF::Response &response,
 		QString out = QString(QJsonDocument(result).toJson(QJsonDocument::Compact));
 
 		response.write(out.toUtf8());
+		return;
 	}
 
 	QJsonArray list;
@@ -1859,6 +1871,7 @@ void OpcodeHandler::handle_updatespace(CWF::Request &req, CWF::Response &respons
 		QString out = QString(QJsonDocument(result).toJson(QJsonDocument::Compact));
 
 		response.write(out.toUtf8());
+		return;
 	}
 
 	QJsonArray rlist;
@@ -1917,6 +1930,7 @@ void OpcodeHandler::handle_listgroup(CWF::Request &req, CWF::Response &response,
 		QString out = QString(QJsonDocument(result).toJson(QJsonDocument::Compact));
 
 		response.write(out.toUtf8());
+		return;
 	}
 
 	QJsonArray list;
@@ -1963,6 +1977,7 @@ void OpcodeHandler::handle_updategroup(CWF::Request &req, CWF::Response &respons
 		QString out = QString(QJsonDocument(result).toJson(QJsonDocument::Compact));
 
 		response.write(out.toUtf8());
+		return;
 	}
 
 	QJsonArray userList;
@@ -2020,6 +2035,7 @@ void OpcodeHandler::handle_creategroup(CWF::Request &req, CWF::Response &respons
 		QString out = QString(QJsonDocument(result).toJson(QJsonDocument::Compact));
 
 		response.write(out.toUtf8());
+		return;
 	}
 
 	QByteArray name = req.getHttpParser().getParameter("name", true, false);
@@ -2069,6 +2085,7 @@ void OpcodeHandler::handle_createspace(CWF::Request &req, CWF::Response &respons
 
 		QString out = QString(QJsonDocument(result).toJson(QJsonDocument::Compact));
 		response.write(out.toUtf8());
+		return;
 	}
 
 	QByteArray name = req.getHttpParser().getParameter("name", true, false);
@@ -2294,6 +2311,7 @@ void OpcodeHandler::handle_upload(CWF::Request &req, CWF::Response &response, RE
 
 		QString out = QString(QJsonDocument(result).toJson(QJsonDocument::Compact));
 		response.write(out.toUtf8());
+		return;
 	}
 
 	if (!(*(ctx.postobj)).contains("filedata"))
@@ -2554,6 +2572,7 @@ void OpcodeHandler::handle_uploadblob(CWF::Request &req, CWF::Response &response
 
 		QString out = QString(QJsonDocument(result).toJson(QJsonDocument::Compact));
 		response.write(out.toUtf8());
+		return;
 	}
 
 	if (!(*(ctx.postobj)).contains("filedata"))
@@ -2760,9 +2779,36 @@ void OpcodeHandler::handle_getstats(CWF::Request &req, CWF::Response &response, 
 {
 	QJsonObject result;
 
+	int authres = AuthMgr::AdminPermissionCheck(*(ctx.sid));
+
+	if (authres == AUTH_RET_INVALID_SESSION)
+	{
+		result.insert("status", "fail");
+		result.insert("errcode", "invalid_session");
+
+		QString out = QString(QJsonDocument(result).toJson(QJsonDocument::Compact));
+
+		response.write(out.toUtf8());
+		return;
+	}
+
+	if (authres != AUTH_RET_SUCCESS)
+	{
+		result.insert("status", "fail");
+		result.insert("errcode", "access_denied");
+
+		QString out = QString(QJsonDocument(result).toJson(QJsonDocument::Compact));
+
+		response.write(out.toUtf8());
+		return;
+	}
+
 	QJsonObject stats;
 
 	stats.insert("ReqCounter", QString("%1").arg(g_statsMgr.m_requestCounter));
+
+	stats.insert("sessionCounter", g_sessionMgr.getCount());
+
 	stats.insert("SiteReqCounter", QString("%1").arg(g_statsMgr.m_siteRequestCounter));
 
 	stats.insert("createPage", QString("%1").arg(g_statsMgr.m_create_page));
@@ -2770,6 +2816,17 @@ void OpcodeHandler::handle_getstats(CWF::Request &req, CWF::Response &response, 
 	stats.insert("writePage", QString("%1").arg(g_statsMgr.m_write_page));
 	stats.insert("uploadFile", QString("%1").arg(g_statsMgr.m_upload_file));
 	stats.insert("delFile", QString("%1").arg(g_statsMgr.m_del_file));
+
+	QDateTime now = QDateTime::currentDateTime();
+	uint64_t seconds = g_statsMgr.m_startup_ts.secsTo(now);
+
+	// server uptime
+	uint64_t up_days = seconds / (24*60*60);
+	uint64_t up_hours = (seconds % (24 * 60 * 60)) / (60 * 60);
+	uint64_t up_mins = ((seconds % (24 * 60 * 60)) % (60 * 60)) / 60;
+	stats.insert("up_days", QString("%1").arg(up_days));
+	stats.insert("up_hours", QString("%1").arg(up_hours));
+	stats.insert("up_mins", QString("%1").arg(up_mins));
 
 	result.insert("stats", stats);
 
@@ -2783,6 +2840,31 @@ void OpcodeHandler::handle_getstats(CWF::Request &req, CWF::Response &response, 
 void OpcodeHandler::handle_getlog(CWF::Request &req, CWF::Response &response, REQ_CONTEXT &ctx)
 {
 	QJsonObject result;
+
+	int authres = AuthMgr::AdminPermissionCheck(*(ctx.sid));
+
+	if (authres == AUTH_RET_INVALID_SESSION)
+	{
+		result.insert("status", "fail");
+		result.insert("errcode", "invalid_session");
+
+		QString out = QString(QJsonDocument(result).toJson(QJsonDocument::Compact));
+
+		response.write(out.toUtf8());
+		return;
+	}
+
+	if (authres != AUTH_RET_SUCCESS)
+	{
+		result.insert("status", "fail");
+		result.insert("errcode", "access_denied");
+
+		QString out = QString(QJsonDocument(result).toJson(QJsonDocument::Compact));
+
+		response.write(out.toUtf8());
+		return;
+	}
+
 	QString log;
 
 	if (g_syslog.getAllMessages(log))
@@ -2859,6 +2941,7 @@ void OpcodeHandler::handle_renamepage(CWF::Request &req, CWF::Response &response
 
 		QString out = QString(QJsonDocument(result).toJson(QJsonDocument::Compact));
 		response.write(out.toUtf8());
+		return;
 	}
 
 	QByteArray title = req.getHttpParser().getParameter("title", true, false);

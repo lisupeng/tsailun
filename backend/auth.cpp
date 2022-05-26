@@ -143,7 +143,7 @@ int AuthMgr::SpaceWritePermissionCheck(const QString &sid, const QString &url)
 		account = sessionobj.value("account").toString();
 	}
 
-	QString authCacheKey = account + "@" + spacePath + "@" + "read";
+	QString authCacheKey = account + "@" + spacePath + "@" + "write";
 	AuthCacheData authdata;
 
 	if (g_authCache.get(authCacheKey, authdata))

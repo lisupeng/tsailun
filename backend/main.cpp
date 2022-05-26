@@ -29,11 +29,13 @@
 
 #include "sysdefs.h"
 #include "urlhandlers.h"
+#include "stats.h"
 
 extern UserDbMgr     g_userDbMgr;
 extern SpaceDbMgr    g_spaceDbMgr;
 extern GroupDbMgr    g_groupDbMgr;
 extern Syslog        g_syslog;
+extern StatsMgr      g_statsMgr;
 
 #define EXIT_APP() \
          do { \
@@ -107,6 +109,8 @@ int main(int argc, char *argv[])
 
 	QString msg = QString("Software version ") + QString(__SYS_VERSION_);
 	g_syslog.logMessage(SYSLOG_LEVEL_INFO, "", msg);
+
+	g_statsMgr.m_startup_ts = QDateTime::currentDateTime();
 
     return server.start();
 }
