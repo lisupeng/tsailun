@@ -968,8 +968,6 @@ void _handle_page_movedown(const QString &path, QJsonObject &result)
 
 void _handle_page_rename(const QString &path, const QString &title, QJsonObject &result)
 {
-	// TODO DON'T rename directory. because could be in using by other people
-
 	QDir dir(path);
 	QString dirname = dir.dirName();
 

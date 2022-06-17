@@ -67,6 +67,7 @@ const searchBoxStyle = {
     color: 'white',
     */
   backgroundColor: "white",
+  width: "180px"
 };
 
 function UserInfo(props) {
@@ -215,6 +216,7 @@ export default function SearchView() {
       <AppBar position="absolute" elevation={1} variant="dense">
         <Toolbar variant="dense"
           sx={{
+            minHeight: "40px",
             pr: "24px", // keep right padding when drawer closed
           }}
         >
@@ -229,6 +231,11 @@ export default function SearchView() {
           </Typography>
 
           <OutlinedInput
+           sx={{
+               "& .MuiInputBase-input": {
+                 pt: "2px", pb: "2px"
+               },
+            }}
             placeholder=""
             size="small"
             style={searchBoxStyle}
@@ -289,7 +296,8 @@ export default function SearchView() {
           overflow: "auto",
         }}
       >
-        <Toolbar variant="dense"/>
+        <Toolbar sx={{
+            minHeight: "40px"}} variant="dense"/>
         <Container maxWidth="lg" sx={{ mt: 4, mb: 4, ml: 9 }}>
           <RenderSearchState />
 

@@ -174,25 +174,27 @@ bool sendMail()
 	// First we need to create an SmtpClient object
 	// We will use the Gmail's smtp server (smtp.gmail.com, port 465, ssl)
 
-	SmtpClient smtp("smtp.qq.com", 465, SmtpClient::SslConnection);
+	//SmtpClient smtp("smtp.qq.com", 465, SmtpClient::SslConnection);
+	SmtpClient smtp("192.168.5.125", 25, SmtpClient::TcpConnection);
 
 	// We need to set the username (your email address) and password
 	// for smtp authentification.
 
-	smtp.setUser("11954794@qq.com");
-	smtp.setPassword("yourpwd");
+
+	//smtp.setUser("11954794@qq.com");
+	//smtp.setPassword("yourpwd");
 
 	// Now we create a MimeMessage object. This is the email.
 
 	MimeMessage message;
 
-	EmailAddress sender("11954794@qq.com", "yourname");
+	EmailAddress sender("test@test.com");
 	message.setSender(&sender);
 
-	EmailAddress to("11954794@qq.com", "");
+	EmailAddress to("11954794@qq.com");
 	message.addRecipient(&to);
 
-	message.setSubject("SmtpClient for Qt - Demo");
+	message.setSubject("sendmail test");
 
 	// Now add some text to the email.
 	// First we create a MimeText object.
@@ -212,10 +214,10 @@ bool sendMail()
 		return false;
 	}
 
-	if (!smtp.login()) {
-		//qDebug() << "Failed to login!" << endl;
-		return false;
-	}
+	//if (!smtp.login()) {
+	//	//qDebug() << "Failed to login!" << endl;
+	//	return false;
+	//}
 
 	if (!smtp.sendMail(message)) {
 		//qDebug() << "Failed to send mail!" << endl;

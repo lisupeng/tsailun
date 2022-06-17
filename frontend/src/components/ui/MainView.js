@@ -92,7 +92,7 @@ const searchBoxStyle = {
     color: 'white',
     */
   backgroundColor: "white",
-  width: "200px"
+  width: "180px"
 };
 
 function UserInfo(props) {
@@ -536,7 +536,7 @@ function MainViewContent() {
       "/pages" +
       path +
       "?op=rename&title=" +
-      renamedTitle;
+      encodeURIComponent(renamedTitle);
 
     fetch(url, {
       method: "post",
@@ -1239,7 +1239,7 @@ function MainViewContent() {
           <OutlinedInput
             sx={{
                "& .MuiInputBase-input": {
-                 pt: "4px", pb: "4px"
+                 pt: "2px", pb: "2px"
                },
             }}
             placeholder=""
@@ -1293,6 +1293,7 @@ function MainViewContent() {
       >
         <Toolbar id="ref_bar" variant="dense"
           sx={{
+            minHeight: "40px",
             pr: "24px", // keep right padding when drawer closed
           }}
         >
@@ -1302,7 +1303,7 @@ function MainViewContent() {
             aria-label="open drawer"
             onClick={toggleDrawer}
             sx={{
-              marginRight: "36px",
+              marginRight: "5px",
             }}
           >
             <MenuIcon />
@@ -1377,7 +1378,7 @@ function MainViewContent() {
             <MenuItem onClick={handleDelPageMenuItemClicked}>
               {Lang.str_menu_del_page}
             </MenuItem>
-            {/*<MenuItem onClick={handleRenamePageMenuItemClicked}>{Lang.str_menu_rename}</MenuItem>*/}
+            <MenuItem onClick={handleRenamePageMenuItemClicked}>{Lang.str_menu_rename}</MenuItem>
             <MenuItem onClick={handlePageHistoryMenuItemClicked}>
               {Lang.str_menu_page_history}
             </MenuItem>
@@ -1818,7 +1819,7 @@ function MainViewContent() {
           >
           
             <AppBar sx={{ position: 'relative' }} elevation={1} variant="dense">
-              <Toolbar variant="dense">
+              <Toolbar variant="dense" sx={{minHeight: "40px"}}>
                 <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
                     {" "}
                 </Typography>
@@ -1920,8 +1921,8 @@ function MainViewContent() {
           sx={{
             mt: 0,
             mb: 0,
-            paddingLeft: (!Utils.windowIsNarrow() && !editting)? "10px":0,
-            paddingRight: (!Utils.windowIsNarrow() && !editting)? "10px":0,
+            paddingLeft: (!Utils.windowIsNarrow() && !editting)? "10px": "0px",
+            paddingRight: (!Utils.windowIsNarrow() && !editting)? "10px": "1px",
             //mr: 0,
             backgroundColor: "#ffffff",
             //border: 1,

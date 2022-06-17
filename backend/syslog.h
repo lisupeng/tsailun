@@ -50,6 +50,9 @@ public:
 
 	bool getAllMessages(QString &log);
 
+	// recent 500k
+	bool getRecentLog(QString &log);
+
 	void setLogLevel(int level);
 
 protected:

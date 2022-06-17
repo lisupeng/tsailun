@@ -142,6 +142,7 @@ function DashboardContent() {
       >
         <Toolbar variant="dense"
           sx={{
+            minHeight: "40px",
             pr: "24px", // keep right padding when drawer closed
           }}
         >
@@ -202,6 +203,7 @@ function DashboardContent() {
       <Drawer variant="permanent" open={open}>
         <Toolbar variant="dense"
           sx={{
+            minHeight: "40px",
             display: "flex",
             alignItems: "center",
             justifyContent: "flex-end",

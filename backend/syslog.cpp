@@ -130,6 +130,11 @@ bool Syslog::getAllMessages(QString &log)
 	return true;
 }
 
+bool Syslog::getRecentLog(QString &log)
+{
+	return false;
+}
+
 void Syslog::setLogLevel(int level)
 {
 	m_curLogLevel = level;

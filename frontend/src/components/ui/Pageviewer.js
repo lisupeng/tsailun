@@ -362,7 +362,7 @@ class Pageviewer extends React.Component {
 
     // TODO use cipher algorithm to make sure no data corrupt
     return (
-      <>
+      <div style={{ paddingLeft: (!Utils.windowIsNarrow())? "10px":"0px", paddingRight: (!Utils.windowIsNarrow())? "10px":"0px"  }}>
         <Snackbar
           open={this.state.alertOpen}
           anchorOrigin={{ vertical: "top", horizontal: "center" }}
@@ -419,7 +419,7 @@ class Pageviewer extends React.Component {
             __html: "<style>p{ margin:2px 0}</style>" + this.msg,
           }}
         ></div>
-      </>
+      </div>
     );
   }
 }

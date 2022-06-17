@@ -202,18 +202,6 @@ export default function SignUp() {
 
         <Box sx={{ mt: 3 }}>
           <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <TextField
-                autoComplete="userfullname"
-                name="userfullname"
-                required
-                fullWidth
-                id="userfullname"
-                label={Lang.str_signup_name}
-                onChange={handleFullnameInputChange}
-                autoFocus
-              />
-            </Grid>
 
             <Grid item xs={12}>
               <TextField
@@ -226,6 +214,20 @@ export default function SignUp() {
                 autoComplete="signup_email"
               />
             </Grid>
+            
+            <Grid item xs={12}>
+              <TextField
+                autoComplete="userfullname"
+                name="userfullname"
+                required
+                fullWidth
+                id="userfullname"
+                label={Lang.str_signup_name}
+                onChange={handleFullnameInputChange}
+                autoFocus
+              />
+            </Grid>
+            
             <Grid item xs={12}>
               <TextField
                 required

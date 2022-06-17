@@ -31,7 +31,7 @@ let Globaldata = {
 
   versionList: null,
 
-  appBarHeight: 48,
+  appBarHeight: 40,
 
   searchString: "",
 
