@@ -45,6 +45,18 @@ function updateTreeData(list, key, children) {
   });
 }
 
+function getIdByDirnameFromNodeList(list, dir) {
+    
+    for (var i = 0; i < list.length; i++)
+    {
+        var item = list[i];
+        
+        if (item.pagedir == dir && item.key.length > 0)
+            return item.key;
+    }
+    return "";
+}
+
 class CAntdtree extends React.Component {
   state = {
     treeData: [],
@@ -83,6 +95,110 @@ class CAntdtree extends React.Component {
         }
       })
       .catch((error) => console.log("error is", error));
+  }
+  
+  // this can be optimized by implementing an new handler in backend to reply multiple levels tree data
+  // in a single reply  
+  async fetchMultiLevelTreeDataByPath()
+  {
+    var url_space = Utils.getSpacePathFromUrl(window.location.pathname);
+    var path = Utils.getPagePathFromUrl(window.location.pathname);
+    
+    if (!(path && path.length > 2)) {
+        this.fetchTreeRootLevelData();
+        return;
+    }
+    
+    var pathlist = path.split("/");
+    
+    if (pathlist.length < 2)
+    {
+        this.fetchTreeRootLevelData();
+        return;
+    }
+    
+    // put to front. this item stands for root path
+    pathlist.unshift("");
+    
+    // empty tree keys
+    var tdata = [];
+    var selected = [];
+    var expanded = [];
+    var loaded = [];
+    Globaldata.selectedTreeNode = "";
+    
+    var curpath = "";
+    
+    var toFetchNodeId = "";
+    
+    for (var i = 0; i < pathlist.length; i++) {
+        var p = pathlist[i];
+        
+        if (i > 0) // 0 is root level
+            curpath = curpath+"/"+p;
+        
+        var url = Utils.getSpacePathFromUrl(window.location.pathname) + "/pages"+curpath+"?op=listpage";
+
+        var postdata = JSON.stringify({ sid: Utils.getSessionId()});
+        let ret = await Utils.axiowrapper(url, postdata);
+        
+        // if fail, set existing data to tree and return
+        if (!(ret && ret.data && ret.data.status && ret.data.status == "ok"))
+        {
+            this.setState({
+              treeData: tdata,
+              expandedKeys: expanded,
+              loadedKeys: loaded,
+              selectedKeys: selected,
+            });
+            return;
+        }
+        
+        if (i == 0) // root node
+        {
+            tdata = ret.data.list;
+        }
+        else
+        {
+          if (toFetchNodeId.length > 0)
+          {
+              tdata = updateTreeData(tdata, toFetchNodeId, ret.data.list);
+              expanded.push(toFetchNodeId);
+              Globaldata.selectedTreeNode = toFetchNodeId;
+              loaded.push(toFetchNodeId);
+          }
+          else
+          {
+            this.setState({
+              treeData: tdata,
+              expandedKeys: expanded,
+              loadedKeys: loaded,
+              selectedKeys: selected,
+            });
+            return;
+          }
+        }
+        
+        // set next_p and next toFetchNodeId
+        var next_p = "";
+        if ((i+1) <= (pathlist.length - 1))
+        {
+            next_p = pathlist[i+1];
+        }
+        
+        // getIdByDirnameFromNodeList
+        toFetchNodeId = getIdByDirnameFromNodeList(ret.data.list, decodeURIComponent(next_p));
+        
+        if ((i+1) == (pathlist.length-1))
+            selected.push(toFetchNodeId);
+    }
+    
+    this.setState({
+      treeData: tdata,
+      expandedKeys: expanded,
+      loadedKeys: loaded,
+      selectedKeys: selected,
+    });
   }
 
   fetchNodeChildData(nodeId, resolve) {
@@ -172,8 +288,8 @@ class CAntdtree extends React.Component {
 
           // set preferred selection if any. (make sure selected key in tree)
           if (preferredSelecKey && preferredSelecKey !== "") {
-            this.state.selectedKeys = [];
-            this.state.selectedKeys.push(preferredSelecKey);
+            selected = [];
+            selected.push(preferredSelecKey);
           }
 
           this.setState({
@@ -190,7 +306,8 @@ class CAntdtree extends React.Component {
   componentDidMount() {
     Globaldata.treeInstance = this;
 
-    this.fetchTreeRootLevelData();
+    //this.fetchTreeRootLevelData();
+    this.fetchMultiLevelTreeDataByPath();
   }
 
   onLoadData = (treeNode) => {

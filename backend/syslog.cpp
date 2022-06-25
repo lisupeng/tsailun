@@ -132,7 +132,32 @@ bool Syslog::getAllMessages(QString &log)
 
 bool Syslog::getRecentLog(QString &log)
 {
-	return false;
+	ConfigMgr *cfgMgr = ConfigMgr::GetInstance();
+	QString appRootPath = cfgMgr->getAppRootDir();
+	QString logFile = appRootPath + "/data/log/syslog.txt";
+
+	QFile file(logFile);
+
+	if (file.size() <= 500 * 1024)
+		return this->getAllMessages(log);
+
+	if (!file.open(QIODevice::ReadOnly))
+		return false;
+
+	file.seek(file.size() - 500 * 1024);
+
+	//QByteArray bytes = file.readAll();
+	QByteArray bytes = file.read(500*1024);
+
+	int idx = bytes.indexOf("\n");
+	if (idx != -1)
+	{
+		bytes = bytes.right(bytes.size()-idx);
+	}
+
+	log = QString::fromUtf8(bytes);
+
+	return true;
 }
 
 void Syslog::setLogLevel(int level)

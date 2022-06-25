@@ -2865,7 +2865,7 @@ void OpcodeHandler::handle_getlog(CWF::Request &req, CWF::Response &response, RE
 
 	QString log;
 
-	if (g_syslog.getAllMessages(log))
+	if (g_syslog.getRecentLog(log))
 	{
 		result.insert("status", "ok");
 		result.insert("log", log);

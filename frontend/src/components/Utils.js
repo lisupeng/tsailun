@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 const HEX_STRINGS = "0123456789abcdef";
 const MAP_HEX = {
   0: 0,
@@ -137,6 +139,17 @@ const Utils = {
     } else {
       return "/spaces/default";
     }
+  },
+  getPagePathFromUrl(url) {
+    var ibegin = url.indexOf("/pages/");
+    if (ibegin == -1)
+        return "";
+
+    var iend = url.length;
+    if (url.indexOf("?") !== -1)
+        iend = url.indexOf("?");
+
+    return url.substring(ibegin+"/pages/".length, iend);
   },
   getUserDisplayName() {
     var session;
@@ -675,6 +688,16 @@ const Utils = {
     }, 5000);
     
   },
+  
+  axiowrapper(url, data) {
+    return new Promise((resolve, reject) => {
+        axios.post(url, data).then((res) => {
+          resolve(res);
+        }).catch((err) => {
+          reject(err);
+        })
+      })
+  }
 
 };
 
